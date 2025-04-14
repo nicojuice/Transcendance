@@ -1,2 +1,0 @@
-# Transcendance
-End of cursus  !
