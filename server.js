@@ -2,19 +2,22 @@ const path = require('path');
 const fastify = require('fastify')({ logger: true });
 const fastifyStatic = require('fastify-static');
 
-// Sert les fichiers statiques depuis /public (ton build front)
+// Donne le front au server
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, 'App'),
+  root: path.join(__dirname, 'public'),
   prefix: '/',
-  wildcard: false,
 });
 
-// Pour toutes les routes non trouvées (ex: /dashboard, /profile), renvoie index.html
+// askip securite 
 fastify.setNotFoundHandler((req, reply) => {
   reply.type('text/html').sendFile('index.html');
 });
 
-fastify.listen({ port: 3000 }, (err, address) => {
+const host = '0.0.0.0';
+const port = 8080;
+
+// le serveur en ecoute 
+fastify.listen({ host, port }, (err, address) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

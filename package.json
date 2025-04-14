@@ -19,6 +19,7 @@
   "homepage": "https://github.com/nicojuice/Transcendance#readme",
   "dependencies": {
     "fastify": "^3.29.5",
-    "fastify-static": "^4.7.0"
+    "fastify-static": "^4.7.0",
+    "typescript": "^5.8.3"
   }
 }
