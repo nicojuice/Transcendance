@@ -5,12 +5,10 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm install
+RUN chmod 777 script/start.sh
 
-RUN npm install typescript
-
-# Expose le port sur lequel ton serveur écoute (8080)
+# Le port utiliser(8080)
 EXPOSE 8080
 
-# Compile le code TypeScript puis démarre le serveur Fastify
-CMD ["sh", "-c", "npx tsc && node server.js"]
+# Lance le script du coup 
+CMD ["sh", "-c","sh ./script/start.sh"]
