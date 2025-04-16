@@ -3,12 +3,12 @@ version: '3.8'
 services:
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"  #Port utilise 
     volumes:
-      - node-volume:/usr/src/app/backend/node_modules #Creer le volume pour node
+      - node-volume:/usr/src/app/backend/ #Creer le volume pour node
     environment:
       - NODE_ENV=production
     networks:
@@ -16,8 +16,8 @@ services:
   
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     volumes:
       - public-volume:/usr/src/app/frontend/public #Creer le volume pour js
     environment:

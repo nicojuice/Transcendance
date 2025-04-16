@@ -2,6 +2,7 @@ const path = require('path');
 const fastify = require('fastify')({ logger: true });
 const fastifyStatic = require('fastify-static');
 
+
 // Donne le front au server
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, '..','frontend', 'public'),
