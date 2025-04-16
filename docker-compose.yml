@@ -6,8 +6,7 @@ services:
     ports:
       - "8080:8080"  # Mappe le port 3000 du conteneur au port 3000 de l'hôte
     volumes:
-      - .:/usr/src/app 
-      - public-volume:/usr/src/app/App/public
+      - public-volume:/usr/src/app/App/public #Creer le 
       - node-volume:/usr/src/app/node_modules
     environment:
       - NODE_ENV=production
