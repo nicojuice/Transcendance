@@ -4,8 +4,8 @@ const fastifyStatic = require('fastify-static');
 
 // Donne le front au server
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, 'App', 'public'),
-  prefix: '/public/',
+  root: path.join(__dirname, '..','frontend', 'public'),
+  prefix: '/public',
 });
 
 fastify.get('/', (req, reply) => {
