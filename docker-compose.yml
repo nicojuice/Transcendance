@@ -7,5 +7,10 @@ services:
       - "8080:8080"  # Mappe le port 3000 du conteneur au port 3000 de l'hôte
     volumes:
       - .:/usr/src/app  # Monte le dossier local dans le conteneur pour un développement facile
+      # Volume nommé pour le dossier compilé
+      - public-volume:/usr/src/app/App/public
     environment:
       - NODE_ENV=production
+
+volumes:
+  public-volume:

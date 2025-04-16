@@ -9,10 +9,8 @@ RUN npm install
 
 RUN npm install typescript
 
-RUN npx tsc
-
 # Expose le port sur lequel ton serveur écoute (8080)
 EXPOSE 8080
 
-# Lance le serveur Fastify
-CMD ["node", "server.js"]
+# Compile le code TypeScript puis démarre le serveur Fastify
+CMD ["sh", "-c", "npx tsc && node server.js"]

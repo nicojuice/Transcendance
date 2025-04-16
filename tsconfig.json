@@ -6,5 +6,5 @@
     "module": "CommonJS",
     "strict": true
   },
-  "include": ["App/ts"]
+  "include": ["App/ts", "App/public/nav.js"]
 }
