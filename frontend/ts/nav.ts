@@ -1,39 +1,27 @@
-// Fonction de navigation pour changer de contenu
-function navigate(path: string): void {
-    history.pushState({}, '', path);  // Change l'URL sans recharger la page
-    updateContent(path);              // Met à jour le contenu de la page en fonction du chemin
+async function navigate(page: string) {
+  try {
+    const response = await fetch(`/pages/${page}.html`);
+    if (!response.ok) throw new Error('404');
+    const html = await response.text();
+    document.getElementById('content')!.innerHTML = html;
+  } catch {
+    const res404 = await fetch('/pages/404.html');
+    const html404 = await res404.text();
+    document.getElementById('content')!.innerHTML = html404;
   }
-  
-  // Fonction pour mettre à jour le contenu en fonction de l'URL
-  function updateContent(path: string): void {
-    // On cache toutes les pages
-    const pages: NodeListOf<HTMLElement> = document.querySelectorAll('.page');
-    pages.forEach(page => {
-      page.style.display = 'none';
-    });
-  
-    // On affiche la page correspondant à l'URL
-    if (path === '/') {
-      const homePage = document.getElementById('home') as HTMLElement;
-      if (homePage) homePage.style.display = 'block';
-    } else if (path === '/about') {
-      const aboutPage = document.getElementById('about') as HTMLElement;
-      if (aboutPage) aboutPage.style.display = 'block';
-    } else if (path === '/contact') {
-      const contactPage = document.getElementById('contact') as HTMLElement;
-      if (contactPage) contactPage.style.display = 'block';
-    } else {
-      // Si l'URL ne correspond à aucune page, afficher la page 404
-      const errorPage = document.getElementById('error-page') as HTMLElement;
-      if (errorPage) errorPage.style.display = 'block';
-    }
-  }
-  
-  // Lors du changement d'URL (navigation avec le bouton retour ou les liens)
-  window.addEventListener('popstate', () => updateContent(location.pathname));
-  
-  // Mettre à jour le contenu lors du premier chargement de la page
-  window.addEventListener('DOMContentLoaded', () => {
-    updateContent(location.pathname);  // Met à jour en fonction du chemin actuel
-  });
-  
+
+  history.pushState(null, '', `#${page}`);
+}
+
+window.addEventListener('load', () => {
+  const page = location.hash.replace('#', '') || 'home';
+  navigate(page);
+});
+
+window.addEventListener('popstate', () => {
+  const page = location.hash.replace('#', '') || 'home';
+  navigate(page);
+});
+
+// Expose function to global scope
+(window as any).navigate = navigate;
