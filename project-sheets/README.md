@@ -2,4 +2,4 @@
 
 Pour lancer le site:
     -docker compose up --build
-    -http://localhost:8080
+    -https://localhost:8443

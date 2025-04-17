@@ -19,7 +19,7 @@ fastify.setNotFoundHandler((req, reply) => {
 });
 
 const host = '0.0.0.0';
-const port = 8080;
+const port = 8443;
 
 // le serveur en ecoute 
 fastify.listen({ host, port }, (err, address) => {

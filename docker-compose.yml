@@ -11,6 +11,8 @@ services:
       - node-volume:/usr/src/app/backend/ #Creer le volume pour node
     environment:
       - NODE_ENV=production
+    # depends_on:
+    #   - frontend
     networks:
       - Transcendance
   
@@ -18,10 +20,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    ports:
+      - 8443:8443
     volumes:
       - public-volume:/usr/src/app/frontend/public #Creer le volume pour js
     environment:
       - NODE_ENV=production
+    depends_on:
+      - backend
     networks:
       - Transcendance
     
