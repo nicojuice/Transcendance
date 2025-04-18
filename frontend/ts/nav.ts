@@ -1,7 +1,8 @@
 async function navigate(page: string) {
   try {
     const response = await fetch(`/pages/${page}.html`);
-    if (!response.ok) throw new Error('404');
+    if (!response.ok)
+      throw new Error('404');
     const html = await response.text();
     document.getElementById('content')!.innerHTML = html;
   } catch {

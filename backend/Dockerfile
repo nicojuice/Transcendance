@@ -5,10 +5,9 @@ WORKDIR /usr/src/app/backend
 
 COPY . .
 
- RUN chmod 777 /usr/src/app/backend/start_back.sh
+RUN chmod 777 /usr/src/app/backend/start_back.sh
 
-# Le port utiliser(8080)
 EXPOSE 8080
 
-# Lance le script du coup 
-CMD ["sh", "-c","sh /usr/src/app/backend/start_back.sh"]
+CMD ["sh", "-c", "sh /usr/src/app/backend/start_back.sh"]
+#ENTRYPOINT ["/usr/src/app/backend/start_back.sh"]
