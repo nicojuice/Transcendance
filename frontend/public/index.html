@@ -2,25 +2,25 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Transcendance</title>
-  <script src="./nav.js" defer></script>
-  <style>
-    .page {
-      display: none; /* Par défaut, toutes les pages sont cachées */
-    }
-  </style>
+	<meta charset="UTF-8">
+	<title>Transcendance</title>
+	<script src="./nav.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-  <h1>🏓 Transcendance EZEZ beta v0.02 🏓</h1>
-  <nav>
-    <button onclick="navigate('home')">Accueil</button>
-    <button onclick="navigate('about')">À propos</button>
-    <button onclick="navigate('contact')">Contact</button> 
-    <button onclick="navigate('inscription')">Inscription</button> 
-  </nav>
-  <div id="content">
-  </div>
+	<div class="bg-sky-800">
+		<div class="justify-self-center flex w-full h-full">
+			welcome to ft_transcendance
+		</div>
+		<nav>
+			<button onclick="navigate('home')">Accueil</button>
+			<button onclick="navigate('about')">À propos</button>
+			<button onclick="navigate('contact')">Contact</button> 
+			<button onclick="navigate('inscription')">Inscription</button> 
+		</nav>
+		<div id="content">
+		</div>
+	</div>
 </body>
 </html>
 

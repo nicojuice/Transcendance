@@ -6,6 +6,7 @@ apk update
 # typescript
 echo "🛠 Install TypeScript..."
 npm install typescript
+npm install tailwindcss @tailwindcss/cli
 echo "🛠 Compilation TypeScript → JavaScript..."
 npx tsc
 
@@ -19,3 +20,4 @@ openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
 
 echo "🚀 Lancement du Front..."
 
+npx @tailwindcss/cli -i /usr/src/app/frontend/public/input.css -o /usr/src/app/frontend/public/output.css --watch &

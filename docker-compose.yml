@@ -28,10 +28,6 @@ services:
       - backend
     networks:
       - Transcendance
-    
-
-
-
 
 networks:
   Transcendance:
