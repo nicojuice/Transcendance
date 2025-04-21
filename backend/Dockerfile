@@ -7,6 +7,9 @@ COPY package*.json ./
 
 RUN echo "📦 Installation des dépendances..." && npm install
 
+RUN echo "📦 Installation de Bcrypt..."
+RUN npm install bcryptjs
+
 COPY . .
 
 EXPOSE 8080
