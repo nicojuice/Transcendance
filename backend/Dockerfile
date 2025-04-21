@@ -8,6 +8,9 @@ COPY package*.json ./
 RUN echo "📦 Installation des dépendances..."
 RUN npm install
 
+RUN echo "📦 Installation de fastify-cors..."
+RUN npm install fastify-cors
+
 RUN echo "📦 Installation de la db..."
 RUN npm install sqlite3
 

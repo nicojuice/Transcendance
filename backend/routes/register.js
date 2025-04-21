@@ -1,9 +1,18 @@
+const fp = require('fastify-plugin');
+
 module.exports = async function (fastify, opts) {
   const sqlite3 = require('sqlite3').verbose();
   const db = new sqlite3.Database('/data/data.db');
 
+  fastify.get('/ping', async (req, reply) => {
+    return { message: 'pong ' };
+  });
+
   fastify.post('/register', async (request, reply) => {
     const { username, email, password } = request.body;
+    
+
+    console.log("request body ", request.body, "\n");
 
     if (!username || !email || !password) {
       return reply.status(400).send({ message: 'Champs manquants' });

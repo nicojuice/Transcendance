@@ -1,6 +1,7 @@
 
 const path = require('path');
 const fastify = require('fastify')({ logger: true });
+const fastifyCors = require('fastify-cors');
 const fastifyStatic = require('fastify-static');
 const registerRoutes = require('./routes/register.js');
 const sqlite3 = require('sqlite3').verbose();
@@ -15,7 +16,7 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
     // initialise la db
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
-       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
       email TEXT,
       password TEXT
@@ -30,25 +31,14 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
   }
 });
 
-// Donne le front au server
-fastify.register(fastifyStatic, {
-  root: path.join(__dirname, '..','frontend', 'public',),
-  prefix: '/public',
+fastify.register(fastifyCors, {
+  origin: ['https://172.18.0.4:8443'], // Autoriser l'origine de ton frontend
 });
 
 // fastify.register(registerRoutes);
 
 // server.js
 fastify.register(registerRoutes, { prefix: '/api' });
-
-fastify.get('/', (req, reply) => {
-  reply.type('text/html').sendFile('index.html');
-});
-
-// askip securite 
-fastify.setNotFoundHandler((req, reply) => {
-  reply.type('text/html').sendFile('index.html');
-});
 
 const host = '0.0.0.0';
 const port = 8080;
