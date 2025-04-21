@@ -14,6 +14,9 @@ RUN npm install fastify-cors
 RUN echo "📦 Installation de la db..."
 RUN npm install sqlite3
 
+RUN echo "📦 Installation de Bcrypt..."
+RUN npm install bcryptjs
+
 COPY . .
 
 
