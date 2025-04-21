@@ -40,5 +40,31 @@ async function register(e: Event): Promise<void> {
 	}
 };
 
+async function connect(e: Event): Promise<void> {
+	e.preventDefault();
+
+	const username = document.getElementById('username') as HTMLInputElement;
+	const password = document.getElementById('password') as HTMLInputElement;
+
+	try {
+		const response = await fetch('/api/connection', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username, password })
+		});
+		const data = await response.json();
+		if (response.ok) {
+			alert(data.message);
+			window.location.href = '/gg.html';
+		}
+		else {
+			alert(data.message || 'Erreur lors de la connexion.');
+		}
+	} catch (err) {
+		console.error('Erreur fetch:', err);
+		alert('Erreur serveur');
+	}
+};
+
 // Expose function to global scope
 (window as any).register = register;
