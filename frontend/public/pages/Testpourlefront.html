@@ -1,0 +1,53 @@
+<h2>For dbug</h2>
+<form id="register-form">
+  <label for="username">Nom d'utilisateur :</label><br>
+  <input type="text" id="username" name="username" required><br><br>
+
+  <label for="email">Adresse e-mail :</label><br>
+  <input type="email" id="email" name="email" required><br><br>
+
+  <label for="password">Mot de passe :</label><br>
+  <input type="password" id="password" name="password" required><br><br>
+
+  <label for="confirm-password">Confirmer le mot de passe :</label><br>
+  <input type="password" id="confirm-password" name="confirm-password" required><br><br>
+
+  <button type="submit">S'inscrire</button>
+</form>
+<script>
+          document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+        
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+        
+            if (password !== confirmPassword) {
+              alert("Les mots de passe ne correspondent pas.");
+              return;
+            }
+        
+            try {
+              const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+              });
+        
+              const data = await response.json();
+        
+              if (response.ok) {
+                alert(data.message);
+                // 🔁 Redirection vers une autre page (par exemple dashboard.html)
+                window.location.href = '/gg.html';
+              } else {
+                alert(data.message || 'Erreur lors de l’inscription.');
+              }
+        
+            } catch (err) {
+              console.error('Erreur fetch:', err);
+              alert('Erreur serveur');
+            }
+          });
+</script>

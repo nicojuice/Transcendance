@@ -3,11 +3,18 @@ FROM node:18-alpine
 # Crée un répertoire de travail dans le conteneur
 WORKDIR /usr/src/app/backend
 
+COPY package*.json ./
+
+RUN echo "📦 Installation des dépendances..."
+RUN npm install
+
+RUN echo "📦 Installation de la db..."
+RUN npm install sqlite3
+
 COPY . .
 
-RUN chmod 777 /usr/src/app/backend/start_back.sh
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "sh /usr/src/app/backend/start_back.sh"]
-#ENTRYPOINT ["/usr/src/app/backend/start_back.sh"]
+RUN echo "🚀 Lancement du Back..."
+CMD ["sh", "-c", "node server.js -d"]

@@ -4,13 +4,14 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"  #Port utilise 
+      - 8080:8080  #Port utilise 
     volumes:
       - node-volume:/usr/src/app/backend/ #Creer le volume pour node
+      - sql:/data
     environment:
       - NODE_ENV=production
-    # depends_on:
-    #   - frontend
+    depends_on:
+      - db
     networks:
       - Transcendance
   
@@ -28,9 +29,17 @@ services:
       - backend
     networks:
       - Transcendance
+  
+  db:
+    build:
+      context: ./SQL
+      dockerfile: Dockerfile
+    volumes:
+      - sql:/data
     
-
-
+    networks:
+      - Transcendance
+    
 
 
 networks:
@@ -40,3 +49,4 @@ networks:
 volumes:
   public-volume:
   node-volume:
+  sql:
