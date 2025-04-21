@@ -5,7 +5,8 @@ WORKDIR /usr/src/app/backend
 
 COPY package*.json ./
 
-RUN echo "📦 Installation des dépendances..." && npm install
+RUN echo "📦 Installation des dépendances..."
+RUN npm install
 
 RUN echo "📦 Installation de Bcrypt..."
 RUN npm install bcryptjs

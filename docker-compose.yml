@@ -6,9 +6,8 @@ services:
     ports:
       - 8080:8080  #Port utilise 
     volumes:
-      - ./backend/:/usr/src/app/backend/ #Creer le volume pour node
+      - node-volume:/usr/src/app/backend/ #Creer le volume pour node
       - sql:/data
-      - node-modules-back:/usr/src/app/backend/node_modules
     environment:
       - NODE_ENV=production
     depends_on:
@@ -24,7 +23,7 @@ services:
       - 8443:8443
     volumes:
       - ./frontend/public:/usr/src/app/frontend/public
-      - node-modules-front:/usr/src/app/frontend/public/node_modules
+      #- public-volume:/usr/src/app/frontend/public
     environment:
       - NODE_ENV=production
     depends_on:
@@ -51,4 +50,6 @@ networks:
 volumes:
   node-modules-front:
   node-modules-back:
+  node-volume:
+  #public-volume:
   sql:
