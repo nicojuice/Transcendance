@@ -8,4 +8,6 @@ RUN echo "DB conteneur is running"
 
 RUN sqlite3
 
+VOLUME ["/data"]
+
 CMD ["tail", "-f", "/dev/null"] 

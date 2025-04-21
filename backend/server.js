@@ -4,6 +4,7 @@ const fastify = require('fastify')({ logger: true });
 const fastifyCors = require('fastify-cors');
 const fastifyStatic = require('fastify-static');
 const registerRoutes = require('./routes/register.js');
+const loginRoutes = require('./routes/login.js');
 const sqlite3 = require('sqlite3').verbose();
 
 // creer la db
@@ -39,6 +40,8 @@ fastify.register(fastifyCors, {
 
 // server.js
 fastify.register(registerRoutes, { prefix: '/api' });
+
+fastify.register(loginRoutes, { prefix: '/api' });
 
 const host = '0.0.0.0';
 const port = 8080;
