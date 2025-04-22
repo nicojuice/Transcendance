@@ -1,4 +1,3 @@
-
 const path = require('path');
 const fastify = require('fastify')({ logger: true });
 const fastifyCors = require('fastify-cors');
@@ -6,6 +5,7 @@ const fastifyStatic = require('fastify-static');
 const registerRoutes = require('./routes/register.js');
 const loginRoutes = require('./routes/login.js');
 const sqlite3 = require('sqlite3').verbose();
+const metricsPlugin = require('fastify-metrics');
 
 // creer la db
 const db = new sqlite3.Database('/data/data.db', (err) => {
@@ -32,16 +32,16 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
   }
 });
 
-fastify.register(fastifyCors, {
-  origin: ['https://172.18.0.4:8443'], // Autoriser l'origine de ton frontend
-});
-
-// fastify.register(registerRoutes);
-
 // server.js
 fastify.register(registerRoutes, { prefix: '/api' });
 
 fastify.register(loginRoutes, { prefix: '/api' });
+
+fastify.register(require('fastify-metrics'), {
+  endpoint: '/metrics',
+});
+
+
 
 const host = '0.0.0.0';
 const port = 8080;
