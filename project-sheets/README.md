@@ -13,3 +13,11 @@ Enter ".help" for usage hints.
 sqlite> select * from users;
 1|dsa|zxc@gmail.com|dsa
 sqlite> 
+
+# Acces a promotheus
+
+     http://localhost:9090
+
+# Acces a grafana
+
+     http://localhost:3000
