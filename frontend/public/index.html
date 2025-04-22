@@ -6,16 +6,30 @@
   <script src="./nav.js" defer></script>
   <script src="./auth.js" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'prim-app': '#34495e',
+          }
+        }
+      }
+    }
+  </script>
 </head>
 <body>
   <h1>🏓 Transcendance EZEZ beta v0.02 🏓</h1>
   <nav>
-    <button class="bg-gradient-to-r from-red-600 to-blue-600" onclick="navigate('home')">Accueil</button>
-    <button onclick="navigate('about')">À propos</button>
-    <button onclick="navigate('contact')">Contact</button> 
-    <button onclick="navigate('connexion')">connexion</button> 
-    <button onclick="navigate('inscription')">Inscription</button> 
-    <button class="bg-gradient-to-bl from-yellow-500 to-green-600" onclick="navigate('Testpourlefront')">TEST</button> 
+    <div>
+      <button onclick="navigate('home')">Accueil</button>
+      <button onclick="navigate('about')">À propos</button>
+      <button onclick="navigate('contact')">Contact</button> 
+      <button onclick="navigate('connexion')">connexion</button> 
+      <button onclick="navigate('inscription')">Inscription</button> 
+      <button onclick="navigate('profile')">Profil</button> 
+      <button onclick="navigate('Testpourlefront')">TEST</button>
+    </div>
   </nav>
   <div id="content">
   </div>

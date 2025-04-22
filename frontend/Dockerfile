@@ -11,5 +11,6 @@ RUN chmod 777 /usr/src/app/frontend/script/setupstatic.sh
 EXPOSE 8443
 
 RUN sh ./script/setupstatic.sh
+RUN (cd /usr/src/app/frontend/ && npx tsc)
 
 CMD ["nginx", "-g", "daemon off;"]
