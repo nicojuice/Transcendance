@@ -1,34 +1,42 @@
-const fp = require('fastify-plugin');
 const bcrypt = require('bcryptjs');
+const sqlite3 = require('sqlite3').verbose();
 
 module.exports = async function (fastify, opts) {
-  const sqlite3 = require('sqlite3').verbose();
-  const db = new sqlite3.Database('/data/data.db');
+  const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-  fastify.get('/ping', async (req, reply) => {
-    return { message: 'pong ' };
+  // Endpoint de test
+  fastify.get('/ping', async (request, reply) => {
+    return { message: 'pong' };
   });
 
-  fastify.post('/register', async (request, reply) => {
+  // Route d'inscription
+  fastify.post('/register', (request, reply) => {
     const { username, email, password } = request.body;
-    
-    console.log("request body ", request.body, "\n");
-    
+
     if (!username || !email || !password) {
-      return reply.status(400).send({ message: 'Champs manquants' });
+      return reply.code(400).send({ message: 'Champs manquants' });
     }
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Insertion dans la base
-    const stmt = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-    stmt.run([username, email, hashedPassword], function (err) {
+
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
       if (err) {
-        console.error('Erreur DB :', err);
-        return reply.status(500).send({ message: 'Erreur serveur' });
+        fastify.log.error('Erreur de hash :', err);
+        return reply.code(500).send({ message: 'Erreur serveur' });
       }
 
-      return reply.send({ message: 'Utilisateur enregistré avec succès', id: this.lastID });
+      db.run(
+        'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+        [username, email, hashedPassword],
+        function (err) {
+          if (err) {
+            fastify.log.error('Erreur DB :', err);
+            return reply.code(500).send({ message: 'Erreur serveur' });
+          }
+          return reply.send({ message: 'Utilisateur enregistré avec succès', id: this.lastID });
+        }
+      );
     });
   });
 };
+
+
   
