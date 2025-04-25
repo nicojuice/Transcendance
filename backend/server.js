@@ -1,7 +1,4 @@
-const path = require('path');
 const fastify = require('fastify')({ logger: true });
-const fastifyCors = require('fastify-cors');
-const fastifyStatic = require('fastify-static');
 
 // creer la db
 const sqlite3 = require('sqlite3').verbose();
@@ -35,6 +32,10 @@ fastify.register(registerRoutes, { prefix: '/api' });
 
 // route api pour le login
 const loginRoutes = require('./routes/login.js');
+fastify.register(loginRoutes, { prefix: '/api' });
+
+// route api pour le User Management
+const umRoutes = require('./routes/um.js');
 fastify.register(loginRoutes, { prefix: '/api' });
 
 // metrics pour prometheus

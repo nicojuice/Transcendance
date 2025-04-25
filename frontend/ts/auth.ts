@@ -1,3 +1,5 @@
+import { setCookie } from 'typescript-cookie'
+
 async function register(e: Event): Promise<void> {
 	e.preventDefault();
 
@@ -15,8 +17,6 @@ async function register(e: Event): Promise<void> {
 		alert("Les mots de passe ne correspondent pas.");
 		return;
 	}
-
-	alert("Merci!");
 
 	try {
 		const response = await fetch('/api/register', {
@@ -46,7 +46,6 @@ async function connect(e: Event): Promise<void> {
 	const username = (document.getElementById('username') as HTMLInputElement).value;
 	const password = (document.getElementById('password') as HTMLInputElement).value;
 
-
 	alert("le serveur va comparer");
 	try {
 		const response = await fetch('/api/login', {
@@ -58,6 +57,7 @@ async function connect(e: Event): Promise<void> {
 		if (response.ok) {
 			alert(data.message);
 			window.location.href = '/gg.html';
+			setCookie('username', username);
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');
