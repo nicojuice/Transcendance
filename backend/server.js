@@ -28,15 +28,15 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
     
 // route api pour l inscription
 const registerRoutes = require('./routes/register.js');
-fastify.register(registerRoutes, { prefix: '/api' });
+fastify.register(registerRoutes, { prefix: '/api' })
 
 // route api pour le login
 const loginRoutes = require('./routes/login.js');
-fastify.register(loginRoutes, { prefix: '/api' });
+fastify.register(loginRoutes, { prefix: '/api' })
 
 // route api pour le User Management
 const umRoutes = require('./routes/um.js');
-fastify.register(loginRoutes, { prefix: '/api' });
+fastify.register(umRoutes, { prefix: '/api' });
 
 // metrics pour prometheus
 const metricsPlugin = require('fastify-metrics');
