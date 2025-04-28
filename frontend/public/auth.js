@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+const typescript_cookie_1 = require("typescript-cookie");
 function register(e) {
     return __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
@@ -23,7 +25,6 @@ function register(e) {
             alert("Les mots de passe ne correspondent pas.");
             return;
         }
-        alert("Merci!");
         try {
             const response = yield fetch('/api/register', {
                 method: 'POST',
@@ -62,6 +63,7 @@ function connect(e) {
             if (response.ok) {
                 alert(data.message);
                 window.location.href = '/gg.html';
+                (0, typescript_cookie_1.setCookie)('username', username);
             }
             else {
                 alert(data.message || 'Erreur lors de la connexion.');
