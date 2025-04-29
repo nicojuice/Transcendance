@@ -1,16 +1,22 @@
-FROM hoosin/alpine-nginx-nodejs:latest
+FROM node:23-slim
 
-# Crée un répertoire de travail dans le conteneur
-WORKDIR /usr/src/app/frontend
+WORKDIR /usr/src/app
 
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+# Installe TypeScript globalement pour éviter tous les bugs de permission
+RUN npm install -g typescript
+
+# Copie des fichiers package.json + lock
+COPY package*.json ./
+
+# Installe les dépendances normales
+RUN npm install
+
+# Copie du code
 COPY . .
 
-RUN chmod 777 /usr/src/app/frontend/script/setupstatic.sh
+# Compile avec le tsc global
+RUN tsc
 
 EXPOSE 8443
 
-RUN sh ./script/setupstatic.sh
-RUN (cd /usr/src/app/frontend/ && npx tsc)
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]

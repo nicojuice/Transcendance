@@ -1,0 +1,14 @@
+{
+  "name": "user-management",
+  "version": "1.0.0",
+  "main": "srcs/server.js",
+  "scripts": {
+    "start": "node srcs/server.js"
+  },
+  "license": "ISC",
+  "description": "User Management Service",
+  "dependencies": {
+    "fastify": "^5.3.2",
+    "fastify-metrics": "^12.1.0"
+  }
+}

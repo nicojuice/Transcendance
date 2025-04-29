@@ -1,13 +1,87 @@
 services:
-  backend:
+  register-service:
     build:
-      context: ./backend
+      context: ./backend/register
       dockerfile: Dockerfile
     ports:
-      - 8080:8080  #Port utilise 
+      - 8001:8001
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
     volumes:
-      - node-volume:/usr/src/app/backend/ #Creer le volume pour node
-      - sql:/data
+      - register-data:/data
+    networks:
+      - Transcendance
+    
+  login-service:    
+    build:
+      context: ./backend/login
+      dockerfile: Dockerfile
+    ports:
+      - 8002:8002
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - Transcendance
+  # Gestion des utilisateurs (profils, avatars, statistiques)
+  um-service:
+    build:
+      context: ./backend/um
+      dockerfile: Dockerfile
+    ports:
+      - 8003:8003
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - Transcendance
+
+  # Partie Game (matchmaking, lancement de parties, websocket pour Pong)
+  matchmaking-service:
+    build:
+      context: ./backend/game/matchmaking
+      dockerfile: Dockerfile
+    ports:
+      - 8004:8004
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    networks:
+      - Transcendance
+
+  # Partie Chat (messagerie temps réel)
+  game-engine-service:
+    build:
+      context: ./backend/game/game-engine
+      dockerfile: Dockerfile
+    ports:
+      - 8005:8005
+    environment:
+      - NODE_ENV=production
+    networks:
+      - Transcendance
+  
+  realtime-service:
+    build:
+      context: ./backend/game/realtime
+      dockerfile: Dockerfile
+    ports:
+      - 8006:8006
+    environment:
+      - NODE_ENV=production
+    networks:
+      - Transcendance
+  history-service:
+    build:
+      context: ./backend/game/history
+      dockerfile: Dockerfile
+    ports:
+      - 8007:8007
     environment:
       - NODE_ENV=production
     depends_on:
@@ -27,7 +101,13 @@ services:
     environment:
       - NODE_ENV=production
     depends_on:
-      - backend
+      - register-service
+      - login-service
+      - um-service
+      - game-engine-service
+      - history-service
+      - matchmaking-service
+      - realtime-service
     networks:
       - Transcendance
   
@@ -67,6 +147,14 @@ services:
       - prometheus
     networks:
       - Transcendance
+  
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - Transcendance
 
 networks:
   Transcendance:
@@ -79,3 +167,4 @@ volumes:
   grafana-data:
   #public-volume:
   sql:
+  register-data:
