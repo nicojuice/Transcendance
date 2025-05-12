@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "srcs/server.js",
   "scripts": {
-    "start": "node srcs/server.js"
+    "start": "node srcs/server.js",
+    "dev": "nodemon src/server.js"
   },
   "license": "ISC",
   "description": "Register Service",

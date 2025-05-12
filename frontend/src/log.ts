@@ -1,31 +1,38 @@
-// src/log.ts
+import { setCookie } from 'typescript-cookie';
 
-const form = document.getElementById("loginForm") as HTMLFormElement;
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function connect(e: Event): Promise<void> {
+	e.preventDefault();
 
-  const username = (document.getElementById("username") as HTMLInputElement)
-    .value;
-  const password = (document.getElementById("password") as HTMLInputElement)
-    .value;
+	const username = (document.getElementById('username') as HTMLInputElement).value;
+	const password = (document.getElementById('password') as HTMLInputElement).value;
 
-  try {
-    const res = await fetch("/api/login/", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-    });
+	try {
+		const response = await fetch('/api/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username, password })
+		});
+		const data = await response.json();
+		if (response.ok) {
+			alert(data.message);
+			setCookie('username', username);
+		}
+		else {
+			alert(data.message || 'Erreur lors de la connexion.');
+		}
+	} catch (err) {
+		console.error('Erreur fetch:', err);
+		alert('Erreur serveur');
+	}
+};
 
-    if (!res.ok) throw new Error("Échec de la connexion");
+// Expose function to global scope
+(window as any).connect = connect;
 
-    const data = await res.json();
-    console.log("Connexion réussie :", data);
-
-    // Optionnel : stocker un token ou rediriger
-    // localStorage.setItem('token', data.token);
-    // window.location.href = '/home.html';
-  } catch (err) {
-    console.error("Erreur lors du login :", err);
+window.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connect-button');
+  if (connectBtn) {
+    connectBtn.addEventListener('click', connect);
   }
 });

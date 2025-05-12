@@ -4,6 +4,15 @@ import { resolve } from "path";
 export default defineConfig({
   root: "src",
   base: "./",
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://register-service:8001', // Utilisez le nom du service Docker
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
   build: {
     outDir: "../dist",
     emptyOutDir: true,

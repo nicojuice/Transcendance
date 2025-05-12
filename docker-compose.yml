@@ -1,7 +1,7 @@
 services:
   register-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/register
+      context: ./backend/register
       dockerfile: Dockerfile
     ports:
       - 8001:8001
@@ -16,7 +16,7 @@ services:
 
   login-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/login
+      context: ./backend/login
       dockerfile: Dockerfile
     ports:
       - 8002:8002
@@ -29,7 +29,7 @@ services:
   # Gestion des utilisateurs (profils, avatars, statistiques)
   um-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/um
+      context: ./backend/um
       dockerfile: Dockerfile
     ports:
       - 8003:8003
@@ -43,7 +43,7 @@ services:
   # Partie Game (matchmaking, lancement de parties, websocket pour Pong)
   matchmaking-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/game/matchmaking
+      context: ./backend/game/matchmaking
       dockerfile: Dockerfile
     ports:
       - 8004:8004
@@ -57,7 +57,7 @@ services:
   # Partie Chat (messagerie temps réel)
   game-engine-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/game/game-engine
+      context: ./backend/game/game-engine
       dockerfile: Dockerfile
     ports:
       - 8005:8005
@@ -68,7 +68,7 @@ services:
 
   realtime-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/game/realtime
+      context: ./backend/game/realtime
       dockerfile: Dockerfile
     ports:
       - 8006:8006
@@ -78,7 +78,7 @@ services:
       - Transcendance
   history-service:
     build:
-      context: /Users/clara/Documents/trans2/backend/game/history
+      context: ./backend/game/history
       dockerfile: Dockerfile
     ports:
       - 8007:8007
@@ -91,7 +91,7 @@ services:
 
   frontend:
     build:
-      context: /Users/clara/Documents/trans2/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - 8443:8443
@@ -113,7 +113,7 @@ services:
 
   db:
     build:
-      context: /Users/clara/Documents/trans2/SQL
+      context: ./SQL
       dockerfile: Dockerfile
     volumes:
       - sql:/data
@@ -122,10 +122,10 @@ services:
 
   prometheus:
     build:
-      context: /Users/clara/Documents/trans2/monitoring/prometheus
+      context: ./monitoring/prometheus
       dockerfile: Dockerfile
     volumes:
-      - /Users/clara/Documents/trans2/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     networks:
@@ -133,7 +133,7 @@ services:
 
   grafana:
     build:
-      context: /Users/clara/Documents/trans2/monitoring/grafana
+      context: ./monitoring/grafana
       dockerfile: Dockerfile
     container_name: grafana
     ports:
@@ -152,7 +152,7 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - "6380:6380"
     networks:
       - Transcendance
 

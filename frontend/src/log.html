@@ -6,7 +6,6 @@
 
     <!-- Tailwind output CSS -->
     <link rel="stylesheet" href="../dist/output.css" />
-
     <!-- Pixelify Sans font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
@@ -68,12 +67,13 @@
         />
 
         <input
+          id="connect-button"
           type="submit"
           value="Sign in"
           class="cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110"
         />
 
-        <div class="flex justify-between w-4/5 mt-6 text-sm text-white">
+        <div class="flex justify-center w-4/5 mt-6 text-sm text-white">
           <!-- <a href="forgetpassword.html" class="underline">Forget Password</a> -->
           <a href="signup.html" class="underline">Sign up</a>
         </div>
@@ -81,6 +81,6 @@
     </div>
 
     <!-- Script de traitement du login -->
-    <script type="module" src="./log.ts"></script>
+    <script type="module" src="log.ts"></script>
   </body>
 </html>

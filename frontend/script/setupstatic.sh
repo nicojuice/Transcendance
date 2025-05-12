@@ -1,14 +1,5 @@
 #!/bin/sh
 
-# system
-apk update
-
-# typescript
-echo "🛠 Install TypeScript..."
-npm install typescript
-echo "🛠 Compilation TypeScript → JavaScript..."
-npx tsc
-
 # openssl & key
 apk add openssl
 mkdir -p /certs
