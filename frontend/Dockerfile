@@ -29,5 +29,6 @@ RUN mkdir -p /certs && \
        -out  /certs/cert.crt \
        -keyout  /certs/cert.key
 
-RUN npx vite preview --port 8443 --host &
-CMD ["nginx", "-g", "daemon off;"]
+RUN nginx
+CMD ["npx", "vite", "preview", "--port", "8443", "--host"]
+#CMD ["nginx", "-g", "daemon off;"]
