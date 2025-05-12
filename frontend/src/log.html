@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login - Arcade Game</title>
+
+    <!-- Tailwind output CSS -->
+    <link rel="stylesheet" href="../dist/output.css" />
+
+    <!-- Pixelify Sans font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    class="bg-black text-neon font-arcade h-screen flex items-center justify-center relative overflow-hidden p-4"
+  >
+    <!-- Fond arcade -->
+    <img
+      src="../public/pink.png"
+      class="absolute inset-0 w-full h-full object-cover z-[-2]"
+      alt="arcade background"
+    />
+
+    <!-- CRT scanlines -->
+    <div class="crt-effect"></div>
+
+    <!-- Anneaux animés + formulaire login -->
+    <div
+      class="relative w-[500px] h-[500px] group flex items-center justify-center"
+    >
+      <!-- Anneaux -->
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
+      ></div>
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
+      ></div>
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
+      ></div>
+
+      <!-- Formulaire -->
+      <form
+        id="loginForm"
+        class="relative z-10 w-[400px] h-[400px] flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
+      >
+        <h2 class="text-2xl mb-6">Login</h2>
+
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          class="mb-4 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-4/5"
+          required
+        />
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          class="mb-4 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-4/5"
+          required
+        />
+
+        <input
+          type="submit"
+          value="Sign in"
+          class="cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110"
+        />
+
+        <div class="flex justify-between w-4/5 mt-6 text-sm text-white">
+          <!-- <a href="forgetpassword.html" class="underline">Forget Password</a> -->
+          <a href="signup.html" class="underline">Sign up</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Script de traitement du login -->
+    <script type="module" src="./log.ts"></script>
+  </body>
+</html>

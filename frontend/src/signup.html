@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sign Up - Arcade Game</title>
+    <link href="../dist/output.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-black text-neon font-arcade flex items-center justify-center min-h-screen relative overflow-hidden p-4"
+  >
+    <!-- Fond arcade -->
+    <img
+      src="../public/pink.png"
+      class="absolute inset-0 w-full h-full object-cover z-[-2]"
+      alt="arcade background"
+    />
+
+    <!-- CRT scanlines -->
+    <div class="crt-effect absolute inset-0 z-[-1]"></div>
+
+    <!-- Conteneur principal -->
+    <div
+      class="relative w-[500px] h-[500px] group flex items-center justify-center"
+    >
+      <!-- Anneaux -->
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
+      ></div>
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
+      ></div>
+      <div
+        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
+      ></div>
+
+      <!-- Formulaire Sign Up -->
+      <form
+        id="signupForm"
+        class="relative z-10 w-[380px] flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
+      >
+        <h2 class="text-2xl mb-4">Create Your Account</h2>
+
+        <input
+          id="username"
+          type="text"
+          placeholder="Username"
+          class="mb-3 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-sm w-full"
+          required
+        />
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          class="mb-3 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-sm w-full"
+          required
+        />
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          class="mb-3 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-sm w-full"
+          required
+        />
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          class="mb-3 px-4 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-sm w-full"
+          required
+        />
+
+        <input
+          type="submit"
+          value="Sign Up"
+          class="cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
+        />
+
+        <p class="text-sm mt-4 text-white">
+          Already have an account?
+          <a href="log.html" class="underline">Log in</a>
+        </p>
+
+        <p id="signupMessage" class="text-sm mt-4"></p>
+      </form>
+    </div>
+
+    <script type="module" src="./signup.ts"></script>
+  </body>
+</html>

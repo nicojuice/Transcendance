@@ -1,23 +1,23 @@
-# Utiliser une image Node.js légère
 FROM node:23-slim
 
-# Définir le répertoire de travail dans le conteneur
-WORKDIR /usr/srcs/app
+# Ajouter les outils nécessaires pour compiler sqlite3
+RUN apt-get update && apt-get install -y \
+  python3 \
+  make \
+  g++ \
+  libsqlite3-dev \
+  && rm -rf /var/lib/apt/lists/*
 
-# Copier package.json et package-lock.json
+WORKDIR /usr/src/app
+
 COPY package*.json ./
 
-# Installer uniquement les dépendances de production
-RUN npm install --production
+RUN npm install
 
-# Copier le code source
 COPY ./srcs ./srcs
 
-# Définir l'environnement de production
 ENV NODE_ENV=production
 
-# Exposer le port du service
 EXPOSE 8001
 
-# Commande pour démarrer le serveur
 CMD ["node", "srcs/server.js"]

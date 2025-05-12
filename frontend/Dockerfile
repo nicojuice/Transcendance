@@ -2,21 +2,17 @@ FROM node:23-slim
 
 WORKDIR /usr/src/app
 
-# Installe TypeScript globalement pour éviter tous les bugs de permission
 RUN npm install -g typescript
 
-# Copie des fichiers package.json + lock
 COPY package*.json ./
-
-# Installe les dépendances normales
 RUN npm install
 
-# Copie du code
 COPY . .
 
-# Compile avec le tsc global
 RUN tsc
+RUN npm run build:css
+RUN npm run build
 
 EXPOSE 8443
 
-CMD ["npm", "start"]
+CMD ["npx", "vite", "preview", "--port", "8443", "--host"]
