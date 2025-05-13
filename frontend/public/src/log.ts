@@ -1,6 +1,5 @@
 import { setCookie } from 'typescript-cookie';
 
-
 async function connect(e: Event): Promise<void> {
 	e.preventDefault();
 
@@ -17,6 +16,7 @@ async function connect(e: Event): Promise<void> {
 		if (response.ok) {
 			alert(data.message);
 			setCookie('username', username);
+			setCookie('isConnected', 'true');
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');

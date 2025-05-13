@@ -8,9 +8,6 @@
       href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link href="./nav.js" type="module" />
-    <link href="./log.js" type="module" />
-    <link href="./signup.js" type="module" />
     <style>
       .ball {
         position: absolute;
@@ -34,21 +31,10 @@
     <!-- Overlay CRT scanlines -->
     <div class="crt-effect"></div>
 
-    <!-- Cadre blanc centré transparent, plus grand -->
-    <div
-      class="relative z-10 border border-white rounded-3xl bg-transparent w-[80vw] h-[70vh] flex flex-col items-center justify-center px-10 py-8"
-    >
-      <!-- Logo arcade ou intro -->
-      <h1 class="text-4xl text-[greenyellow] mb-10 font-pixelify text-center">
-        HELLO TRANSCENDANCE
-      </h1>
-
-      <!-- Start button -->
-      <a href="./pages/log.html" class="flex items-center gap-2 px-6 py-3 font-pixelify text-neon font-semibold text-lg rounded-xl border border-neon bg-transparent shadow-md hover:shadow-[0_0_12px_#39ff14,0_0_24px_#39ff14] transition duration-300">
-      <span>ENTER THE GAME</span>
-      </a>
-    
-    </div>
+    <div id="screen-content"></div>
+    <script src="./src/nav.js" type="module">
+      // navigate();
+    </script>
 
     <!-- Balle de Pong -->
     <div id="pongBall" class="ball"></div>

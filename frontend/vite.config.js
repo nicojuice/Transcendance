@@ -14,14 +14,14 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: "../dist",
+    outDir: "../style/",
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "src/index.html"),
-        log: resolve(__dirname, "src/log.html"),
-        signup: resolve(__dirname, "src/signup.html"),
-        forget: resolve(__dirname, "src/forgetpassword.html"),
+        main: resolve(__dirname, "./src/index.html"),
+        log: resolve(__dirname, "./src/log.html"),
+        signup: resolve(__dirname, "./src/signup.html"),
+        forget: resolve(__dirname, "./src/forgetpassword.html"),
       },
     },
   },
