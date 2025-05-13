@@ -1,33 +1,35 @@
-FROM node:23-slim
-
-WORKDIR /usr/src/app
-
-RUN npm install -g typescript
-
+# Étape 1 : build
+FROM node:20-alpine AS builder
+WORKDIR /app
+# Copier package.json et package-lock.json
 COPY package*.json ./
 RUN npm install
-
+# Copier tout le reste des fichiers du projet
 COPY . .
-
-RUN npx tsc
-RUN npm run build:css
+# Compiler le projet avec Vite
 RUN npm run build
+
+# Étape 2 : nginx
+FROM nginx:alpine
+# Installer openssl pour générer les certificats directement dans Nginx
+RUN apk update && apk add --no-cache openssl
+
+# Créer un dossier pour les certificats
+RUN mkdir -p /etc/nginx/certs
+
+# Générer un certificat SSL auto-signé directement dans l'image Nginx
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/certs/cert.key \
+    -out /etc/nginx/certs/cert.crt \
+    -subj "/CN=localhost"
+
+# Copier ta config nginx personnalisée
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+
+# Copier le contenu du build Vite dans le dossier nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 8443
 
-RUN apt-get upgrade
-RUN apt-get update -y
-
-RUN apt-get install -y nginx
-COPY ./conf/nginx.conf /etc/nginx/
-
-RUN apt-get install -y openssl
-
-RUN mkdir -p /certs && \
-    openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-       -subj "/C=FR/ST=Paris/L=Paris/O=42/CN=62.210.34.175" \
-       -out  /certs/cert.crt \
-       -keyout  /certs/cert.key
-
-RUN npx vite preview --port 8443 --host &
+# Démarrer nginx
 CMD ["nginx", "-g", "daemon off;"]
