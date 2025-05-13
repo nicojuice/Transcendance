@@ -1,5 +1,7 @@
 #!/bin/sh
 
+npm install typescript-cookie
+npm install -g typescript
 # openssl & key
 apk add openssl
 mkdir -p /certs
