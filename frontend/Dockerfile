@@ -46,6 +46,6 @@ RUN chmod 777 /usr/src/app/frontend/script/setupstatic.sh
 EXPOSE 8443
 
 RUN sh ./script/setupstatic.sh
-RUN (cd /usr/src/app/frontend/ && npx tsc && npx tailwindcss -i ./src/input.css -o ./src/output.css --minify)
+RUN (cd /usr/src/app/frontend/ && npx tsc && npx tailwindcss -i ./public/style/input.css -o ./public/style/output.css --minify)
 
 CMD ["nginx", "-g", "daemon off;"]

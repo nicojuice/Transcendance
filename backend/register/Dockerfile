@@ -1,23 +1,23 @@
 FROM node:23-slim
 
-# Ajouter les outils nécessaires pour compiler sqlite3
-RUN apt-get update && apt-get install -y \
-  python3 \
-  make \
-  g++ \
-  libsqlite3-dev \
-  && rm -rf /var/lib/apt/lists/*
+# # Ajouter les outils nécessaires pour compiler sqlite3
+# RUN apt-get -y update && apt-get install -y \
+#   python3 \
+#   make \
+#   g++ \
+#   libsqlite3-dev \
+#   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-COPY package*.json ./
+# COPY package*.json ./
 
-RUN npm install
+# RUN npm install
 
-COPY ./srcs ./srcs
+# COPY ./srcs ./srcs
 
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
-EXPOSE 8001
+# EXPOSE 8001
 
-CMD ["node", "srcs/server.js"]
+CMD ["sleep infinity"]

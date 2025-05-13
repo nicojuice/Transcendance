@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "tailwindcss": "^4.1.6",
     "typescript-cookie": "^1.0.6"
   }
 }

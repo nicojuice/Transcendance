@@ -1,3 +1,3 @@
 //import "./style.css";
-//import "./input.css";
+import "../public/style/input.css";
 
