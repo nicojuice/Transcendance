@@ -10,7 +10,7 @@ module.exports = async function (fastify, opts) {
   });
 
   // Route d'inscription
-  fastify.post('/api/register', (request, reply) => {
+  fastify.post('/backend/register', (request, reply) => {
     const { username, email, password } = request.body;
 
     if (!username || !email || !password) {

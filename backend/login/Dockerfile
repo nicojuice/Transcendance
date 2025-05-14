@@ -1,14 +1,29 @@
-FROM node:23-slim
+FROM node:18-alpine
 
-WORKDIR /usr/srcs/app
+# Crée un répertoire de travail dans le conteneur
+WORKDIR /usr/src/app/backend/login
 
 COPY package*.json ./
-RUN npm install --production
 
-COPY ./srcs ./srcs
+RUN echo "📦 On vide le cache..."
+RUN npm cache clean --force
 
-ENV NODE_ENV=production
+RUN echo "📦 Installation des dépendances..."
+RUN npm install
+RUN npm install @fastify/cors
+RUN npm install sqlite3
 
-EXPOSE 8002
+RUN echo "📦 Installation de Bcrypt..."
+RUN npm install bcryptjs
 
-CMD ["node", "srcs/server.js"]
+RUN echo "📦 Installation de metric..."
+RUN npm install fastify-metrics prom-client --legacy-peer-deps
+
+
+
+COPY . .
+
+EXPOSE 8081
+
+RUN echo "🚀 Lancement du Micro Service LOGIN..."
+CMD ["sh", "-c", "node server.js -d"]

@@ -3,7 +3,7 @@ async function	navigate(page : string) {
         const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
         const html = await response.text();
-		const elem = document.getElementById('screen-content'); 
+		const elem = document.getElementById('screen-content');
 		if (elem)
         	elem.innerHTML = html;
     } catch (error) {
@@ -34,12 +34,14 @@ async function	navigate(page : string) {
 
 
 async function default_navigate() {
-	if (localStorage.getItem('isConnected') === 'true')
+	if (localStorage.getItem('isConnected') === 'false')
 	{
 		// await navigate("../pages/profil.html");
 	}
-  else
-    await navigate("log");
+	else
+	{
+  		await navigate("log");
+	}
 }
 
 default_navigate();

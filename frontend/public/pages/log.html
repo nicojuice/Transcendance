@@ -1,7 +1,7 @@
     <!-- Fond arcade -->
     <img
-      src="../../assets/pink.png"
-      class="absolute inset-0 w-full h-full object-cover z-[-2]"
+      src="./assets/pink.png"
+      class="absolute inset-0 w-full min-h-full max-h-screen object-cover z-[-2]"
       alt="arcade background"
     />
 
@@ -10,7 +10,7 @@
 
     <!-- Anneaux animés + formulaire login -->
     <div
-      class="relative w-[500px] h-[500px] group flex items-center justify-center"
+      class="w-[500px] h-[500px] group flex items-center justify-center pt-[50%]" 
     >
       <!-- Anneaux -->
       <div
@@ -53,6 +53,7 @@
           type="submit"
           value="Sign in"
           class="cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110"
+          onclick="register(event)"
           />
           
           <div id="div-neon" class="place-items-center grid w-[30%] h-full">

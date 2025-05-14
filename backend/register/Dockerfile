@@ -1,23 +1,28 @@
-FROM node:23-slim
+FROM node:18-alpine
 
-# # Ajouter les outils nécessaires pour compiler sqlite3
-# RUN apt-get -y update && apt-get install -y \
-#   python3 \
-#   make \
-#   g++ \
-#   libsqlite3-dev \
-#   && rm -rf /var/lib/apt/lists/*
+# Crée un répertoire de travail dans le conteneur
+WORKDIR /usr/src/app/backend/register
 
-# WORKDIR /usr/src/app
+COPY package*.json ./
 
-# COPY package*.json ./
+RUN echo "📦 On vide le cache..."
+RUN npm cache clean --force
 
-# RUN npm install
+RUN echo "📦 Installation des dépendances..."
+RUN npm install
+RUN npm install @fastify/cors
 
-# COPY ./srcs ./srcs
+RUN echo "📦 Installation de Bcrypt..."
+RUN npm install bcryptjs
 
-# ENV NODE_ENV=production
+RUN echo "📦 Installation de metric..."
+RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
-# EXPOSE 8001
 
-CMD ["sleep infinity"]
+
+COPY . .
+
+EXPOSE 8082
+
+RUN echo "🚀 Lancement du Back/REGISTER..."
+CMD ["sh", "-c", "node server.js -d"]

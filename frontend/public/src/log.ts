@@ -7,7 +7,7 @@ async function connect(e: Event): Promise<void> {
 	const password = (document.getElementById('password') as HTMLInputElement).value;
 
 	try {
-		const response = await fetch('/api/login', {
+		const response = await fetch('http://localhost:8081/api/backend/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username, password })

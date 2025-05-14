@@ -5,7 +5,7 @@ module.exports = function (fastify, opts, done) {
   // Utilise l'instance partagée si disponible
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-  fastify.post('/login', (request, reply) => {
+  fastify.post('/backend/login', (request, reply) => {
     const { username, password } = request.body;
 
     if (!username || !password) {

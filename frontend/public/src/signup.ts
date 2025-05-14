@@ -17,7 +17,7 @@ async function register(e: Event): Promise<void> {
 	}
 
 	try {
-		const response = await fetch('/api/register', {
+		const response = await fetch('http://localhost:8082/api/backend/register', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username, email, password })
