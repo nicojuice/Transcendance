@@ -1,28 +1,6 @@
-    <!-- Fond arcade -->
-    <img
-      src="./assets/pink.png"
-      class="absolute inset-0 w-full min-h-full max-h-screen object-cover z-[-2]"
-      alt="arcade background"
-    />
-
-    <!-- CRT scanlines -->
+     <!-- CRT scanlines -->
     <div class="crt-effect"></div>
-
-    <!-- Anneaux animés + formulaire login -->
-    <div
-      class="w-[500px] h-[500px] group flex items-center justify-center pt-[50%]" 
-    >
-      <!-- Anneaux -->
-      <div
-        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
-      ></div>
-      <div
-        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
-      ></div>
-      <div
-        class="absolute w-[500px] h-[500px] border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
-      ></div>
-
+ 
       <!-- Formulaire -->
       <form
         id="loginForm"
@@ -60,5 +38,4 @@
             <button onclick="navigate('signup')">Sign up</button>
           </div>
         <div class="flex justify-center w-4/5 mt-6 text-sm text-white">
-        </div>
       </form>
