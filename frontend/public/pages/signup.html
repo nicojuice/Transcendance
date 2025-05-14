@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Sign Up - Arcade Game</title>
-    <link href="../style/output.css" rel="stylesheet" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body
-    class="bg-black text-neon font-arcade flex items-center justify-center min-h-screen relative overflow-hidden p-4"
-  >
+
     <!-- Fond arcade -->
     <img
       src="../../assets/pink.png"
@@ -80,16 +67,10 @@
           class="cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
         
         />
+          <div id="div-neon" class="place-items-center grid w-[30%] h-full">
+            <button onclick="navigate('log')">Login</button>
+          </div>
 
-
-        <p class="text-sm mt-4 text-white">
-          Already have an account?
-          <a href="log.html" class="underline">Log in</a>
-        </p>
-
-        <p id="signupMessage" class="text-sm mt-4"></p>
       </form>
     </div>
-    <script type="module" src="signup.js"></script>
-  </body>
-</html>
+

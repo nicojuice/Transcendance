@@ -1,4 +1,4 @@
-import { setCookie } from 'typescript-cookie';
+// import { setCookie } from 'typescript-cookie';
 
 async function connect(e: Event): Promise<void> {
 	e.preventDefault();
@@ -15,8 +15,8 @@ async function connect(e: Event): Promise<void> {
 		const data = await response.json();
 		if (response.ok) {
 			alert(data.message);
-			setCookie('username', username);
-			setCookie('isConnected', 'true');
+			localStorage.setItem('username', username);
+			localStorage.setItem('isConnected', 'true');
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');

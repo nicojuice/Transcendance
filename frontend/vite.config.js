@@ -19,9 +19,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "./src/index.html"),
-        log: resolve(__dirname, "./src/log.html"),
-        signup: resolve(__dirname, "./src/signup.html"),
-        forget: resolve(__dirname, "./src/forgetpassword.html"),
+        log: resolve(__dirname, "./pages/log.html"),
+        signup: resolve(__dirname, "./pages/signup.html"),
       },
     },
   },

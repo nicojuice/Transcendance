@@ -12,5 +12,7 @@ openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
        -out  /certs/cert.crt\
        -keyout  /certs/cert.key
 
+# cd /usr/src/app/frontend/ && npx tsc
+
 echo "🚀 Lancement du Front..."
 

@@ -1,4 +1,4 @@
-import { getCookie } from 'typescript-cookie';
+// import { getCookie } from 'typescript-cookie';
 async function cloneHTML(page) {
     try {
         const response = await fetch(page);
@@ -17,16 +17,20 @@ async function cloneHTML(page) {
     }
 }
 async function navigate() {
+    console.log("dsa");
     if (0) // Autres evenements
      { }
-    else if (getCookie('isConnected') === 'true') {
+    else if (localStorage.getItem('isConnected') === 'true') {
         // Profil
     }
     else
-        await cloneHTML("./pages/log.html");
+        await cloneHTML("../pages/log.html");
 }
+
 navigate();
+
 // async function navigate(page: string) {
+//   console.log("Button clicked!");
 //   try {
 //     const response = await fetch(`/pages/${page}.html`);
 //     if (!response.ok)
@@ -72,5 +76,6 @@ if (neonText) {
       0 0 ${blur30}px rgba(234,179,8,${intensity})`;
     }, 50);
 }
-// Expose function to global scope
 window.navigate = navigate;
+window.cloneHTML = cloneHTML;
+export {};
