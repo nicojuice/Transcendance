@@ -32,7 +32,6 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
-        // 👇 ajout nécessaire pour spin-reverse
         "spin-reverse": {
           from: { transform: "rotate(360deg)" },
           to: { transform: "rotate(0deg)" },

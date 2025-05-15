@@ -2,9 +2,11 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
-  root: "src",
+  root: "./public",
   base: "./",
   server: {
+       port: 5173,
+       open:true,
     proxy: {
       '/api': {
         target: 'http://register-service:8001', // Utilisez le nom du service Docker
@@ -18,9 +20,9 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "./src/index.html"),
-        log: resolve(__dirname, "./pages/log.html"),
-        signup: resolve(__dirname, "./pages/signup.html"),
+        main: resolve(__dirname, "./index.html"),
+        log: resolve(__dirname, "./public/pages/log.html"),
+        signup: resolve(__dirname, "./public/pages/signup.html"),
       },
     },
   },
