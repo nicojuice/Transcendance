@@ -24,6 +24,7 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
         name TEXT,
         email TEXT,
         password TEXT
+        avatar BLOB
         )
         `, (err) => {
           if (err) {
