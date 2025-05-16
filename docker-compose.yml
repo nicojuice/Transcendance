@@ -29,6 +29,21 @@ services:
     networks:
       - Transcendance
 
+  get-username-service:
+    build:
+      context: ./backend/user_management/get_username
+      dockerfile: Dockerfile
+    ports:
+      - 8083:8083
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
@@ -43,6 +58,7 @@ services:
     depends_on:
       - register-service
       - login-service
+      - get-username-service
     networks:
       - Transcendance
 
