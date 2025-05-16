@@ -7,5 +7,6 @@ import './style/input.css';
 import './logout';
 import './profile_infos';
 import './dataUrltoFile';
+import './profile';
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

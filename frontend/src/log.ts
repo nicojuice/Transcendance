@@ -1,4 +1,6 @@
 // import { setCookie } from 'typescript-cookie';
+import { navigate } from './nav';
+
 
 async function connect(e: Event): Promise<void> {
 	e.preventDefault();
@@ -21,7 +23,7 @@ async function connect(e: Event): Promise<void> {
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');
 		}
-		navigate('profile');
+		navigate("profile");
 	} catch (err) {
 		console.error('Erreur fetch:', err);
 		alert('Erreur serveur');
@@ -32,8 +34,35 @@ async function connect(e: Event): Promise<void> {
 (window as any).connect = connect;
 
 window.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connect-button');
-  if (connectBtn) {
-    connectBtn.addEventListener('click', connect);
-  }
+	// Connexion
+	const connectBtn = document.getElementById('connect-button');
+	if (connectBtn) {
+		connectBtn.addEventListener('click', connect);
+	}
+
+	// Affichage du username
+	const storedUsername = localStorage.getItem('username');
+	if (storedUsername) {
+		const displayUsername = document.getElementById('display-username');
+		if (displayUsername) {
+			displayUsername.textContent = storedUsername;
+		}
+	}
 });
+
+// window.addEventListener('DOMContentLoaded', () => {
+//   const connectBtn = document.getElementById('connect-button');
+//   if (connectBtn) {
+//     connectBtn.addEventListener('click', connect);
+//   }
+// });
+
+// window.addEventListener('DOMContentLoaded', () => {
+// 	const storedUsername = localStorage.getItem('username');
+// 	if (storedUsername) {
+// 		const displayUsername = document.getElementById('display-username');
+// 		if (displayUsername) {
+// 			displayUsername.textContent = storedUsername;
+// 		}
+// 	}
+// });

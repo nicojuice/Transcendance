@@ -1,11 +1,15 @@
-async function	navigate(page : string) {
+import { initProfilePage } from './profile';
+
+export async function	navigate(page : string) {
     try {
-        const response = await fetch(`../pages/${page}.html`);
+		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
         const html = await response.text();
 		const elem = document.getElementById('screen-content');
 		if (elem)
         	elem.innerHTML = html;
+		if (page === "profile")
+			initProfilePage();
     } catch (error) {
         console.error("Erreur de chargement :", error);
         		const elem = document.getElementById('screen-content'); 
