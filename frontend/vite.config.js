@@ -2,21 +2,21 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
-  root: "./public",
+  root: ".",
   base: "./",
   server: {
-       port: 5173,
-       open:true,
+    port: 5173,
+    open: true,
     proxy: {
-      '/api': {
-        target: 'http://register-service:8001', // Utilisez le nom du service Docker
+      "/api": {
+        target: "http://register-service:8001", // Utilisez le nom du service Docker
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   build: {
-    outDir: "../style/",
+    outDir: "dist",
     emptyOutDir: true,
     rollupOptions: {
       input: {

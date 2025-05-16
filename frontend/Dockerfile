@@ -10,9 +10,10 @@ RUN chmod 777 /usr/src/app/frontend/script/setupstatic.sh
 
 EXPOSE 8443
 
-RUN npx tsc 
 RUN sh ./script/setupstatic.sh
-RUN (npx tailwindcss -i ./public/style/input.css -o ./public/style/output.css)
-
+# RUN (npx tailwindcss -i ./src/style/input.css -o ./output.css)
+RUN npm install
+RUN npm run build:css
+RUN npm run build
 # CMD ["sh", "-c", "./script/test.sh"]
 CMD ["nginx", "-g", "daemon off;"]

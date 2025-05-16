@@ -1,9 +1,9 @@
 #!/bin/sh
 
-npm install typescript-cookie 
-npm install -D tailwindcss
-npm tailwindcss init
-npm install -g typescript
+# npm install typescript-cookie 
+# npm install -D tailwindcss
+# npm tailwindcss init
+# npm install -g typescript
 # openssl & key
 apk add openssl
 mkdir -p /certs

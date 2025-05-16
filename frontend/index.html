@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Arcade Game</title>
+    <link href="../style/output.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div
+      class="text-neon font-arcade flex items-center justify-center min-h-screen relative overflow-hidden p-4"
+    >
+      <img
+        src="/assets/pink.png"
+        class="absolute inset-0 w-full h-full object-cover z-[-2]"
+      />
+
+      <!-- Page content -->
+      <div id="screen-content"></div>
+      <!-- Pong ball -->
+      <div id="pongBall" class="ball absolute z-2"></div>
+
+      <script type="module" src="./src/main.js"></script>
+      <script type="module" src="./src/nav.js"></script>
+      <script type="module" src="./src/pongballeffects.js"></script>
+      <script type="module" src="./src/signup.js"></script>
+      <script type="module" src="./src/log.js"></script>
+    </div>
+  </body>
+</html>

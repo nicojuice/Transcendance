@@ -35,9 +35,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8443:8443
-    volumes:
-      # ./frontend/public:/usr/src/app/frontend/public
-      - public-volume:/usr/src/app
+    # volumes:
+    # ./frontend/public:/usr/src/app/frontend/public
+    # - public-volume:/usr/src/app
     environment:
       - NODE_ENV=production
     depends_on:
