@@ -11,6 +11,7 @@ RUN npm cache clean --force
 RUN echo "📦 Installation des dépendances..."
 RUN npm install
 RUN npm install @fastify/cors
+RUN npm install sqlite3
 
 RUN echo "📦 Installation de Bcrypt..."
 RUN npm install bcryptjs
