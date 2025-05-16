@@ -55,33 +55,33 @@ services:
     networks:
       - Transcendance
 
-  prometheus:
-    build:
-      context: ./monitoring/prometheus
-      dockerfile: Dockerfile
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - Transcendance
+  # prometheus:
+  #   build:
+  #     context: ./monitoring/prometheus
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - Transcendance
 
-  grafana:
-    build:
-      context: ./monitoring/grafana
-      dockerfile: Dockerfile
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    depends_on:
-      - prometheus
-    networks:
-      - Transcendance
+  # grafana:
+  #   build:
+  #     context: ./monitoring/grafana
+  #     dockerfile: Dockerfile
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana-data:/var/lib/grafana
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   depends_on:
+  #     - prometheus
+  #   networks:
+  #     - Transcendance
 
   redis:
     image: redis:7-alpine

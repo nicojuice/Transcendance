@@ -5,7 +5,7 @@ async function connect(e: Event): Promise<void> {
 
 	const username = (document.getElementById('username') as HTMLInputElement).value;
 	const password = (document.getElementById('password') as HTMLInputElement).value;
-
+	
 	try {
 		const response = await fetch('http://localhost:8081/api/backend/login', {
 			method: 'POST',
@@ -21,6 +21,7 @@ async function connect(e: Event): Promise<void> {
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');
 		}
+		navigate('profile');
 	} catch (err) {
 		console.error('Erreur fetch:', err);
 		alert('Erreur serveur');
