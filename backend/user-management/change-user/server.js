@@ -1,6 +1,6 @@
 const fastify = require('fastify')({ logger: true });
 // const sqlite3 = require('sqlite3').verbose();
-const loginRoutes = require('./srcs/login.js');
+// const loginRoutes = require('./srcs/login.js');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
 
@@ -11,14 +11,14 @@ fastify.register(fastifyCors, {
   methods: ['GET', 'POST', 'OPTIONS']
 });
 
-fastify.register(loginRoutes, { prefix: '/api' })
+// fastify.register(loginRoutes, { prefix: '/api' })
 
 fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
 
 const host = '0.0.0.0';
-const port = 8081;
+const port = 8085;
 
 // le serveur en ecoute 
 fastify.listen({ host, port }, (err, address) => {
