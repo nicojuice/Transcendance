@@ -1,3 +1,5 @@
+import { user_exist } from "./nav";
+
 async function register(e: Event): Promise<void> {
 	e.preventDefault();
 
@@ -10,6 +12,12 @@ async function register(e: Event): Promise<void> {
 	const email = emailInput.value;
 	const password = passwordInput.value;
 	const confirmPassword = confirmPasswordInput.value;
+
+	if (await user_exist(username) === true)
+	{
+		alert("An user already uses this username")
+		return ;
+	}
 
 	if (password !== confirmPassword) {
 		alert("Les mots de passe ne correspondent pas.");

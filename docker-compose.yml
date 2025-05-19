@@ -73,6 +73,21 @@ services:
       - sql:/data
     networks:
       - Transcendance
+  
+  avatar-service:
+    build:
+      context: ./backend/user-management/add-avatar
+      dockerfile: Dockerfile
+    ports:
+      - 8086:8086
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
 
   frontend:
     build:

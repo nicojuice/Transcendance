@@ -5,6 +5,18 @@ module.exports = function (fastify, opts, done) {
   // Utilise l'instance partagée si disponible
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
+  fastify.get('/backend/user_exist', (request, reply) => {
+    const { username } = request.query;
+
+    if (!username)
+        return (reply.send({ message: 'Pas de connexion courante' }));
+    db.get('SELECT * FROM users WHERE name = ?', [username], (err, user) => {
+      if (err || !user)
+        return (reply.code(500).send({ message: "Utilisateur non existant" }));
+      return (reply.send({ message: "Connexion" }));
+    })
+  });
+
   fastify.post('/backend/login', (request, reply) => {
     const { username, password } = request.body;
 
