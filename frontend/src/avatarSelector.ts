@@ -46,21 +46,21 @@ async function encodeImgToBase64(file: File): Promise<string> {
 }
 
 async function sendImgToDB(file: File): Promise<void> {
-  const base64 = encodeImgToBase64(file);
-  	try {
-		  const response = await fetch('http://localhost:8082/api/backend/', {
-		  	method: 'POST',
-		  	headers: { 'Content-Type': 'application/json' },
-		  	body: JSON.stringify({ base64 })
-		});
+  const base64 = await encodeImgToBase64(file);
+  const username = localStorage.getItem("username");
+
+  try {
+	  const response = await fetch(`http://localhost:8086/api/backend/add-avatar`, {
+	  	method: 'PATCH',
+	  	headers: { 'Content-Type': 'application/json' },
+	  	body: JSON.stringify({ username: username, avatar: base64 })
+	});
 
 		const data = await response.json();
-
 		if (response.ok) {
-			alert(data.message);
-			window.location.href =  './index.html';
+			alert(data.message || 'Image upload');
 		} else {
-			alert(data.message || 'Erreur lors de l’inscription.');
+			alert(data.message || 'Failed to upload image');
 		}
 
 	} catch (err) {
@@ -79,7 +79,7 @@ function uploadCustomAvatar(event: Event): void {
     const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === 'string') {
       avatarPreview.src = reader.result;
-      //sendImgToDB(file);
+      sendImgToDB(file);
     }
   };
   reader.readAsDataURL(file);

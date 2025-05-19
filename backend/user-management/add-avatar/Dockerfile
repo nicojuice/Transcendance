@@ -12,14 +12,13 @@ RUN echo "📦 Installation des dépendances..."
 RUN npm install
 RUN npm install fastify
 RUN npm install @fastify/cors
+RUN npm install @fastify/multipart
 
 RUN echo "📦 Installation de Bcrypt..."
 RUN npm install bcryptjs
 
 RUN echo "📦 Installation de metric..."
 RUN npm install fastify-metrics prom-client --legacy-peer-deps
-
-
 
 COPY . .
 
