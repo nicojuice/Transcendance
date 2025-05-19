@@ -26,7 +26,7 @@ async function default_navigate() {
 		}
 		else
 		{
-			await navigate("profile");
+			await navigate("log");
 		}
 	}
 	
