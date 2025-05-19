@@ -29,6 +29,51 @@ services:
     networks:
       - Transcendance
 
+  email-service:
+    build:
+      context: ./backend/user-management/change-email
+      dockerfile: Dockerfile
+    ports:
+      - 8083:8083
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+    
+  pass-service:
+    build:
+      context: ./backend/user-management/change-pass
+      dockerfile: Dockerfile
+    ports:
+      - 8084:8084
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+  
+  user-service:
+    build:
+      context: ./backend/user-management/change-user
+      dockerfile: Dockerfile
+    ports:
+      - 8085:8085
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
@@ -43,6 +88,8 @@ services:
     depends_on:
       - register-service
       - login-service
+      - email-service
+      - pass-service
     networks:
       - Transcendance
 
