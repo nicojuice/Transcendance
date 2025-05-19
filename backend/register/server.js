@@ -7,7 +7,7 @@ const metricsPlugin = require('fastify-metrics');
 const fastifyCors = require('@fastify/cors');
 fastify.register(fastifyCors, {
   origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS']
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
 // creer la db

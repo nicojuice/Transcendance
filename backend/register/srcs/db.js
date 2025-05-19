@@ -10,7 +10,8 @@ const db = new sqlite3.Database('/data/data.db', (err) => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         email TEXT,
-        password TEXT
+        password TEXT,
+        avatar TEXT
       )
     `, (err) => {
       if (err) {

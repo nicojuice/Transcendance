@@ -20,14 +20,14 @@ export async function	navigate(page : string) {
 
 
 async function default_navigate() {
-	if (localStorage.getItem('isConnected') === 'false')
-		{
-			await navigate("profile");
-		}
-		else
-		{
-			await navigate("profile");
-		}
+	if (localStorage.getItem('isConnected') === 'true')
+	{
+		await navigate("profile");
+	}
+	else
+	{
+		await navigate("log");
+	}
 	}
 	
 	default_navigate();
