@@ -1,3 +1,5 @@
+//import { encode } from "punycode";
+
 const avatars: string[] = [
   '/assets/avatar1.png',
   '/assets/avatar2.png',
@@ -29,6 +31,44 @@ function changeAvatar(direction: number): void {
   }
 }
 
+async function encodeImgToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result as string);
+    }
+    reader.onerror = (error) => {
+      reject(error);
+    }
+    reader.readAsDataURL(file);
+  });
+}
+
+async function sendImgToDB(file: File): Promise<void> {
+  const base64 = encodeImgToBase64(file);
+  	try {
+		  const response = await fetch('http://localhost:8082/api/backend/', {
+		  	method: 'POST',
+		  	headers: { 'Content-Type': 'application/json' },
+		  	body: JSON.stringify({ base64 })
+		});
+
+		const data = await response.json();
+
+		if (response.ok) {
+			alert(data.message);
+			window.location.href =  './index.html';
+		} else {
+			alert(data.message || 'Erreur lors de l’inscription.');
+		}
+
+	} catch (err) {
+		console.error('Erreur fetch:', err);
+		alert('Erreur serveur');
+	}
+}
+
 function uploadCustomAvatar(event: Event): void {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
@@ -39,6 +79,7 @@ function uploadCustomAvatar(event: Event): void {
     const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === 'string') {
       avatarPreview.src = reader.result;
+      //sendImgToDB(file);
     }
   };
   reader.readAsDataURL(file);
@@ -52,6 +93,7 @@ function toggleAvatarDropdown(): void {
   dropdown?.classList.toggle('hidden');
 }
 
+
 function chooseAvatar(path: string): void {
   selectedAvatar = path;
 
@@ -61,6 +103,7 @@ function chooseAvatar(path: string): void {
   selected?.classList.add('ring-4', 'ring-blue-500');
 }
 
+
 function selectAvatar(path: string, btn: HTMLButtonElement): void {
   selectedAvatar = path;
 
@@ -69,6 +112,7 @@ function selectAvatar(path: string, btn: HTMLButtonElement): void {
 
   btn.classList.add('border-white');
 }
+
 
 function confirmAvatarSelection(): void {
   if (!selectedAvatar) return;
