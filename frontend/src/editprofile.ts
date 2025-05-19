@@ -48,7 +48,7 @@ async function editPass(edit: string) : Promise<void> {
 
 async function editEmail(edit: string) : Promise<void> {
   const username = localStorage.getItem("username");
-  
+
   try {
       const response = await fetch(`http://localhost:8083/api/user-management/change-email`, {
         method: 'PATCH',
@@ -69,3 +69,9 @@ async function editEmail(edit: string) : Promise<void> {
       alert('Erreur serveur');
 	}
 }
+
+(window as any).editEmail = editEmail;
+
+(window as any).editUser = editUser;
+
+(window as any).editPass = editPass;
