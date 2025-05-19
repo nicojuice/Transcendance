@@ -8,5 +8,6 @@ import './logout';
 import './profile_infos';
 import './dataUrltoFile';
 import './profile';
+import './editprofile';
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

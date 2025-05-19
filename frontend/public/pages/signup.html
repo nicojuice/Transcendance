@@ -1,92 +1,61 @@
-<div class="text-neon font-arcade font-pixelify flex items-center justify-center min-h-screen relative p-4">
-    <!-- Rectangle vert -->
-    <div class="w-[1000px] h-[800px] border-2 border-transparent -500 p-6 flex items-center justify-around rounded-lg">
-    <!-- Rectangle bleu -->
-    <div class="m-4 w-[950px] h-[750px]  backdrop-blur border-2 border-crtBlue rounded-md p-8">
-        <h2 class="py-8 text-center text-4xl text-white mb-4">Choose Your Avatar</h2>
+<div class="text-neon font-arcade flex items-center justify-center min-h-screen relative p-4">
 
-        <div class="flex flex-col items-center space-y-6">
-            <div class="flex items-center space-x-6">
-            <button onclick="changeAvatar(-1)" class="text-white border-2 border-white w-10 h-10 rounded-full text-2xl">
-            &larr;
-            </button>
+  <!-- CRT scanlines -->
+  <div class="crt-effect absolute inset-0 z-[-1]"></div>
 
-            <img
-                id="avatar-preview"
-                src="assets/avatar1.png"
-                alt="Avatar Preview"
-                class="w-128 h-128 object-cover rounded-full"
-            />
-
-            <button onclick="changeAvatar(1)" class="text-white text-2xl border-2 border-white w-10 h-10 rounded-full">
-                &rarr;
-            </button>
-        </div>
-
-        </div>
-    </div>
-  <!-- Rectangle rose (Formulaire d'inscription) -->
-    <div class="m-4 w-[800px] h-[750px] border-2 border-crtPurple rounded-md relative">
+  <!-- Conteneur principal : anneaux + formulaire -->
+  <div class="relative w-[500px] h-[500px] group flex items-center justify-center z-10 overflow-visible">
+    <!-- Anneaux -->
+    <div class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"></div>
+    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"></div>
+    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"></div>
+      
       <form
         id="signupForm"
-        onsubmit="register(event)"
-        class="h-full flex flex-col items-center justify-center font-pixelify text-neon text-center"
+        class="min-h-screen flex flex-col items-center justify-center relative font-pixelify text-neon text-center px-8 overflow-hidden"
       >
-        <h2 class="text-6xl text-white mb-6">Welcome,</h2>
+        <h2 class="text-2xl mb-4">Create Your Account</h2>
 
-<input
-  id="username"
-  type="text"
-  placeholder="Username"
-  class="mb-4 px-6 py-2 rounded bg-white border border-white text-black placeholder-gray"
-  required
-/>
+        <input
+          id="username"
+          type="text"
+          placeholder="Username"
+          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
+          required
+        />
         <input
           id="email"
           type="email"
           placeholder="Email"
-          class="mb-4 px-6 py-2 rounded bg-white border border-white text-black placeholder-gray "
+          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
           required
         />
         <input
           id="password"
           type="password"
           placeholder="Password"
-          class="mb-4 px-6 py-2 rounded bg-white border border-white text-black placeholder-gray "
+          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
           required
         />
         <input
           id="confirm-password"
           type="password"
           placeholder="Confirm Password"
-          class="mb-4 px-6 py-2 rounded bg-white border border-white text-black placeholder-gray"
+          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
           required
         />
-        <button
-          type="submit"
-          class="mt-6 px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all"
-        >
-          Sign Up
-        </button>
-      </form>
 
-      <div class="absolute top-4 right-4 flex items-center gap-2 text-white text-sm">
-        <span>Already have an account?</span>
-        <button
-          onclick="navigate('log')"
-          class="w-8 h-8 border-2 border-white bg-black rounded-full flex items-center justify-center hover:brightness-110 transition-all"
-          title="Login"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-log-in"
-          >
-            <path d="m10 17 5-5-5-5"/>
-            <path d="M15 12H3"/>
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-          </svg>
-        </button>
-      </div>
+        <input
+          id="register-button"
+          type="submit"
+          value="Sign Up"
+          class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
+          onclick="register(event)"
+        />
+        
+        <div class="h-full text-white">Already have an account ? <button onclick="navigate('log')">Login</button> </div>
+            </form>
+
     </div>
-  </div>
+  </div>  
+

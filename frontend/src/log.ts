@@ -19,15 +19,16 @@ async function connect(e: Event): Promise<void> {
 			alert(data.message);
 			localStorage.setItem('username', username);
 			localStorage.setItem('isConnected', 'true');
+			navigate('profile');
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');
 		}
-		navigate("profile");
 	} catch (err) {
 		console.error('Erreur fetch:', err);
 		alert('Erreur serveur');
 	}
+	
 };
 
 // Expose function to global scope
