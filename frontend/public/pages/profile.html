@@ -77,25 +77,80 @@
 
 
     <div class="relative z-10 flex flex-col text-white px-8 py-16 w-full">
-        <h2 class="text-6xl text-white mb-4 mt-16">Hello,
+        <h2 class="text-6xl text-white mb-4">Hello,
         <p><span id="display-username"></span></p>
     </h2>
-        <div class="flex flex-row bg-black/30 p-4 rounded">
+
+<!-- Container -->
+<div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
+
+  <!-- Username -->
+  <div class="flex items-center">
+    <input
+      id="username"
+      type="text"
+      class="flex-1 px-2 rounded bg-white border border-white text-black"
+      readonly
+    />
+    <button
+      onclick=""
+      class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
+    >
+      Modifier
+    </button>
+  </div>
+
+  <!-- Email -->
+  <div class="flex items-center">
+    <input
+      id="email"
+      type="email"
+      class="flex-1 px-2 rounded bg-white border border-white text-black"
+      readonly
+    />
+    <button
+      onclick=""
+      class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
+    >
+      Modifier
+    </button>
+  </div>
+
+  <!-- Password -->
+  <div class="flex items-center">
+    <input
+      id="password"
+      type="password"
+      value="********"
+      class="flex-1 px-2 rounded bg-white border border-white text-black"
+      readonly
+    />
+    <button
+      onclick=""
+      class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
+    >
+      Modifier
+    </button>
+  </div>
+</div>
+
+
+        <div class="mt-8 mb-8 flex flex-row bg-black/30 p-4 rounded items-center justify-center">
         <button 
-            class="border border-neon bg-neon mt-16 mb-16 px-4 rounded py-2 mr-16 text-black"
+            class="border border-neon bg-neon px-8 rounded py-4 text-black"
             >
             PLAY
         </button>
-
-        <button 
+    
+        <!-- <button 
             onclick="editProfile()"
             class="border border-white mt-16 mb-16 px-4 py-2 rounded hover:bg-white hover:text-black transition"
             >
             Edit Profile 
-        </button>
+        </button> -->
         </div>
 
-        <div class="flex justify-center items-center text-white text-xl space-x-8 mb-8">
+        <div class="flex justify-center items-center text-white text-xl space-x-8">
         <!-- Wins -->
         <div class="flex flex-col items-center">
             <span class="text-base">Wins</span>

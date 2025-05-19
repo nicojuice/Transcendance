@@ -10,4 +10,6 @@ import './dataUrltoFile';
 import './profile';
 import './editprofile';
 
+
+
 console.log('Frontend chargé avec Vite + TypeScript ✅');
