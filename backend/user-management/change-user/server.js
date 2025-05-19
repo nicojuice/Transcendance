@@ -8,7 +8,7 @@ const metricsPlugin = require('fastify-metrics');
 
 fastify.register(fastifyCors, {
   origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS']
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
 // fastify.register(loginRoutes, { prefix: '/api' })

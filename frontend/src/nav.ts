@@ -18,18 +18,48 @@ export async function	navigate(page : string) {
     }
 }
 
+export async function user_exist(username: string) : Promise<boolean> {
+	// check si le username est valide et correspond a un utilisateur existant
+	if (!username)
+		return (false);
+	try {
+		const response = await fetch(`http://localhost:8081/api/backend/user_exist?username=${encodeURIComponent(username)}`, {
+			method: 'GET'
+		});
+		//const data = await response.json();
+		if (response.ok) {
+			//alert(data.message);
+			return (true);
+		} else {
+			//alert(data.message || 'Erreur lors de l’inscription.');
+			return (false);
+		}
+	} catch (err) {
+		console.error('Erreur fetch:', err);
+		alert('Erreur serveur');
+		return (false);
+	}
+}
 
 async function default_navigate() {
 	if (localStorage.getItem('isConnected') === 'true')
 	{
-		await navigate("profile");
+		const username = localStorage.getItem("username");
+		if (username && await user_exist(username) === true)
+			await navigate("profile");
+		else
+		{
+			localStorage.removeItem("isConnected");
+			localStorage.removeItem("username");
+			await navigate("log");
+		}
 	}
 	else
 	{
 		await navigate("log");
 	}
-	}
-	
+}
+
 	default_navigate();
 	(window as any).navigate = navigate;
 	(window as any).default_navigate = default_navigate;

@@ -39,7 +39,7 @@
         fastify.log.error('Erreur de hash :', err);
         return reply.code(500).send({ message: 'Erreur serveur' });
       }
-
+      // check si le username n'existe pas deja
       db.run(
         'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
         [username, email, hashedPassword],
