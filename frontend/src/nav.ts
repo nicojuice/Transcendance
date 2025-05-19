@@ -20,13 +20,13 @@ export async function	navigate(page : string) {
 
 
 async function default_navigate() {
-	if (localStorage.getItem('isConnected') === 'false')
+	if (localStorage.getItem('isConnected') === 'true')
 		{
 			await navigate("profile");
 		}
 		else
 		{
-			await navigate("profile");
+			await navigate("signup");
 		}
 	}
 	

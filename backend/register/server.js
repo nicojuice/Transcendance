@@ -11,30 +11,30 @@ fastify.register(fastifyCors, {
 });
 
 // creer la db
-const db = new sqlite3.Database('/data/data.db', (err) => {
-  if (err) {
-    console.error('❌ Erreur ouverture DB', err.message);
-  } else {
-    console.log('✅ Connexion à SQLite réussie');
+// const db = new sqlite3.Database('/data/data.db', (err) => {
+//   if (err) {
+//     console.error('❌ Erreur ouverture DB', err.message);
+//   } else {
+//     console.log('✅ Connexion à SQLite réussie');
     
-    // initialise la db
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        password TEXT
-        avatar BLOB
-        )
-        `, (err) => {
-          if (err) {
-            console.error('❌ Erreur création table', err.message);
-          } else {
-            console.log('✅ Table users créée ou déjà existante');
-          }
-        });
-      }
-    });
+//     // initialise la db
+//     db.run(`
+//       CREATE TABLE IF NOT EXISTS users (
+//         id INTEGER PRIMARY KEY AUTOINCREMENT,
+//         name TEXT,
+//         email TEXT,
+//         password TEXT
+//         avatar BLOB
+//         )
+//         `, (err) => {
+//           if (err) {
+//             console.error('❌ Erreur création table', err.message);
+//           } else {
+//             console.log('✅ Table users créée ou déjà existante');
+//           }
+//         });
+//       }
+//     });
     
 // route api pour l inscription
 fastify.register(registerRoutes, { prefix: '/api' })
