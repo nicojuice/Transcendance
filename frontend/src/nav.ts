@@ -26,7 +26,7 @@ async function default_navigate() {
 		}
 		else
 		{
-			await navigate("signup");
+			await navigate("log");
 		}
 	}
 	

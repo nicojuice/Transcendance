@@ -47,7 +47,7 @@ module.exports = async function (fastify, opts) {
 // module.exports = async function (fastify, opts) {
 //   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-//   // Plugin multipart pour gérer les fichiers
+//   // Plugin part pour gérer les fichiers
 //   await fastify.register(require('@fastify/multipart'));
 
 //   // Endpoint de test
