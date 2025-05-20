@@ -10,6 +10,7 @@ RUN npm cache clean --force
 
 RUN echo "📦 Installation des dépendances..."
 RUN npm install
+RUN npm install sqlite3
 RUN npm install fastify
 RUN npm install @fastify/cors
 # RUN npm install @fastify/multipart

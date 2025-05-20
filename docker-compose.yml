@@ -1,10 +1,10 @@
 services:
-  register-service:
+  login-service:
     build:
-      context: ./backend/register
+      context: ./backend/login
       dockerfile: Dockerfile
     ports:
-      - 8082:8082
+      - 8081:8081
     environment:
       - NODE_ENV=production
     depends_on:
@@ -13,13 +13,13 @@ services:
       - sql:/data
     networks:
       - Transcendance
-
-  login-service:
+      
+  register-service:
     build:
-      context: ./backend/login
+      context: ./backend/register
       dockerfile: Dockerfile
     ports:
-      - 8081:8081
+      - 8082:8082
     environment:
       - NODE_ENV=production
     depends_on:
