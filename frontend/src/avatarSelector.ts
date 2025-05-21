@@ -45,15 +45,42 @@ async function encodeImgToBase64(file: File): Promise<string> {
   });
 }
 
-async function sendImgToDB(file: File): Promise<void> {
-  const base64 = await encodeImgToBase64(file);
-  const username = localStorage.getItem("username");
+//async function sendImgToDB(file: File): Promise<void> {
+//  const base64 = await encodeImgToBase64(file);
+//  const username = localStorage.getItem("username");
 
+//  try {
+//	  const response = await fetch(`http://localhost:8086/api/backend/add-avatar`, {
+//	  	method: 'PATCH',
+//	  	headers: { 'Content-Type': 'application/json' },
+//	  	body: JSON.stringify({ username: username, avatar: base64 })
+//	});
+
+//		const data = await response.json();
+//		if (response.ok) {
+//			alert(data.message || 'Image upload');
+//		} else {
+//			alert(data.message || 'Failed to upload image');
+//		}
+
+//	} catch (err) {
+//		console.error('Erreur fetch:', err);
+//		alert('Erreur serveur');
+//	}
+//}
+
+async function sendImgToDB(file: File): Promise<void> {
+  const username = localStorage.getItem("username");
+  const formData = new FormData();
+
+  if (!username)
+    return;
+  formData.append("username", username);
+  formData.append("avatar", file);
   try {
 	  const response = await fetch(`http://localhost:8086/api/backend/add-avatar`, {
 	  	method: 'PATCH',
-	  	headers: { 'Content-Type': 'application/json' },
-	  	body: JSON.stringify({ username: username, avatar: base64 })
+	  	body: formData
 	});
 
 		const data = await response.json();

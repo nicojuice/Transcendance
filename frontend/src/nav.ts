@@ -1,6 +1,6 @@
 import { initProfilePage } from './profile';
 
-export async function	navigate(page : string) {
+export async function navigate(page : string) {
     try {
 		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
@@ -42,20 +42,24 @@ export async function user_exist(username: string) : Promise<boolean> {
 }
 
 async function default_navigate() {
-	if (localStorage.getItem('isConnected') === 'true')
+	const username = localStorage.getItem("username");
+
+	if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true))
 	{
-		const username = localStorage.getItem("username");
-		if (username && await user_exist(username) === true)
-			await navigate("profile");
-		else
-		{
-			localStorage.removeItem("isConnected");
-			localStorage.removeItem("username");
-			await navigate("log");
-		}
+		//const username = localStorage.getItem("username");
+		//if (username && await user_exist(username) === true)
+		await navigate("profile");
+		//else
+		//{
+		//	localStorage.removeItem("isConnected");
+		//	localStorage.removeItem("username");
+		//	await navigate("log");
+		//}
 	}
 	else
 	{
+		localStorage.removeItem("isConnected");
+		localStorage.removeItem("username");
 		await navigate("log");
 	}
 }

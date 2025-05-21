@@ -1,33 +1,4 @@
-// async function editUser(edit: string) : Promise<void> {
-//   const username = localStorage.getItem("username");
-  
-//   try {
-//       console.log(username, '<--- l ancien user');
-//       console.log(edit, '<--- le nouveau user');
-//       const response = await fetch(`http://localhost:8085/api/user-management/change-user`, {
-//         method: 'PATCH',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ username, edit })
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         alert(data.message);
-//         localStorage.removeItem("username");
-//         localStorage.setItem(edit, edit);
-//         const displayInput = document.getElementById("display-username") as HTMLInputElement;
-//         if (displayInput) displayInput.textContent = edit;
-//       } 
-//       else {
-//         alert(data.message || `Failed to edit username.`);
-//       }
-
-//   } catch (err) {
-//       console.error('Erreur fetch:', err);
-//       alert('Erreur serveur');
-// 	}
-// }
+import { user_exist } from "./nav";
 
 async function editUser(): Promise<void> {
   const oldUsername = localStorage.getItem("username");
@@ -36,6 +7,9 @@ async function editUser(): Promise<void> {
 
   if (!edit) {
     alert("Veuillez saisir un nouveau nom d'utilisateur.");
+    return;
+  } else if (await user_exist(edit) === true) {
+    alert("Nom d'utilisateur deja existant.");
     return;
   }
 
@@ -118,7 +92,5 @@ async function editEmail(edit: string) : Promise<void> {
 }
 
 (window as any).editEmail = editEmail;
-
 (window as any).editUser = editUser;
-
 (window as any).editPass = editPass;

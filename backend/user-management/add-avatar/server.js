@@ -3,10 +3,18 @@ const fastify = require('fastify')({ logger: true });
 const add_avatar_route = require('./srcs/add-avatar.js');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
+const multipart = require('@fastify/multipart');
 
 fastify.register(fastifyCors, {
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
+});
+
+fastify.register(multipart, {
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50 MB par fichier
+    files: 1, // nombre max de fichiers
+  }
 });
 
 fastify.register(add_avatar_route, { prefix: '/api' })
