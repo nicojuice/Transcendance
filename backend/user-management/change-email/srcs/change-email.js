@@ -20,7 +20,7 @@ module.exports = async function (fastify, opts) {
         return reply.code(404).send({ message: 'Utilisateur introuvable' });
       }
 
-      await dbRun('UPDATE users SET email = ? WHERE email = ?', [email, username]);
+      await dbRun('UPDATE users SET email = ? WHERE name = ?', [email, username]);
 
       return reply.send({ message: `Email mis à jour avec succès en "${email}"` });
 

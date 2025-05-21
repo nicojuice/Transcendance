@@ -9,6 +9,7 @@ import './profile_infos';
 import './dataUrltoFile';
 import './profile';
 import './editprofile';
+import './friends';
 
 
 

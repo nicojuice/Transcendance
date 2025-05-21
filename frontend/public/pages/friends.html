@@ -15,13 +15,32 @@
     <h2 class="py-8 text-center text-white text-4xl mb-4">Friends</h2>
 
     <!-- Add Friend centré en bas du rectangle -->
-    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/30 p-4 text-white rounded">
+    <!-- <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/30 p-4 text-white rounded">
       <button
         onclick="addFriend()"
         class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
       >
         Add Friend
-      </button>
+      </button> -->
+
+
+      <div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
+
+<!-- Username -->
+<div class="flex items-center" id="username-container">
+  <input
+    id="addfriend"
+    type="text"
+    class="flex-1 px-2 rounded bg-white border border-white text-black"
+  />
+  <button
+    onclick="addFriends()"
+    class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
+  >
+    Add Friend
+  </button>
+</div>
+
 
 
   <!-- Ajoute autant d'amis que nécessaire ici -->

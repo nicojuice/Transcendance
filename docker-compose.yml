@@ -89,6 +89,21 @@ services:
     networks:
       - Transcendance
 
+  add-friends-service:
+    build:
+      context: ./backend/user-management/add-friends
+      dockerfile: Dockerfile
+    ports:
+      - 8087:8087
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
@@ -105,6 +120,7 @@ services:
       - login-service
       - email-service
       - pass-service
+      - add-friends-service
     networks:
       - Transcendance
 
