@@ -1,3 +1,5 @@
+import { user_exist } from "./nav";
+
 async function editUser(): Promise<void> {
   const oldUsername = localStorage.getItem("username");
   const newUsernameInput = document.getElementById("username") as HTMLInputElement;
@@ -5,6 +7,10 @@ async function editUser(): Promise<void> {
 
   if (!edit) {
     alert("Veuillez saisir un nouveau nom d'utilisateur.");
+    return;
+  }
+  else if (await user_exist(edit) === true) {
+    alert("Nom d'utilisateur deja existant.");
     return;
   }
 
@@ -87,7 +93,5 @@ async function editEmail(edit: string) : Promise<void> {
 }
 
 (window as any).editEmail = editEmail;
-
 (window as any).editUser = editUser;
-
 (window as any).editPass = editPass;
