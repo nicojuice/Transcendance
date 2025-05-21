@@ -73,10 +73,10 @@ async function editPass(edit: string) : Promise<void> {
   const username = localStorage.getItem("username");
   
   try {
-      const response = await fetch(`http://localhost:8084/api/user-management/change-pass`, {
+      const response = await fetch(`http://localhost:8084/api/user-management/change-password`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, edit })
+        body: JSON.stringify({ username, newPassword: edit })
       });
 
       const data = await response.json();
@@ -95,12 +95,12 @@ async function editPass(edit: string) : Promise<void> {
 
 async function editEmail(edit: string) : Promise<void> {
   const username = localStorage.getItem("username");
-
+  console.log(edit);
   try {
       const response = await fetch(`http://localhost:8083/api/user-management/change-email`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, edit })
+        body: JSON.stringify({ username, email: edit })
       });
 
       const data = await response.json();
@@ -110,7 +110,7 @@ async function editEmail(edit: string) : Promise<void> {
       } else {
         alert(data.message || `Failed to edit email.`);
       }
-
+  localStorage.setItem("email", edit);
   } catch (err) {
       console.error('Erreur fetch:', err);
       alert('Erreur serveur');

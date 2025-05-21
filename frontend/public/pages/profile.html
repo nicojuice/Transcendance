@@ -104,12 +104,10 @@
     <input
       id="email"
       type="email"
-      value="email"
       class="flex-1 px-2 rounded bg-white border border-white text-black"
-      readonly
     />
     <button
-      onclick="editEmail('email')"
+      onclick="editEmail(document.getElementById('email').value)"
       class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
     >
       Modifier
@@ -121,12 +119,10 @@
     <input
       id="password"
       type="password"
-      value="********"
       class="flex-1 px-2 rounded bg-white border border-white text-black"
-      readonly
     />
     <button
-      onclick="editPass('password')"
+      onclick="editPass(document.getElementById('password').value)"
       class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
     >
       Modifier
@@ -172,23 +168,14 @@
 
 
   <div class="flex flex-row gap-4 mt-8">
-    <!-- Edit Profile -->
-    <div class="bg-black/30 p-4 rounded">
-      <button
-        onclick="editProfile()"
-        class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-      >
-        My Friends
-      </button>
-    </div>
 
     <!-- Add Friend -->
     <div class="bg-black/30 p-4 rounded">
       <button
-        onclick="addFriend()"
+        onclick="navigate('friends')"
         class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
       >
-        Add Friend
+        Friends
       </button>
     </div>
 

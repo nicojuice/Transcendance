@@ -1,5 +1,4 @@
 const fastify = require('fastify')({ logger: true });
-const sqlite3 = require('sqlite3').verbose();
 const registerRoutes = require('./srcs/register.js');
 const metricsPlugin = require('fastify-metrics');
 
@@ -10,32 +9,6 @@ fastify.register(fastifyCors, {
   methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
-// creer la db
-const db = new sqlite3.Database('/data/data.db', (err) => {
-  if (err) {
-    console.error('❌ Erreur ouverture DB', err.message);
-  } else {
-    console.log('✅ Connexion à SQLite réussie');
-    
-    // initialise la db
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        password TEXT
-        avatar BLOB
-        )
-        `, (err) => {
-          if (err) {
-            console.error('❌ Erreur création table', err.message);
-          } else {
-            console.log('✅ Table users créée ou déjà existante');
-          }
-        });
-      }
-    });
-    
 // route api pour l inscription
 fastify.register(registerRoutes, { prefix: '/api' })
 

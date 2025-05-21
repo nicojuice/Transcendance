@@ -10,7 +10,9 @@ RUN npm cache clean --force
 
 RUN echo "📦 Installation des dépendances..."
 RUN npm install
+RUN npm install bcrypt
 RUN npm install fastify
+RUN npm install sqlite3
 RUN npm install @fastify/cors
 # RUN npm install @fastify/multipart
 
@@ -27,4 +29,4 @@ COPY . .
 EXPOSE 8084
 
 RUN echo "🚀 Lancement du Back/User-Management/Change-pass..."
-CMD ["sh", "-c", "node server.js -d"]
+CMD ["node", "server.js"]

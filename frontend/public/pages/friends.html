@@ -1,0 +1,32 @@
+<div class="text-neon font-arcade font-pixelify flex items-center justify-center min-h-screen relative p-4">
+  <!-- Rectangle bleu -->
+  <div class="relative m-4 w-[500px] h-[800px] border-2 border-crtBlue rounded-md p-8 overflow-hidden">
+    
+
+
+    <button
+      id="return-btn"
+      onclick="navigate('profile')"
+      class="absolute top-4 right-4 z-50 cursor-pointer hover:text-red-500 text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
+      title="Log Out">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-corner-down-left-icon lucide-corner-down-left"><path d="M20 4v7a4 4 0 0 1-4 4H4"/><path d="m9 10-5 5 5 5"/></svg>
+    </button>
+
+    <h2 class="py-8 text-center text-white text-4xl mb-4">Friends</h2>
+
+    <!-- Add Friend centré en bas du rectangle -->
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/30 p-4 text-white rounded">
+      <button
+        onclick="addFriend()"
+        class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+      >
+        Add Friend
+      </button>
+
+
+  <!-- Ajoute autant d'amis que nécessaire ici -->
+</div>
+
+    </div>
+  </div>
+</div>
