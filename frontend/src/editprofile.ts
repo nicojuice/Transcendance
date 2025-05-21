@@ -1,34 +1,3 @@
-// async function editUser(edit: string) : Promise<void> {
-//   const username = localStorage.getItem("username");
-  
-//   try {
-//       console.log(username, '<--- l ancien user');
-//       console.log(edit, '<--- le nouveau user');
-//       const response = await fetch(`http://localhost:8085/api/user-management/change-user`, {
-//         method: 'PATCH',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ username, edit })
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         alert(data.message);
-//         localStorage.removeItem("username");
-//         localStorage.setItem(edit, edit);
-//         const displayInput = document.getElementById("display-username") as HTMLInputElement;
-//         if (displayInput) displayInput.textContent = edit;
-//       } 
-//       else {
-//         alert(data.message || `Failed to edit username.`);
-//       }
-
-//   } catch (err) {
-//       console.error('Erreur fetch:', err);
-//       alert('Erreur serveur');
-// 	}
-// }
-
 async function editUser(): Promise<void> {
   const oldUsername = localStorage.getItem("username");
   const newUsernameInput = document.getElementById("username") as HTMLInputElement;

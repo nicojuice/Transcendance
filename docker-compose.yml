@@ -94,7 +94,7 @@ services:
       context: ./backend/user-management/add-friends
       dockerfile: Dockerfile
     ports:
-      - 8087:8087
+      - 8088:8088
     environment:
       - NODE_ENV=production
     depends_on:

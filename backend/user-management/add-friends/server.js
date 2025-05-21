@@ -5,23 +5,19 @@ const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
 
 
-// const path = require('path');
-// const loginRoutes = require(path.join(__dirname, 'srcs', 'add-friends.js'));
-
-
 fastify.register(fastifyCors, {
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
-fastify.register(loginRoutes, { prefix: '/api/user-management' });
+fastify.register(loginRoutes, { prefix: '/api' });
 
 fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
 
 const host = '0.0.0.0';
-const port = 8087;
+const port = 8088;
 
 // le serveur en ecoute 
 fastify.listen({ host, port }, (err, address) => {
@@ -32,3 +28,5 @@ fastify.listen({ host, port }, (err, address) => {
   console.log('\n\n')
   fastify.log.info(`⭐ Server listening at ${address} ⭐`);
 });
+
+ 

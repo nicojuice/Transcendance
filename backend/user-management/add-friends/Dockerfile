@@ -26,7 +26,7 @@ RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
 COPY . .
 
-EXPOSE 8087
+EXPOSE 8088
 
 RUN echo "🚀 Lancement du Back/User-Management/add-friends..."
 CMD ["sh", "-c", "node server.js -d"]
