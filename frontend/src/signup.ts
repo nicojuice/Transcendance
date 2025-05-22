@@ -1,4 +1,5 @@
 import { user_exist } from "./nav";
+import { sendImgToDB } from "./avatarSelector"
 
 async function register(e: Event): Promise<void> {
 	e.preventDefault();
@@ -18,10 +19,10 @@ async function register(e: Event): Promise<void> {
 		alert("An user already uses this username")
 		return ;
 	}
-
-	if (password !== confirmPassword) {
+	else if (password !== confirmPassword)
+	{
 		alert("Les mots de passe ne correspondent pas.");
-		return;
+		return ;
 	}
 
 	try {
@@ -35,11 +36,10 @@ async function register(e: Event): Promise<void> {
 
 		if (response.ok) {
 			alert(data.message);
-			window.location.href =  './index.html';
+			sendImgToDB(new File(["blod data"], "/assets/default_pfp.jpg"));
 		} else {
 			alert(data.message || 'Erreur lors de l’inscription.');
 		}
-
 	} catch (err) {
 		console.error('Erreur fetch:', err);
 		alert('Erreur serveur');
