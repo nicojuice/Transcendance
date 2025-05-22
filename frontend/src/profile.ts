@@ -26,7 +26,7 @@ async function displayAvatar(username: string): Promise<void> {
 			img.src = imageUrl;
 		}
 	} catch (err) {
-		alert(";");
+		// alert(";");
 		console.error("Error fetching avatar:", err);
 	}
 }

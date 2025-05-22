@@ -18,8 +18,8 @@ async function connect(e: Event): Promise<void> {
 		if (response.ok) {
 			alert(data.message);
 			localStorage.setItem('username', username);
-			localStorage.setItem('password', password);
 			localStorage.setItem('isConnected', 'true');
+			localStorage.setItem("token", data.token);
 			navigate('profile');
 		}
 		else {
