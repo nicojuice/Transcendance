@@ -1,26 +1,19 @@
 import * as BABYLON from "babylonjs";
+import { main } from "./pong/game";
 
 let engine: BABYLON.Engine | null = null;
 
-function startPongGame(canvas: HTMLCanvasElement) {
+function startGame(canvas: HTMLCanvasElement) {
   canvas.style.width = window.innerWidth + "px";
   canvas.style.height = window.innerHeight + "px";
 
+  //focus
+  canvas.setAttribute("tabindex", "1");
+  canvas.focus();
+
   engine = new BABYLON.Engine(canvas, true);
   engine.resize();
-
-  const scene = new BABYLON.Scene(engine);
-
-  const camera = new BABYLON.FreeCamera("cam", new BABYLON.Vector3(0, 5, -10), scene);
-  camera.setTarget(BABYLON.Vector3.Zero());
-  camera.attachControl(canvas, true);
-
-  const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-  BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
-
-  engine.runRenderLoop(() => {
-    scene.render();
-  });
+  main(engine, canvas); 
 }
 
 function waitForCanvasAndStart() {
@@ -29,7 +22,7 @@ function waitForCanvasAndStart() {
     if (!canvas) return;
 
     clearInterval(interval);
-    startPongGame(canvas);
+    startGame(canvas);
   }, 100);
 }
 
