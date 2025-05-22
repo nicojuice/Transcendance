@@ -1,15 +1,46 @@
-// src/main.ts
 import * as BABYLON from "babylonjs";
 
-const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
-const engine = new BABYLON.Engine(canvas, true);
-const scene = new BABYLON.Scene(engine);
+let engine: BABYLON.Engine | null = null;
 
-const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-camera.setTarget(BABYLON.Vector3.Zero());
-camera.attachControl(canvas, true);
+function startPongGame(canvas: HTMLCanvasElement) {
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
 
-new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 2, 0), scene);
-BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
+  engine = new BABYLON.Engine(canvas, true);
+  engine.resize();
 
-engine.runRenderLoop(() => scene.render());
+  const scene = new BABYLON.Scene(engine);
+
+  const camera = new BABYLON.FreeCamera("cam", new BABYLON.Vector3(0, 5, -10), scene);
+  camera.setTarget(BABYLON.Vector3.Zero());
+  camera.attachControl(canvas, true);
+
+  const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+  BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+
+  engine.runRenderLoop(() => {
+    scene.render();
+  });
+}
+
+function waitForCanvasAndStart() {
+  const interval = setInterval(() => {
+    const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    clearInterval(interval);
+    startPongGame(canvas);
+  }, 100);
+}
+
+window.addEventListener("resize", () => {
+  const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
+  if (!canvas) return;
+
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+
+  if (engine) engine.resize();
+});
+
+waitForCanvasAndStart();
