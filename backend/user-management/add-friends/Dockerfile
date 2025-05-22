@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
 # Crée un répertoire de travail dans le conteneur
-WORKDIR /usr/src/app/backend/user-management/change-email
+WORKDIR /usr/src/app/backend/user-management/add-friends
 
 COPY package*.json ./
 
@@ -10,10 +10,11 @@ RUN npm cache clean --force
 
 RUN echo "📦 Installation des dépendances..."
 RUN npm install
+RUN npm install sqlite
 RUN npm install sqlite3
 RUN npm install fastify
+RUN npm install @fastify/sensible
 RUN npm install @fastify/cors
-RUN npm install @fastify/multipart
 
 RUN echo "📦 Installation de Bcrypt..."
 RUN npm install bcryptjs
@@ -21,9 +22,11 @@ RUN npm install bcryptjs
 RUN echo "📦 Installation de metric..."
 RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
+
+
 COPY . .
 
-EXPOSE 8086
+EXPOSE 8088
 
-RUN echo "🚀 Lancement du Back/User-Management/Change-Email..."
+RUN echo "🚀 Lancement du Back/User-Management/add-friends..."
 CMD ["sh", "-c", "node server.js -d"]

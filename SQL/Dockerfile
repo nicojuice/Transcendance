@@ -13,4 +13,5 @@ RUN chmod +x /db/create_db.sh
 
 VOLUME ["/data"]
 
-CMD ["sh", "-c", "/db/create_db.sh"]
+CMD ["sh", "-c", "/db/create_db.sh && sleep infinity"]
+
