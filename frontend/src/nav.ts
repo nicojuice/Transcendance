@@ -56,7 +56,7 @@ async function default_navigate() {
 	}
 	else
 	{
-		await navigate("log");
+		await navigate("pong");
 	}
 }
 
