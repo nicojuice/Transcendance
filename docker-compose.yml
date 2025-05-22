@@ -104,6 +104,21 @@ services:
     networks:
       - Transcendance
 
+  profile-info-service:
+    build:
+      context: ./backend/user-management/profile-info
+      dockerfile: Dockerfile
+    ports:
+      - 8090:8090
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend

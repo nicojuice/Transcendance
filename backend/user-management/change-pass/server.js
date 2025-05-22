@@ -4,8 +4,6 @@ const loginRoutes = require('./srcs/change-pass.js');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
 
-
-
 fastify.register(fastifyCors, {
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS', 'PATCH']

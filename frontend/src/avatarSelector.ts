@@ -1,3 +1,5 @@
+import { filenameToFileObject } from "./signup"
+
 const avatars: string[] = [
   '/assets/avatar1.png',
   '/assets/avatar2.png',
@@ -25,12 +27,12 @@ function changeAvatar(direction: number): void {
   const avatarElement = document.getElementById('avatar-preview') as HTMLImageElement | null;
 
   if (avatarElement) {
-    avatarElement.src = "/assets/default_pfp.jpg"; //avatars[currentIndex];
+    avatarElement.src = avatars[currentIndex];
   }
 }
 
-export async function sendImgToDB(file: File): Promise<void> {
-  const username = localStorage.getItem("username");
+export async function sendImgToDB(file: File, u: string | null): Promise<void> {
+  const username = localStorage.getItem("username") || u;
   const formData = new FormData();
 
   if (!username)
@@ -66,7 +68,7 @@ function uploadCustomAvatar(event: Event): void {
     const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === 'string') {
       avatarPreview.src = reader.result;
-      sendImgToDB(file);
+      sendImgToDB(file, null);
     }
   };
   reader.readAsDataURL(file);
@@ -101,7 +103,7 @@ function selectAvatar(path: string, btn: HTMLButtonElement): void {
 }
 
 
-function confirmAvatarSelection(): void {
+async function confirmAvatarSelection(): Promise<void> {
   if (!selectedAvatar) return;
 
   const preview = document.getElementById('avatar-preview') as HTMLImageElement | null;
@@ -111,6 +113,8 @@ function confirmAvatarSelection(): void {
 
   const dropdown = document.getElementById('avatar-dropdown');
   dropdown?.classList.add('hidden');
+  console.log("confirm");
+  sendImgToDB(await filenameToFileObject(selectedAvatar as string), null);
 }
 
 (window as any).selectAvatar = selectAvatar;
