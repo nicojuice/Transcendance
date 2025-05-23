@@ -1,4 +1,4 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "@babylonjs/core";
 import { main } from "./pong/game";
 
 let engine: BABYLON.Engine | null = null;

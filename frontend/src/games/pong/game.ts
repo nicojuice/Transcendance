@@ -1,4 +1,6 @@
-import * as BABYLON from "babylonjs";
+import * as BABYLON from "@babylonjs/core";
+import * as GUI from "@babylonjs/gui";
+
 
 function handleBallCollisions(
   ball: BABYLON.Mesh,
@@ -52,30 +54,92 @@ function handleBallCollisions(
 
 
 
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
+export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
+{
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
+
+
+
+
+
+
+
+
+
+
+  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+
+  const pingText = new GUI.TextBlock();
+  pingText.text = "Ping: ...";
+  pingText.color = "white";
+  pingText.fontSize = 24;
+  pingText.top = "-45%";
+  pingText.left = "-45%";
+  pingText.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+  pingText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  advancedTexture.addControl(pingText);
+
+
+  let lastPingSent = 0;
+  //let currentPing = 0;
+
+  // WebSocket
+  const socket = new WebSocket("ws://localhost:8180");
+  socket.binaryType = "arraybuffer"; // et décodes à la main
+
+  socket.addEventListener("open", () => {
+    setInterval(() => {
+      lastPingSent = performance.now();
+      socket.send(JSON.stringify({ type: "ping", timestamp: lastPingSent }));
+    }, 1000); // toutes les secondes
+  });
+
+
+
+  socket.addEventListener("message", async (event) => {
+    let data: any;
+
+    if (event.data instanceof Blob) {
+      const text = await event.data.text();
+      data = JSON.parse(text);
+    } else {
+      data = JSON.parse(event.data);
+    }
+
+    //console.log("Message from server:", data);
+
+    if (data.type === "pong") {
+      const now = performance.now();
+      const ping = Math.round(now - data.timestamp);
+      pingText.text = `Ping: ${ping} ms`;
+      //console.log(`Ping: ${ping} ms`);
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // === Caméra fixe ===
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.attachControl(canvas, false);
   function updateCameraRadius() {
-    /*const canvasAspect = canvas.width / canvas.height;
-
-    const fieldWidth = 45;
-    const fieldHeight = 20;
-
-    // On regarde sur Y, donc c’est le Z qui compte ici (le champ vertical)
-    const fovHeight = fieldHeight / (2 * Math.tan(camera.fov / 2)); // distance minimale pour voir 20 d’un coup
-
-    // Ajuster pour être sûr de voir toute la largeur selon le ratio
-    const fovWidth = (fieldWidth / canvasAspect) / (2 * Math.tan(camera.fov / 2));
-
-    // Prend le plus grand des deux pour garantir la visibilité
-    const idealRadius = Math.max(fovHeight, fovWidth);
-
-    camera.radius = idealRadius;
-    camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;*/
     const fieldWidth = 35;
     const canvasAspect = canvas.width / canvas.height;
     const fov = camera.fov; // en radians, vertical FOV (par défaut π/3)
@@ -89,9 +153,6 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
     camera.radius = requiredRadius;
     camera.lowerRadiusLimit = camera.upperRadiusLimit = requiredRadius;
   }
-  //camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;// Réglage de la distance
-  //camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;// Réglage de l'angle
-  //camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;//Réglage de la rotation
   camera.alpha = Math.PI / 2; // vue de côté
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
   camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
