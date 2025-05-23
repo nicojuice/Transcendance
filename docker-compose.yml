@@ -133,6 +133,20 @@ services:
       - Transcendance
     restart: unless-stopped
 
+  games-player:
+    build:
+      context: ./backend/games/player
+      dockerfile: Dockerfile
+    ports:
+      - "8092:8092"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
@@ -150,6 +164,7 @@ services:
       - email-service
       - pass-service
       - add-friends-service
+      - games-player
     networks:
       - Transcendance
 
