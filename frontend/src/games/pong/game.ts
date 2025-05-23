@@ -52,6 +52,49 @@ function handleBallCollisions(
 }
 
 
+function buildTerrain(scene: BABYLON.Scene): void
+{
+
+  const groundMat = new BABYLON.StandardMaterial("groundMat", scene);
+  groundMat.emissiveColor = new BABYLON.Color3(0, 22.7/255.0, 45.0/255.0);
+  groundMat.diffuseColor = groundMat.emissiveColor;
+  groundMat.alpha = 0.8;
+
+  const borderMat = new BABYLON.StandardMaterial("borderMat", scene);
+  borderMat.emissiveColor = new BABYLON.Color3(57.3/255.0, 1.0, 1.0);
+  borderMat.diffuseColor = borderMat.emissiveColor;
+
+  const borderMat2 = new BABYLON.StandardMaterial("borderMat2", scene);
+  borderMat2.diffuseColor = new BABYLON.Color3(0, 38.4/255.0, 55.3/255.0);
+  borderMat2.emissiveColor = borderMat2.diffuseColor;
+
+  // === Terrain ===
+  const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 30, height: 20 }, scene);
+  ground.material = groundMat;
+
+  const border1 = BABYLON.MeshBuilder.CreateCapsule("border1", {
+    radius: 0.25,
+    height: 30,
+    subdivisions: 6,
+    tessellation: 12
+  }, scene);
+  border1.rotation = new BABYLON.Vector3(Math.PI / 2, Math.PI / 2, 0);
+  border1.position = new BABYLON.Vector3(0, 0, 10);
+  border1.material = borderMat;
+
+  const border1_2 = border1.clone("border1_2");
+  border1_2.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
+  border1_2.material = borderMat2;
+
+  const border2 = border1.clone("border2");
+  border2.position = new BABYLON.Vector3(0, 0, -10);
+  
+  const border2_2 = border2.clone("border2_2");
+  border2_2.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
+  border2_2.material = borderMat2;
+
+}
+
 
 
 export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
@@ -81,18 +124,29 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   advancedTexture.addControl(pingText);
 
 
-  let lastPingSent = 0;
-  //let currentPing = 0;
+  
 
   // WebSocket
   const socket = new WebSocket("ws://localhost:8180");
   socket.binaryType = "arraybuffer"; // et décodes à la main
 
+  let lastPingSent = 0;
+  let pingInterval: ReturnType<typeof setInterval> | undefined;
+
   socket.addEventListener("open", () => {
-    setInterval(() => {
-      lastPingSent = performance.now();
-      socket.send(JSON.stringify({ type: "ping", timestamp: lastPingSent }));
-    }, 1000); // toutes les secondes
+    pingInterval = setInterval(() => {
+      if (socket.readyState === WebSocket.OPEN) {
+        lastPingSent = performance.now();
+        socket.send(JSON.stringify({ type: "ping", timestamp: lastPingSent }));
+      }
+    }, 1000);
+  });
+
+  socket.addEventListener("close", () => {
+    if (pingInterval) clearInterval(pingInterval);
+    pingText.text = "🔴 Connexion perdue";
+    scene.render();
+    engine.stopRenderLoop();
   });
 
 
@@ -177,14 +231,8 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   ballMat.emissiveColor = new BABYLON.Color3(1.0, 0.0, 0.6); // rose néon
   ballMat.diffuseColor = ballMat.emissiveColor;
 
-  const groundMat = new BABYLON.StandardMaterial("groundMat", scene);
-  groundMat.emissiveColor = new BABYLON.Color3(0.1, 0.2, 1.0); // bleu néon
-  groundMat.diffuseColor = groundMat.emissiveColor;
-  groundMat.alpha = 0.4;
-
   // === Terrain ===
-  const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 30, height: 20 }, scene);
-  ground.material = groundMat;
+  buildTerrain(scene);
 
   // === Raquettes ===
   const paddleRadius = 0.25;
@@ -196,6 +244,14 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
     subdivisions: 6,
     tessellation: 12
   }, scene);
+  const paddleMat2 = new BABYLON.StandardMaterial("paddleMat2", scene);
+  paddleMat2.diffuseColor = new BABYLON.Color3(0, 55.3/255.0, 38.4/255.0);
+  paddleMat2.emissiveColor = paddleMat2.diffuseColor;
+  const subpaddle = paddle1.clone("subpaddle");
+  subpaddle.scaling = new BABYLON.Vector3(0.98, 0.99, 1.25);
+  subpaddle.material = paddleMat2;
+  subpaddle.parent = paddle1;
+
 
   const paddle2 = paddle1.clone("paddle2");
 
@@ -209,6 +265,9 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   paddle2.position.set(14, yOffset, 0);
   paddle1.material = paddleMat;
   paddle2.material = paddleMat;
+
+
+  
 
   // === Balle ===
   const ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
@@ -235,10 +294,10 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
 
     const speed = 0.3;
     // Déplacement raquettes
-    if (inputMap["w"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
-    if (inputMap["s"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
-    if (inputMap["ArrowUp"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
-    if (inputMap["ArrowDown"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+    if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
+    if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+    if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
+    if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
 
     // Déplacement balle
     ball.position.addInPlace(ballVelocity);
