@@ -78,21 +78,17 @@ function buildTerrain(scene: BABYLON.Scene): void
     subdivisions: 6,
     tessellation: 12
   }, scene);
+  const subborder = border1.clone("subborder");
+  subborder.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
+  subborder.material = borderMat2;
+  subborder.parent = border1;
+
   border1.rotation = new BABYLON.Vector3(Math.PI / 2, Math.PI / 2, 0);
   border1.position = new BABYLON.Vector3(0, 0, 10);
   border1.material = borderMat;
 
-  const border1_2 = border1.clone("border1_2");
-  border1_2.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
-  border1_2.material = borderMat2;
-
   const border2 = border1.clone("border2");
   border2.position = new BABYLON.Vector3(0, 0, -10);
-  
-  const border2_2 = border2.clone("border2_2");
-  border2_2.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
-  border2_2.material = borderMat2;
-
 }
 
 
@@ -118,7 +114,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   pingText.color = "white";
   pingText.fontSize = 24;
   pingText.top = "-45%";
-  pingText.left = "-45%";
+  //pingText.left = "-45%";
   pingText.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
   pingText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
   advancedTexture.addControl(pingText);
@@ -177,19 +173,6 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   // === Caméra fixe ===
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.attachControl(canvas, false);
@@ -213,7 +196,6 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   updateCameraRadius();
 
   
-
   // === Lumière ===
   const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
   light.intensity = 0.5;
@@ -298,6 +280,9 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
     if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+    /*paddle1.position.z = ball.position.z;
+    paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
+    paddle2.position.z = paddle1.position.z;*/
 
     // Déplacement balle
     ball.position.addInPlace(ballVelocity);
