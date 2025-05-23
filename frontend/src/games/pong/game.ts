@@ -50,6 +50,8 @@ function handleBallCollisions(
 }
 
 
+
+
 export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
   const scene = new BABYLON.Scene(engine);
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
@@ -57,9 +59,45 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
   // === Caméra fixe ===
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.attachControl(canvas, false);
-  camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;
-  camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
+  function updateCameraRadius() {
+    /*const canvasAspect = canvas.width / canvas.height;
+
+    const fieldWidth = 45;
+    const fieldHeight = 20;
+
+    // On regarde sur Y, donc c’est le Z qui compte ici (le champ vertical)
+    const fovHeight = fieldHeight / (2 * Math.tan(camera.fov / 2)); // distance minimale pour voir 20 d’un coup
+
+    // Ajuster pour être sûr de voir toute la largeur selon le ratio
+    const fovWidth = (fieldWidth / canvasAspect) / (2 * Math.tan(camera.fov / 2));
+
+    // Prend le plus grand des deux pour garantir la visibilité
+    const idealRadius = Math.max(fovHeight, fovWidth);
+
+    camera.radius = idealRadius;
+    camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;*/
+    const fieldWidth = 35;
+    const canvasAspect = canvas.width / canvas.height;
+    const fov = camera.fov; // en radians, vertical FOV (par défaut π/3)
+
+    // Convertir FOV vertical en FOV horizontal selon l’aspect
+    const fovH = 2 * Math.atan(Math.tan(fov / 2) * canvasAspect);
+
+    // Calcul du rayon minimal pour voir toute la largeur
+    const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
+
+    camera.radius = requiredRadius;
+    camera.lowerRadiusLimit = camera.upperRadiusLimit = requiredRadius;
+  }
+  //camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;// Réglage de la distance
+  //camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;// Réglage de l'angle
+  //camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;//Réglage de la rotation
+  camera.alpha = Math.PI / 2; // vue de côté
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
+  camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
+  updateCameraRadius();
+
+  
 
   // === Lumière ===
   const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -134,11 +172,12 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
   scene.onBeforeRenderObservable.add(() => {
     const delta = engine.getDeltaTime() / 16.666;
 
+    const speed = 0.3;
     // Déplacement raquettes
-    if (inputMap["w"] && paddle1.position.z > -8) paddle1.position.z -= 0.3 * delta;
-    if (inputMap["s"] && paddle1.position.z < 8) paddle1.position.z += 0.3 * delta;
-    if (inputMap["ArrowUp"] && paddle2.position.z > -8) paddle2.position.z -= 0.3 * delta;
-    if (inputMap["ArrowDown"] && paddle2.position.z < 8) paddle2.position.z += 0.3 * delta;
+    if (inputMap["w"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
+    if (inputMap["s"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+    if (inputMap["ArrowUp"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
+    if (inputMap["ArrowDown"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
 
     // Déplacement balle
     ball.position.addInPlace(ballVelocity);
@@ -159,5 +198,9 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void {
 
   engine.runRenderLoop(() => {
     scene.render();
+  });
+
+  window.addEventListener("resize", () => {
+    updateCameraRadius();
   });
 }
