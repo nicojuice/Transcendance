@@ -1,4 +1,4 @@
-//import { encode } from "punycode";
+import { filenameToFileObject } from "./signup"
 
 const avatars: string[] = [
   '/assets/avatar1.png',
@@ -31,46 +31,8 @@ function changeAvatar(direction: number): void {
   }
 }
 
-async function encodeImgToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      resolve(reader.result as string);
-    }
-    reader.onerror = (error) => {
-      reject(error);
-    }
-    reader.readAsDataURL(file);
-  });
-}
-
-//async function sendImgToDB(file: File): Promise<void> {
-//  const base64 = await encodeImgToBase64(file);
-//  const username = localStorage.getItem("username");
-
-//  try {
-//	  const response = await fetch(`http://localhost:8086/api/backend/add-avatar`, {
-//	  	method: 'PATCH',
-//	  	headers: { 'Content-Type': 'application/json' },
-//	  	body: JSON.stringify({ username: username, avatar: base64 })
-//	});
-
-//		const data = await response.json();
-//		if (response.ok) {
-//			alert(data.message || 'Image upload');
-//		} else {
-//			alert(data.message || 'Failed to upload image');
-//		}
-
-//	} catch (err) {
-//		console.error('Erreur fetch:', err);
-//		alert('Erreur serveur');
-//	}
-//}
-
-async function sendImgToDB(file: File): Promise<void> {
-  const username = localStorage.getItem("username");
+export async function sendImgToDB(file: File, u: string | null): Promise<void> {
+  const username = localStorage.getItem("username") || u;
   const formData = new FormData();
 
   if (!username)
@@ -106,7 +68,7 @@ function uploadCustomAvatar(event: Event): void {
     const avatarPreview = document.getElementById('avatar-preview') as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === 'string') {
       avatarPreview.src = reader.result;
-      sendImgToDB(file);
+      sendImgToDB(file, null);
     }
   };
   reader.readAsDataURL(file);
@@ -141,7 +103,7 @@ function selectAvatar(path: string, btn: HTMLButtonElement): void {
 }
 
 
-function confirmAvatarSelection(): void {
+async function confirmAvatarSelection(): Promise<void> {
   if (!selectedAvatar) return;
 
   const preview = document.getElementById('avatar-preview') as HTMLImageElement | null;
@@ -151,6 +113,8 @@ function confirmAvatarSelection(): void {
 
   const dropdown = document.getElementById('avatar-dropdown');
   dropdown?.classList.add('hidden');
+  console.log("confirm");
+  sendImgToDB(await filenameToFileObject(selectedAvatar as string), null);
 }
 
 (window as any).selectAvatar = selectAvatar;

@@ -1,3 +1,13 @@
+// export function initProfilePage(): void {
+// 	const storedUsername = localStorage.getItem('username');
+// 	if (storedUsername) {
+// 		const displayUsername = document.getElementById('display-username');
+// 		if (displayUsername) {
+// 			displayUsername.textContent = storedUsername;
+// 		}
+// 	}
+// }
+
 async function displayAvatar(username: string): Promise<void> {
 	try {
 		console.log("display avatar");
@@ -16,7 +26,6 @@ async function displayAvatar(username: string): Promise<void> {
 			img.src = imageUrl;
 		}
 	} catch (err) {
-		alert(";");
 		console.error("Error fetching avatar:", err);
 	}
 }
