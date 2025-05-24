@@ -47,7 +47,7 @@ export async function sendImgToDB(file: File, u: string | null): Promise<void> {
 
 		const data = await response.json();
 		if (response.ok) {
-			alert(data.message || 'Image upload');
+			//alert(data.message || 'Image upload');
 		} else {
 			alert(data.message || 'Failed to upload image');
 		}
@@ -113,7 +113,7 @@ async function confirmAvatarSelection(): Promise<void> {
 
   const dropdown = document.getElementById('avatar-dropdown');
   dropdown?.classList.add('hidden');
-  console.log("confirm");
+  //console.log("confirm");
   sendImgToDB(await filenameToFileObject(selectedAvatar as string), null);
 }
 

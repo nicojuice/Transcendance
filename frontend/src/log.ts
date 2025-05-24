@@ -1,5 +1,6 @@
 // import { setCookie } from 'typescript-cookie';
 import { navigate } from './nav';
+//import { initProfilePage } from './profile';
 
 
 async function connect(e: Event): Promise<void> {
@@ -20,7 +21,7 @@ async function connect(e: Event): Promise<void> {
 			localStorage.setItem('username', username);
 			localStorage.setItem('isConnected', 'true');
 			localStorage.setItem("token", data.token);
-			navigate('profile');
+			await navigate('profile');
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');

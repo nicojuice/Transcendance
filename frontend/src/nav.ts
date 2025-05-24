@@ -1,4 +1,6 @@
 import { initProfilePage } from './profile';
+import { getFriends } from "./friends"
+import { moveBall } from "./pongballeffects"
 
 export async function navigate(page : string) {
     try {
@@ -8,13 +10,18 @@ export async function navigate(page : string) {
 		const elem = document.getElementById('screen-content');
 		if (elem)
         	elem.innerHTML = html;
+		console.log("navigation by navigate()");
 		if (page === "profile")
-			initProfilePage();
+			await initProfilePage();
+		else if (page === "friends")
+			await getFriends();
+		else if (page === "log" || page === "signup")
+			moveBall();
     } catch (error) {
         console.error("Erreur de chargement :", error);
         		const elem = document.getElementById('screen-content'); 
 		if (elem)
-        	elem.innerHTML = "<p>QUITTE LA PAGE VITE!</p>";
+        	elem.innerHTML = "<p>404 - QUITTE LA PAGE VITE!</p>";
     }
 }
 
@@ -46,41 +53,20 @@ async function default_navigate() {
 
 	if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true))
 	{
-		//const username = localStorage.getItem("username");
-		//if (username && await user_exist(username) === true)
+		console.log("navigation by default()");
 		await navigate("profile");
-		//else
-		//{
-		//	localStorage.removeItem("isConnected");
-		//	localStorage.removeItem("username");
-		//	await navigate("log");
-		//}
 	}
 	else
 	{
 		localStorage.removeItem("isConnected");
 		localStorage.removeItem("username");
+		localStorage.removeItem("email");
+		localStorage.removeItem("token");
 		await navigate("log");
 	}
 }
 
-	default_navigate();
-	(window as any).navigate = navigate;
-	(window as any).default_navigate = default_navigate;
-	
-	// async function navigate(page: string) {
-	//   console.log(page);
-	//   try {
-	//     const response = await fetch(`../pages/${page}.html`);
-	//     if (!response.ok)
-	//       throw new Error('404');
-	//     const html = await response.text();
-	//     document.getElementById('content')!.innerHTML = html;
-	//   } catch {
-	//     const res404 = await fetch('/pages/404.html');
-	//     const html404 = await res404.text();
-	//     document.getElementById('content')!.innerHTML = html404;
-	//   }
-	
-	//   history.pushState(null, '', `#${page}`);
-	// }
+default_navigate();
+
+(window as any).navigate = navigate;
+(window as any).default_navigate = default_navigate;

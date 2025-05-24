@@ -1,10 +1,6 @@
 <div class="text-neon font-arcade font-pixelify flex items-center justify-center min-h-screen relative p-4">
   <!-- Rectangle bleu -->
   <div class="relative m-4 w-[500px] h-[800px] border-2 border-crtBlue rounded-md p-8 overflow-hidden">
-    
-<div id="friends-list" class="mt-8 space-y-4">
-  <!-- Les amis ajoutés apparaîtront ici -->
-</div>
 
     <button
       id="return-btn"
@@ -36,14 +32,19 @@
     class="flex-1 px-2 rounded bg-white border border-white text-black"
   />
   <button
-    onclick="addFriends(document.getElementById('addfriend').value)"
+    onclick="addFriend(document.getElementById('addfriend').value)"
     class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
   >
     Follow Friends
   </button>
 </div>
 
+<div class="mt-8 space-y-4 overflow-y-scroll max-h-[50svh]">
+  <!-- Les amis ajoutés apparaîtront ici -->
+   <ul id="friends-list">
 
+   </ul>
+</div>
 
   <!-- Ajoute autant d'amis que nécessaire ici -->
 </div>

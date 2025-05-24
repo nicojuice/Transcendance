@@ -1,7 +1,9 @@
-async function addFriends(add: string) : Promise<void> {
+import { navigate } from "./nav"
+
+async function addFriend(add: string) : Promise<void> {
   const username = localStorage.getItem("username");
-  console.log(localStorage.getItem("username"), 'l user en question');
-  console.log(add,"le compte a add");
+  //console.log(localStorage.getItem("username"), 'l user en question');
+  //console.log(add,"le compte a add");
 
   if (add === localStorage.getItem("username"))
   {
@@ -19,7 +21,8 @@ async function addFriends(add: string) : Promise<void> {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        //alert(data.message);
+        await getFriends();
       } else {
         alert(data.message || `Failed to add friends.`);
       }
@@ -30,13 +33,42 @@ async function addFriends(add: string) : Promise<void> {
 	}
 }
 
-(window as any).addFriends = addFriends;
+export async function getFriends() : Promise<void> {
+  const username = localStorage.getItem("username");
+  if (!username)
+  {
+    await navigate("log");
+    return ;
+  }
+  try {
+    const reponse = await fetch(`http://localhost:8088/api/get-friends?username=${encodeURIComponent(username)}`, {
+      method: "GET"
+    });
+    if (!reponse.ok)
+      throw new Error(`Erreur API : ${reponse.status}`);
+    const data = await reponse.json();
+    const friendsList = data.friends as string[];
+    const ul = document.getElementById("friends-list");
+    if (!ul)
+      return;
+    ul.innerHTML = "";
+    friendsList.forEach(friend => {
+      const li = document.createElement("li");
+      li.textContent = friend;
+      ul.appendChild(li);
+    });
+  } catch (err) {
+
+  }
+}
+
+(window as any).addFriend = addFriend;
 
 window.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('addfriend');
   if (connectBtn) {
     connectBtn.addEventListener('click', () => {
-      addFriends("quelquun");
+      addFriend("quelquun");
     });
   }
 });

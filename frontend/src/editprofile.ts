@@ -30,8 +30,8 @@ async function editUser(): Promise<void> {
   const newUsernameInput = document.getElementById("username") as HTMLInputElement;
   const edit = newUsernameInput?.value?.trim();
 
-  console.log("Ancien username:", oldUsername);
-  console.log("Nouveau username:", edit);
+  //console.log("Ancien username:", oldUsername);
+  //console.log("Nouveau username:", edit);
 
   if (!edit) {
     alert("Veuillez saisir un nouveau nom d'utilisateur.");
@@ -59,7 +59,7 @@ async function editUser(): Promise<void> {
     });
 
     const data = await response.json();
-    console.log("Réponse changement username:", data);
+    //console.log("Réponse changement username:", data);
 
     if (response.ok) {
       alert(data.message || "Nom d'utilisateur modifié avec succès");
@@ -85,7 +85,7 @@ async function editUser(): Promise<void> {
 async function editPass(edit: string): Promise<void> {
   const username = localStorage.getItem("username");
   
-  console.log("Changement mot de passe pour:", username);
+  //console.log("Changement mot de passe pour:", username);
   
   if (!edit?.trim() || edit === "••••••••") {
     alert("Veuillez saisir un nouveau mot de passe.");
@@ -105,7 +105,7 @@ async function editPass(edit: string): Promise<void> {
     });
 
     const data = await response.json();
-    console.log("Réponse changement password:", data);
+    //console.log("Réponse changement password:", data);
 
     if (response.ok) {
       alert(data.message || "Mot de passe modifié avec succès");
@@ -126,8 +126,8 @@ async function editPass(edit: string): Promise<void> {
 async function editEmail(edit: string): Promise<void> {
   const username = localStorage.getItem("username");
   
-  console.log("Changement email pour:", username);
-  console.log("Nouvel email:", edit);
+  //console.log("Changement email pour:", username);
+  //console.log("Nouvel email:", edit);
   
   if (!edit?.trim()) {
     alert("Veuillez saisir un nouvel email.");
@@ -147,7 +147,7 @@ async function editEmail(edit: string): Promise<void> {
     });
 
     const data = await response.json();
-    console.log("Réponse changement email:", data);
+    //console.log("Réponse changement email:", data);
 
     if (response.ok) {
       alert(data.message || "Email modifié avec succès");
@@ -167,12 +167,12 @@ async function editEmail(edit: string): Promise<void> {
 
 
 
-async function fetchProfile(): Promise<void> {
+export async function fetchProfile(): Promise<void> {
   const token = localStorage.getItem("token");
   const storedUsername = localStorage.getItem("username");
 
-  console.log("fetchProfile - Token:", token ? "présent" : "absent");
-  console.log("fetchProfile - Username stocké:", storedUsername);
+  //console.log("fetchProfile - Token:", token ? "présent" : "absent");
+  //console.log("fetchProfile - Username stocké:", storedUsername);
 
   if (!token) {
     console.warn("Utilisateur non authentifié - pas de token");
@@ -189,7 +189,7 @@ async function fetchProfile(): Promise<void> {
       },
     });
 
-    console.log("fetchProfile - Status:", response.status);
+    //console.log("fetchProfile - Status:", response.status);
 
     if (!response.ok) {
       if (response.status === 401) {
@@ -202,7 +202,7 @@ async function fetchProfile(): Promise<void> {
     }
 
     const data = await response.json();
-    console.log("Profil reçu du serveur:", data);
+    //console.log("Profil reçu du serveur:", data);
 
     // Vérifier que les données sont valides
     if (!data || typeof data !== 'object') {
@@ -215,7 +215,7 @@ async function fetchProfile(): Promise<void> {
 
     if (displayUsername) {
       const usernameToDisplay = data.name || data.username || storedUsername || "Utilisateur";
-      console.log("Mise à jour affichage username:", usernameToDisplay);
+      //console.log("Mise à jour affichage username:", usernameToDisplay);
       displayUsername.textContent = usernameToDisplay;
     }
     
@@ -262,7 +262,7 @@ async function fetchProfile(): Promise<void> {
     const storedEmail = localStorage.getItem("email");
     
     if (storedUsername || storedEmail) {
-      console.log("Utilisation des données du localStorage comme fallback");
+      //console.log("Utilisation des données du localStorage comme fallback");
       
       const displayUsername = document.getElementById("display-username");
       const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -289,10 +289,10 @@ async function fetchProfile(): Promise<void> {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Page chargée, récupération du profil...");
+  //console.log("Page chargée, récupération du profil...");
   
   setTimeout(() => {
-    console.log("Lancement fetchProfile après délai...");
+    //console.log("Lancement fetchProfile après délai...");
     fetchProfile();
   }, 50);
 });
