@@ -28,6 +28,10 @@ async function displayAvatar(username: string): Promise<void> {
 			img.src = imageUrl;
 		}
 	} catch (err) {
+<<<<<<< HEAD
+=======
+		// alert(";");
+>>>>>>> origin/main
 		console.error("Error fetching avatar:", err);
 	}
 }

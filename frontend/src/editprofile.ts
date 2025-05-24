@@ -1,4 +1,4 @@
-import { user_exist } from "./nav";
+import { user_exist, navigate } from "./nav";
 
 function clearUserData(): void {
   localStorage.removeItem("username");
@@ -36,8 +36,16 @@ async function editUser(): Promise<void> {
   if (!edit) {
     alert("Veuillez saisir un nouveau nom d'utilisateur.");
     return;
-  } else if (await user_exist(edit) === true) {
-    alert("Nom d'utilisateur deja existant.");
+  }
+
+  if (!oldUsername) {
+    alert("Deconnexion.");
+    await navigate("log");
+    return;
+  }
+
+  if (await user_exist(edit) === true) {
+    alert("Nom d'utilisateur déjà existant.");
     return;
   }
   
