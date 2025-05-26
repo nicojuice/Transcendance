@@ -1,6 +1,7 @@
 // import { setCookie } from 'typescript-cookie';
 import { navigate } from './nav';
 //import { initProfilePage } from './profile';
+import { updateConnectionStatus } from './status';
 
 
 async function connect(e: Event): Promise<void> {
@@ -21,6 +22,7 @@ async function connect(e: Event): Promise<void> {
 			localStorage.setItem('username', username);
 			localStorage.setItem('isConnected', 'true');
 			localStorage.setItem("token", data.token);
+			await updateConnectionStatus(1);
 			await navigate('profile');
 		}
 		else {

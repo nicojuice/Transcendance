@@ -147,6 +147,19 @@ services:
       - Transcendance
     restart: unless-stopped
 
+  status-service:
+    build:
+      context: ./backend/user-management/status
+      dockerfile: Dockerfile
+    ports:
+      - "8094:8094"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
@@ -165,6 +178,7 @@ services:
       - pass-service
       - add-friends-service
       - games-player
+      - status-service
     networks:
       - Transcendance
 

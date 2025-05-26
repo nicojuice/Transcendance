@@ -5,7 +5,8 @@ sqlite3 /data/data.db "
 		name TEXT,
 		email TEXT,
 		password TEXT,
-		avatar BLOB
+		avatar BLOB,
+		status INTEGER
 	);"
 sqlite3 /data/data.db "
 	CREATE TABLE IF NOT EXISTS friends (
