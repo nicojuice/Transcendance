@@ -160,6 +160,19 @@ services:
     networks:
       - Transcendance
 
+  google-auth-service:
+    build:
+      context: ./backend/google-auth
+      dockerfile: Dockerfile
+    ports:
+      - "8095:8095"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
