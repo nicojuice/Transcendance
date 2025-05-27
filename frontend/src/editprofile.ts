@@ -297,10 +297,11 @@ export async function fetchProfile(): Promise<void> {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  //console.log("Page chargée, récupération du profil...");
-  
-  setTimeout(() => {
-    //console.log("Lancement fetchProfile après délai...");
-    fetchProfile();
-  }, 50);
+  const isProfilePage = window.location.pathname.includes("profile");
+
+  if (isProfilePage) {
+    setTimeout(() => {
+      fetchProfile();
+    }, 50);
+  }
 });
