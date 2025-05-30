@@ -7,7 +7,7 @@
   <div class="crt-effect absolute inset-0 z-[-1]"></div>
 
   <!-- Conteneur principal : anneaux + formulaire -->
-  <div class="relative w-[500px] h-[500px] group flex items-center justify-center z-10 overflow-visible">
+  <div class="relative w-[600px] h-[600px] group flex items-center justify-center z-10 overflow-visible">
     <!-- Anneaux -->
     <div class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"></div>
     <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"></div>
@@ -56,7 +56,21 @@
           onclick="register(event)"
         />
         
+<<<<<<< HEAD
         <div class="h-full text-white">Already have an account ?&nbsp;<button class="cursor-pointer hover:underline" onclick="navigate('log')">Login</button> </div>
+=======
+        <!-- Bouton Google Sign Up -->
+        <button
+          type="button"
+          class="mb-4 flex items-center justify-center gap-2 px-6 py-2 bg-white text-black font-bold rounded hover:brightness-110 transition-all w-full"
+          onclick="loginWithGoogle()"
+        >
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="w-5 h-5" />
+          Sign up with Google
+        </button>
+
+        <div class="h-full text-white">Already have an account ? <button onclick="navigate('log')">Login</button> </div>
+>>>>>>> 99c95092daf01ed6b656c5e6640d9c0982bbb479
       </form>
     </div>
   </div>  
