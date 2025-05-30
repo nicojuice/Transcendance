@@ -20,10 +20,11 @@ async function connect(e: Event): Promise<void> {
 		if (response.ok) {
 			//alert(data.message);
 			localStorage.setItem("username", username);
+			localStorage.setItem("token", data.token);
 			if (await is2FA(e) === false)
 				await navigate('2FA');
 			else
-				await send2FACode(username, data.token, e);
+				await send2FACode(username, e);
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');

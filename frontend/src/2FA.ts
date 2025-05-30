@@ -1,6 +1,6 @@
 import { navigate } from "./nav"
 
-export async function send2FACode(username: string, token: string | null, e: Event) : Promise<void> {
+export async function send2FACode(username: string, e: Event) : Promise<void> {
 	e.preventDefault();
 
 	// send 2FA code
@@ -10,13 +10,18 @@ export async function send2FACode(username: string, token: string | null, e: Eve
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ username })
 	});
-	if (token)
-		localStorage.setItem("token", token);
 	if (!response.ok)
 	{
 		alert("Error while sending the 2FA code.");
 		return ;
 	}
+}
+
+async function active2FAlater(e: Event) : Promise<void> {
+	e.preventDefault();
+
+	localStorage.setItem('isConnected', "true");
+	await navigate("profile");
 }
 
 async function resend2FACode(e: Event) : Promise<void> {
@@ -28,7 +33,7 @@ async function resend2FACode(e: Event) : Promise<void> {
 		navigate("log");
 		return;
 	}
-	send2FACode(username, localStorage.getItem("token"), e);
+	send2FACode(username, e);
 }
 
 async function check2FACode(e: Event) : Promise<void> {
@@ -113,6 +118,7 @@ async function active2FA(e: Event) : Promise<void> {
 
 (window as any).is2FA = is2FA;
 (window as any).active2FA = active2FA;
+(window as any).active2FAlater = active2FAlater;
 (window as any).check2FACode = check2FACode;
 (window as any).send2FACode = send2FACode;
 (window as any).resend2FACode = resend2FACode;
