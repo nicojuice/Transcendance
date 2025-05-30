@@ -1,6 +1,7 @@
 import { initProfilePage } from './profile';
 import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
+import { updateConnectionStatus } from './status';
 
 export async function navigate(page : string) {
     try {
@@ -13,7 +14,10 @@ export async function navigate(page : string) {
         	elem.innerHTML = html;
 		console.log("navigation by navigate()");
 		if (page === "profile")
+		{
+			await updateConnectionStatus(1);
 			await initProfilePage();
+		}
 		else if (page === "friends")
 			await getFriends();
 		moveBall();

@@ -10,6 +10,8 @@ import './profile';
 import './editprofile';
 import './friends';
 import './2FA';
+import './status';
+
 
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

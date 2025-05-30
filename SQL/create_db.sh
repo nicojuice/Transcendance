@@ -6,7 +6,8 @@ sqlite3 /data/data.db "
 		email TEXT NOT NULL,
 		password TEXT NOT NULL,
 		avatar BLOB,
-		enabled_fa INTEGER
+		enabled_fa INTEGER,
+		status INTEGER
 	);"
 sqlite3 /data/data.db "
 	CREATE TABLE IF NOT EXISTS otp_codes (
