@@ -11,6 +11,7 @@ import './editprofile';
 import './friends';
 import './2FA';
 import './status';
+import './room';
 
 
 

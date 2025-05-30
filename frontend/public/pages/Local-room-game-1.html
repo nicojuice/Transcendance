@@ -1,0 +1,67 @@
+<!-- Pong ball -->
+<div id="pongBall" class="ball absolute z-2"></div>
+
+<div
+  class="text-neon font-arcade flex items-center justify-center relative overflow-visible p-4"
+>
+  <!-- CRT scanlines -->
+  <div class="crt-effect absolute inset-0 z-[-1]"></div>
+
+  <!-- Conteneur principal : anneaux + formulaire -->
+  <div
+    class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center z-10"
+  >
+    <!-- Anneaux -->
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
+    ></div>
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
+    ></div>
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
+    ></div>
+
+    <!-- Formulaire -->
+    <form
+      id="SettingForm"
+      class="relative z-10 flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
+      onsubmit="return false;"
+    >
+      <h2 class="text-2xl mb-4">Game Setting</h2>
+      <!-- Choix du nombre de joueurs -->
+      <label for="players" class="mb-2">Combien de joueurs ?</label>
+      <select
+        id="players"
+        name="players"
+        class="mb-4 p-2 bg-black border border-neon text-neon rounded-md"
+      >
+        <option value="1">1 joueur</option>
+        <option value="2">2 joueurs</option>
+        <option value="3">3 joueurs</option>
+        <option value="4">4 joueurs</option>
+      </select>
+
+      <!-- Choix du mode custom -->
+      <label for="custom" class="mb-2">Partie personnalisée ?</label>
+      <select
+        id="custom"
+        name="custom"
+        class="mb-4 p-2 bg-black border border-neon text-neon rounded-md"
+      >
+        <option value="no">Non</option>
+        <option value="yes">Oui</option>
+      </select>
+
+      <!-- Bouton de soumission -->
+      <button
+        type="button"
+        onclick="startGame()"
+        class="mt-4 px-4 py-2 border border-neon text-neon rounded hover:bg-neon hover:text-black transition-all duration-300"
+      >
+        Lancer la partie
+      </button>
+    </form>
+  </div>
+</div>
+

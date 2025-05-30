@@ -160,6 +160,19 @@ services:
     networks:
       - Transcendance
 
+  rooms-service:
+    build:
+      context: ./backend/games/rooms
+      dockerfile: Dockerfile
+    ports:
+      - "8096:8096"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
