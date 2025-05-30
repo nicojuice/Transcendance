@@ -160,21 +160,12 @@ services:
     networks:
       - Transcendance
 
-<<<<<<< HEAD
   rooms-service:
     build:
       context: ./backend/games/rooms
       dockerfile: Dockerfile
     ports:
       - "8096:8096"
-=======
-  google-auth-service:
-    build:
-      context: ./backend/google-auth
-      dockerfile: Dockerfile
-    ports:
-      - "8095:8095"
->>>>>>> 99c95092daf01ed6b656c5e6640d9c0982bbb479
     environment:
       - NODE_ENV=production
     volumes:
