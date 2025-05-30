@@ -4,6 +4,7 @@ import { moveBall } from "./pongballeffects"
 
 export async function navigate(page : string) {
     try {
+		window.history.replaceState(null, document.title, page);
 		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
         const html = await response.text();
@@ -15,8 +16,10 @@ export async function navigate(page : string) {
 			await initProfilePage();
 		else if (page === "friends")
 			await getFriends();
-		else if (page === "log" || page === "signup")
-			moveBall();
+		moveBall();
+		
+		//else if (page === "log" || page === "signup" || page === "2FA" || page === "2FAcode")
+		//	moveBall();
     } catch (error) {
         console.error("Erreur de chargement :", error);
         		const elem = document.getElementById('screen-content'); 

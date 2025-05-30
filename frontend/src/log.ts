@@ -1,5 +1,6 @@
 // import { setCookie } from 'typescript-cookie';
 import { navigate } from './nav';
+import { is2FA, send2FACode } from './2FA'
 //import { initProfilePage } from './profile';
 
 
@@ -17,11 +18,12 @@ async function connect(e: Event): Promise<void> {
 		});
 		const data = await response.json();
 		if (response.ok) {
-			alert(data.message);
-			localStorage.setItem('username', username);
-			localStorage.setItem('isConnected', 'true');
-			localStorage.setItem("token", data.token);
-			await navigate('profile');
+			//alert(data.message);
+			localStorage.setItem("username", username);
+			if (await is2FA(e) === false)
+				await navigate('2FA');
+			else
+				await send2FACode(username, data.token, e);
 		}
 		else {
 			alert(data.message || 'Erreur lors de la connexion.');
@@ -38,10 +40,10 @@ async function connect(e: Event): Promise<void> {
 
 window.addEventListener('DOMContentLoaded', () => {
 	// Connexion
-	const connectBtn = document.getElementById('connect-button');
-	if (connectBtn) {
-		connectBtn.addEventListener('click', connect);
-	}
+	//const connectBtn = document.getElementById('connect-button');
+	//if (connectBtn) {
+	//	connectBtn.addEventListener('click', connect);
+	//}
 
 	// Affichage du username
 	const storedUsername = localStorage.getItem('username');

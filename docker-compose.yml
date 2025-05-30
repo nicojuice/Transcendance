@@ -176,6 +176,20 @@ services:
       - sql:/data
     networks:
       - Transcendance
+  
+  2fa:
+    build:
+      context: ./backend/2FA/
+      dockerfile: Dockerfile
+    ports:
+      - 8100:8100
+    depends_on:
+      - db
+    volumes:
+      - 2fa:/2fa
+      - sql:/data
+    networks:
+      - Transcendance
 
   # prometheus:
   #   build:
@@ -223,5 +237,6 @@ volumes:
   node-volume:
   grafana-data:
   public-volume:
+  2fa:
   sql:
   register-data:

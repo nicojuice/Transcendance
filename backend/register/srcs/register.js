@@ -24,8 +24,8 @@
       }
       // check si le username n'existe pas deja
       db.run(
-        'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-        [username, email, hashedPassword],
+        'INSERT INTO users (name, email, password, enabled_fa) VALUES (?, ?, ?, ?)',
+        [username, email, hashedPassword, 0],
         function (err) {
           if (err) {
             fastify.log.error('Erreur DB :', err);

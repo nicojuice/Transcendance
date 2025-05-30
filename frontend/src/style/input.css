@@ -4,7 +4,7 @@
 
 /* Balle de Pong */
 .ball {
-  @apply absolute rounded-full z-20;
+  @apply absolute rounded-full -z-10 pointer-events-none;
   width: 20px;
   height: 20px;
   background-color: white;
@@ -25,7 +25,7 @@
 
 /* Effet CRT scanlines */
 .crt-effect {
-  @apply absolute inset-0 z-[-1] pointer-events-none;
+  @apply absolute inset-0 -z-10 pointer-events-none;
   background: repeating-linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.03) 0px,
