@@ -1,4 +1,4 @@
-function startGame() {
+function startGameLocal() {
     const playersElement = document.getElementById("players") as HTMLSelectElement | null;
     const customElement = document.getElementById("custom") as HTMLSelectElement | null;
     
@@ -12,7 +12,7 @@ function startGame() {
     console.log("Lancement de la partie avec :", players, "joueurs, custom =", custom);
 
   // Exemple : envoyer les données au serveur ou rediriger
-  fetch("http://localhost:8096/api/rooms", {
+  fetch("http://localhost:8096/api/rooms/local", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -33,4 +33,4 @@ function startGame() {
     });
 }
 
-(window as any).startGame = startGame; 
+(window as any).startGameLocal = startGameLocal; 

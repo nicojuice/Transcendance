@@ -1,6 +1,6 @@
 const fastify = require('fastify')({ logger: true });
 const sqlite3 = require('sqlite3').verbose();
-// const loginRoutes = require('./srcs/login.js');
+const roomRoutes = require('./srcs/rooms.js');
 const fastifyCors = require('@fastify/cors');
 const fastifyJwt = require('@fastify/jwt');
 const metricsPlugin = require('fastify-metrics');
@@ -11,7 +11,7 @@ fastify.register(fastifyCors, {
   methods: ['GET', 'POST', 'OPTIONS']
 });
 
-// fastify.register(loginRoutes, { prefix: '/api' })
+fastify.register(roomRoutes)
 
 fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',

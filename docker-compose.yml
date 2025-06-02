@@ -160,9 +160,9 @@ services:
     networks:
       - Transcendance
 
-  rooms-service:
+  rooms-local-service:
     build:
-      context: ./backend/games/rooms
+      context: ./backend/games/rooms/local
       dockerfile: Dockerfile
     ports:
       - "8096:8096"

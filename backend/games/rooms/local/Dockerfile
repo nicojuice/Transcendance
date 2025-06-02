@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
 # Crée un répertoire de travail dans le conteneur
-WORKDIR /usr/src/app/backend/games/player
+WORKDIR /usr/src/app/backend/games/rooms/local
 
 COPY package*.json ./
 
@@ -27,5 +27,5 @@ COPY . .
 
 EXPOSE 8096
 
-RUN echo "🚀 Lancement du Back/games/player..."
+RUN echo "🚀 Lancement du Back/games/rooms/local..."
 CMD ["sh", "-c", "node server.js -d"]
