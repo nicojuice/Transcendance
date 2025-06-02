@@ -91,3 +91,15 @@
       box-shadow: 0 0 20px #39ff14, 0 0 30px #39ff14;
     }
   }
+
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+

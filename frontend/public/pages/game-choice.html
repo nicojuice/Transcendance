@@ -1,39 +1,102 @@
-<div class="text-neon font-arcade font-pixelify flex items-center justify-center min-h-screen relative p-4">
-    <!-- Rectangle vert -->
-    <div class="w-[1000px] h-[800px] backdrop-blur-xl border-2 border-neon -500 p-6 flex items-center justify-around rounded-lg">
+<div class="text-neon font-pixelify flex items-center justify-center min-h-screen p-6">
+  <!-- Conteneur principal -->
+  <div class="w-full max-w-[1600px] flex gap-8 flex-wrap justify-center items-start">
 
-<!-- Rectangle bleu -->
-<div class="m-4 w-[800px] h-[750px] border-2 border-crtBlue rounded-md p-8 overflow-hidden">
-  <h2 class="py-8 text-center text-2xl text-white mb-4">Game 1</h2>
-<div class="mt-auto w-full flex justify-center gap-4 pt-8">
-<button onclick="navigate('Local-room-game-1')" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Local
-</button>
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Multijoueur
-</button>
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Tournoi
-</button>
-</div>
-</div>
-  <!-- </div> -->
-<!-- </div> -->
-    
-<!-- Rectangle rose -->
-<div class="m-4 w-[800px] h-[750px] border-2 border-crtPurple rounded-md relative">
-    <h2 class="py-8 text-center text-2xl text-white mb-4">Game 2</h2>
-<div class="mt-auto w-full flex justify-center gap-4 pt-8">
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Local
-</button>
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Multijoueur
-</button>
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition">
-  Tournoi
-</button>
-</div>
-</div>
+    <!-- Bloc Game 1 -->
+    <div class="w-[500px] h-[700px] bg-gradient-to-br backdrop-blur-xl from-crtBlue/30 to-blue-10 border-2 border-crtBlue shadow-neon-blue rounded-2xl p-6 flex flex-col justify-between">
+      <h2 class="text-center text-3xl text-white uppercase tracking-widest mb-6 drop-shadow-neon">Game 1</h2>
+        <button
+          id="settings-btn"
+          onclick="navigate('Local-room-game-1')"
+          class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
+          title="Paramètres"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-settings"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      <div class="flex flex-col gap-4 mt-auto">
+        <button onclick="navigate('Local-room-game-1')" class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Local
+        </button>
+        <button class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Multijoueur
+        </button>
+        <button class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Tournoi
+        </button>
+      </div>
+    </div>
 
+    <!-- Bloc Game 2 -->
+    <div class="w-[500px] h-[700px] backdrop-blur-xl bg-gradient-to-br from-crtPurple/30 to-purple-10 border-2 border-crtPurple shadow-neon-purple rounded-2xl p-6 flex flex-col justify-between">
+      <h2 class="text-center text-3xl text-white uppercase tracking-widest mb-6 drop-shadow-neon">Game 2</h2>
+        <button
+          id="return-btn"
+          onclick="navigate('profile')"
+          class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
+          title="Back to Profile"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-corner-down-left"
+          >
+            <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+            <path d="m9 10-5 5 5 5" />
+          </svg>
+        </button>
 
+        <button
+          id="settings-btn"
+          onclick="navigate('Local-room-game-1')"
+          class="absolute top-4 right-16 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
+          title="Paramètres"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-settings"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      <div class="flex flex-col gap-4 mt-auto">
+        <button class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Local
+        </button>
+        <button class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Multijoueur
+        </button>
+        <button class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
+          Tournoi
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

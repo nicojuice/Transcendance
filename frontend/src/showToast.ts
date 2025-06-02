@@ -20,9 +20,13 @@ export function showToast(message: string, type: 'success' | 'error' = 'success'
     'ease-out',
     'opacity-0',
     'scale-95',
+    'border', // ajout de la bordure
   ];
 
-  const typeClasses = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+  const typeClasses =
+    type === 'success'
+      ? 'bg-green-500/20 border-green-500 text-green-600'
+      : 'bg-red-500/20 border-red-500 text-red-600';
 
   toast.className = [...baseClasses, typeClasses].join(' ');
   toast.id = id;
@@ -30,13 +34,11 @@ export function showToast(message: string, type: 'success' | 'error' = 'success'
 
   document.body.appendChild(toast);
 
-  // Animation d’entrée (force reflow + modif styles)
   requestAnimationFrame(() => {
     toast.classList.remove('top-[-100px]', 'opacity-0', 'scale-95');
     toast.classList.add('top-4', 'opacity-100', 'scale-100');
   });
 
-  // Disparition après 3 secondes
   setTimeout(() => {
     toast.classList.remove('top-4', 'opacity-100', 'scale-100');
     toast.classList.add('top-[-100px]', 'opacity-0', 'scale-95');
