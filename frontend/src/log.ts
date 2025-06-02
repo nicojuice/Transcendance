@@ -69,3 +69,50 @@ window.addEventListener("DOMContentLoaded", () => {
 // 		}
 // 	}
 // });
+
+
+// Bouton de connexion Google
+function loginWithGoogle() {
+	window.location.href = '/api/google-auth';
+}
+
+(window as any).loginWithGoogle = loginWithGoogle;
+
+// Vérifier si on revient de Google (dans votre page principale)
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    
+    if (code) {
+        // Envoyer le code au microservice pour traitement
+        fetch('http://localhost:8095/api/google-auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                code: code,
+                state: state 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Authentification réussie:', data.user);
+                // Sauvegarder les infos utilisateur
+                localStorage.setItem('user', JSON.stringify(data.user));
+                // Nettoyer l'URL et rediriger
+                window.history.replaceState({}, document.title, window.location.pathname);
+                // Rediriger vers le dashboard
+                window.location.href = '/dashboard';
+            } else {
+                console.error('Erreur auth:', data.error);
+                alert('Erreur lors de l\'authentification');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+        });
+    }
+});
