@@ -49,7 +49,7 @@ module.exports = function (fastify, opts, done) {
         // Connexion réussie
         return reply.send({ 
           message: 'Connexion réussie', 
-          token: fastify.jwt.sign({id: user.id, email: user.email })
+          token: fastify.jwt.sign({id: user.id, username: username, email: user.email })
         });
       });
     });

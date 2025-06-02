@@ -5,6 +5,23 @@ const nodemailer = require("nodemailer");
 module.exports = async function (fastify, opts) {
 	const db = fastify.db || new sqlite3.Database('/data/data.db');
 
+	fastify.post('/waiting-for-a-code', async (req, reply) => {
+		const { id } = req.body;
+
+		const user = await new Promise((resolve, reject) => {
+			db.get("SELECT * FROM otp_codes WHERE user_id = ?", [id], (err, row) => {
+			if (err) return reject(err);
+			if (!row) return resolve(null);
+			resolve(row);
+			});
+		});
+		if (!user)
+			return reply.code(404).send({ error: "user not found" });
+		if (user.validated === 0)
+			return reply.send({ success: true });	// waiting for a code
+		return reply.send({ success: false });		// no waiting for a code
+	});
+
 	fastify.post('/verify-2fa', async (req, reply) => {
 		const { username, code } = req.body;
 
@@ -41,6 +58,16 @@ module.exports = async function (fastify, opts) {
 			if (now > otpEntry.expires)
 				return reply.status(410).send({ error: 'OTP code expired' });
 			// Si tout est bon
+			await new Promise((resolve, reject) => {
+				db.run(
+					"UPDATE otp_codes SET validated = ? WHERE user_id = ?",
+					[1, user.id],
+					function (err) {
+						if (err) return reject(err);
+						resolve(this.changes);
+					}
+				);
+			});
 			reply.send({ success: true });
 		} catch (err) {
 			fastify.log.error(err);
@@ -95,10 +122,10 @@ module.exports = async function (fastify, opts) {
 			});
 			const otpEntry = await new Promise((resolve, reject) => {
 				db.run(
-					`INSERT INTO otp_codes (user_id, code, expires)
-					VALUES (?, ?, ?)
-					ON CONFLICT(user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires`,
-					[user.id, OTPcode, Date.now() + 5 * 60 * 1000],
+					`INSERT INTO otp_codes (user_id, code, expires, validated)
+					VALUES (?, ?, ?, ?)
+					ON CONFLICT(user_id) DO UPDATE SET code = excluded.code, expires = excluded.expires, validated = excluded.validated`,
+					[user.id, OTPcode, Date.now() + 5 * 60 * 1000, 0],
 					function (err) {
 						if (err) {
 							return (reject(err));
@@ -107,18 +134,6 @@ module.exports = async function (fastify, opts) {
 					}
 				);
 			});
-			//const otpEntry = await new Promise((resolve, reject) => {
-			//	db.run(
-			//		"UPDATE otp_codes SET code = ?, expires = ? WHERE user_id = ?",
-			//		[OTPcode, Date.now() + 5 * 60 * 1000, user.id],
-			//		function (err) {
-			//			if (err) {
-			//				return (reject(err));
-			//			}
-			//			resolve(this.lastID);
-			//		}
-			//	);
-			//});
 			return (reply.send({ message: "2FA activée avec succès!" }));
 		}  catch (err) {
 			fastify.log.error(err);

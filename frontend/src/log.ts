@@ -1,6 +1,7 @@
 // import { setCookie } from 'typescript-cookie';
 import { navigate } from './nav';
 import { is2FA, send2FACode } from './2FA'
+import { getUsername } from './fetchs';
 //import { initProfilePage } from './profile';
 
 
@@ -19,7 +20,7 @@ async function connect(e: Event): Promise<void> {
 		const data = await response.json();
 		if (response.ok) {
 			//alert(data.message);
-			localStorage.setItem("username", username);
+			//localStorage.setItem("username", username);
 			localStorage.setItem("token", data.token);
 			if (await is2FA(e) === false)
 				await navigate('2FA');
@@ -39,7 +40,7 @@ async function connect(e: Event): Promise<void> {
 // Expose function to global scope
 (window as any).connect = connect;
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
 	// Connexion
 	//const connectBtn = document.getElementById('connect-button');
 	//if (connectBtn) {
@@ -47,7 +48,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	//}
 
 	// Affichage du username
-	const storedUsername = localStorage.getItem('username');
+	const storedUsername = await getUsername();//localStorage.getItem('username');
 	if (storedUsername) {
 		const displayUsername = document.getElementById('display-username');
 		if (displayUsername) {

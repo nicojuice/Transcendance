@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
 # Crée un répertoire de travail dans le conteneur
-WORKDIR /usr/src/app/backend/2fa
+WORKDIR /usr/src/app/backend/jwt
 
 COPY package*.json ./
 
@@ -14,13 +14,11 @@ RUN npm install sqlite3
 RUN npm install fastify
 RUN npm install @fastify/cors
 RUN npm install @fastify/cookie
-#RUN npm install qrcode
-#RUN npm install speakeasy
-RUN npm install nodemailer
+RUN npm install @fastify/jwt
 
 COPY . .
 
-EXPOSE 8100
+EXPOSE 8101
 
-RUN echo "🚀 Lancement du service 2FA"
+RUN echo "🚀 Lancement du service JWT..."
 CMD ["sh", "-c", "node server.js -d"]

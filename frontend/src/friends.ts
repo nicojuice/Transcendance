@@ -1,11 +1,12 @@
 import { navigate } from "./nav"
+import { getUsername } from "./fetchs";
 
 async function addFriend(add: string) : Promise<void> {
-  const username = localStorage.getItem("username");
+  const username = await getUsername();//localStorage.getItem("username");
   //console.log(localStorage.getItem("username"), 'l user en question');
   //console.log(add,"le compte a add");
 
-  if (add === localStorage.getItem("username"))
+  if (add === await getUsername())//localStorage.getItem("username"))
   {
     alert("impossible de s'ajouter soi-meme en ami, t'as pas d'ami ou quoi ??? La honte mdrrr");
     return ;
@@ -34,7 +35,7 @@ async function addFriend(add: string) : Promise<void> {
 }
 
 export async function getFriends() : Promise<void> {
-  const username = localStorage.getItem("username");
+  const username = await getUsername();//localStorage.getItem("username");
   if (!username)
   {
     await navigate("log");

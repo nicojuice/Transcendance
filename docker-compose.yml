@@ -204,6 +204,19 @@ services:
       - sql:/data
     networks:
       - Transcendance
+  jwt:
+    build:
+      context: ./backend/JWT/
+      dockerfile: Dockerfile
+    ports:
+      - 8101:8101
+    depends_on:
+      - db
+    volumes:
+      - jwt:/jwt
+      - sql:/data
+    networks:
+      - Transcendance
 
   # prometheus:
   #   build:
@@ -252,5 +265,6 @@ volumes:
   grafana-data:
   public-volume:
   2fa:
+  jwt:
   sql:
   register-data:

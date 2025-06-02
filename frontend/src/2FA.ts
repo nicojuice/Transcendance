@@ -1,3 +1,4 @@
+import { getUsername } from "./fetchs";
 import { navigate } from "./nav"
 
 export async function send2FACode(username: string, e: Event) : Promise<void> {
@@ -20,14 +21,14 @@ export async function send2FACode(username: string, e: Event) : Promise<void> {
 async function active2FAlater(e: Event) : Promise<void> {
 	e.preventDefault();
 
-	localStorage.setItem('isConnected', "true");
+	//localStorage.setItem('isConnected', "true");
 	await navigate("profile");
 }
 
 async function resend2FACode(e: Event) : Promise<void> {
 	e.preventDefault();
 
-	const username = localStorage.getItem("username");
+	const username = await getUsername();//localStorage.getItem("username");
 	if (!username)
 	{
 		navigate("log");
@@ -39,13 +40,14 @@ async function resend2FACode(e: Event) : Promise<void> {
 async function check2FACode(e: Event) : Promise<void> {
 	e.preventDefault();
 
-	const username = localStorage.getItem("username");
+	const username = await getUsername();//localStorage.getItem("username");
 	if (!username)
 	{
-		navigate("log");
+		await navigate("log");
 		return;
 	}
 	const code = (document.getElementById('2FA-code') as HTMLInputElement).value;
+	console.log(code);
 	const response = await fetch('http://localhost:8100/api/verify-2fa', {
 		method: "POST",
 		headers: { 'Content-Type': 'application/json' },
@@ -67,7 +69,7 @@ async function check2FACode(e: Event) : Promise<void> {
 export async function is2FA(e: Event) : Promise<Boolean | null> {
 	e.preventDefault();
 
-	const username = localStorage.getItem("username");
+	const username = await getUsername();//localStorage.getItem("username");
 	if (!username)
 	{
 		alert("Connexion perdue");
@@ -94,7 +96,7 @@ export async function is2FA(e: Event) : Promise<Boolean | null> {
 async function active2FA(e: Event) : Promise<void> {
 	e.preventDefault();
 
-	const username = localStorage.getItem("username");
+	const username = await getUsername();//localStorage.getItem("username");
 	if (!username)
 	{
 		alert("Connexion perdue");

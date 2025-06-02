@@ -1,4 +1,5 @@
 import { user_exist, navigate } from "./nav";
+import { getEmail, getUsername } from "./fetchs";
 
 function clearUserData(): void {
   localStorage.removeItem("username");
@@ -26,7 +27,7 @@ function clearUserData(): void {
 }
 
 async function editUser(): Promise<void> {
-  const oldUsername = localStorage.getItem("username");
+  const oldUsername = await getUsername();//localStorage.getItem("username");
   const newUsernameInput = document.getElementById("username") as HTMLInputElement;
   const edit = newUsernameInput?.value?.trim();
 
@@ -71,7 +72,7 @@ async function editUser(): Promise<void> {
 
     if (response.ok) {
       alert(data.message || "Nom d'utilisateur modifié avec succès");
-      localStorage.setItem("username", edit);
+      //localStorage.setItem("username", edit);
       
       const displayText = document.getElementById("display-username");
       if (displayText) displayText.textContent = edit;
@@ -91,7 +92,7 @@ async function editUser(): Promise<void> {
 
 
 async function editPass(edit: string): Promise<void> {
-  const username = localStorage.getItem("username");
+  const username = await getUsername();//localStorage.getItem("username");
   
   //console.log("Changement mot de passe pour:", username);
   
@@ -132,7 +133,7 @@ async function editPass(edit: string): Promise<void> {
 
 
 async function editEmail(edit: string): Promise<void> {
-  const username = localStorage.getItem("username");
+  const username = await getUsername();//localStorage.getItem("username");
   
   //console.log("Changement email pour:", username);
   //console.log("Nouvel email:", edit);
@@ -159,7 +160,7 @@ async function editEmail(edit: string): Promise<void> {
 
     if (response.ok) {
       alert(data.message || "Email modifié avec succès");
-      localStorage.setItem("email", edit.trim());
+      //localStorage.setItem("email", edit.trim());
       
       const emailInput = document.getElementById("email") as HTMLInputElement;
       if (emailInput) emailInput.value = edit.trim();
@@ -177,7 +178,7 @@ async function editEmail(edit: string): Promise<void> {
 
 export async function fetchProfile(): Promise<void> {
   const token = localStorage.getItem("token");
-  const storedUsername = localStorage.getItem("username");
+  const storedUsername = await getUsername();//localStorage.getItem("username");
 
   //console.log("fetchProfile - Token:", token ? "présent" : "absent");
   //console.log("fetchProfile - Username stocké:", storedUsername);
@@ -256,18 +257,18 @@ export async function fetchProfile(): Promise<void> {
     }
 
     if (data.name || data.username) {
-      localStorage.setItem("username", data.name || data.username);
+      //localStorage.setItem("username", data.name || data.username);
     }
     if (data.email) {
-      localStorage.setItem("email", data.email);
+      //localStorage.setItem("email", data.email);
     }
 
   } catch (err) {
     console.error("Erreur lors du chargement du profil:", err);
     
     // Fallback: utiliser les données du localStorage si disponibles
-    const storedUsername = localStorage.getItem("username");
-    const storedEmail = localStorage.getItem("email");
+    const storedUsername = await getUsername();//localStorage.getItem("username");
+    const storedEmail = await getEmail();//localStorage.getItem("email");
     
     if (storedUsername || storedEmail) {
       //console.log("Utilisation des données du localStorage comme fallback");

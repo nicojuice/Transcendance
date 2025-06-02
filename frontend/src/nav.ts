@@ -2,6 +2,7 @@ import { initProfilePage } from './profile';
 import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status';
+import { getUsername, userIsWaitingForA2FACode } from './fetchs';
 
 export async function navigate(page : string) {
     try {
@@ -56,18 +57,25 @@ export async function user_exist(username: string) : Promise<boolean> {
 }
 
 async function default_navigate() {
-	const username = localStorage.getItem("username");
+	//const username = localStorage.getItem("username");
+	const	token = localStorage.getItem("token");
+	let username;
+	try { username = await getUsername(); }
+	catch (err) { username = null; }
 
-	if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true))
+	if (	token
+		&&	username
+		&&	await user_exist(username) === true
+		&&  await userIsWaitingForA2FACode() === false)
 	{
-		console.log("navigation by default()");
 		await navigate("profile");
+	}
+	else if (token && username && await user_exist(username) === true)
+	{
+		await navigate("2FAcode");
 	}
 	else
 	{
-		localStorage.removeItem("isConnected");
-		localStorage.removeItem("username");
-		localStorage.removeItem("email");
 		localStorage.removeItem("token");
 		await navigate("log");
 	}

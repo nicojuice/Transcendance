@@ -14,6 +14,7 @@ sqlite3 /data/data.db "
 		user_id INTEGER PRIMARY KEY,
 		code TEXT NOT NULL,
 		expires INTEGER NOT NULL,
+		validated INTEGER NOT NULL,
 		FOREIGN KEY(user_id) REFERENCES users(id)
 	);"
 sqlite3 /data/data.db "

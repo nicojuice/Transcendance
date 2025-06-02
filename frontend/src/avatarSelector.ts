@@ -1,4 +1,5 @@
 import { filenameToFileObject } from "./signup"
+import { getUsername } from "./fetchs";
 
 const avatars: string[] = [
   '/assets/avatar1.png',
@@ -32,7 +33,7 @@ function changeAvatar(direction: number): void {
 }
 
 export async function sendImgToDB(file: File, u: string | null): Promise<void> {
-  const username = localStorage.getItem("username") || u;
+  const username = (await getUsername()) || u;//localStorage.getItem("username") || u;
   const formData = new FormData();
 
   if (!username)

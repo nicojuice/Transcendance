@@ -1,6 +1,8 @@
+import { getUsername } from "./fetchs";
+
 export async function updateConnectionStatus(status: 0 | 1): Promise<void> 
 {
-    const username = localStorage.getItem("username");
+    const username = await getUsername();//localStorage.getItem("username");
   try {
     const response = await fetch('http://localhost:8094/api/status', {
       method: 'PATCH',

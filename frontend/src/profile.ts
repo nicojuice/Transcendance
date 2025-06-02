@@ -1,4 +1,5 @@
 import { fetchProfile } from "./editprofile"
+import { getUsername } from "./fetchs";
 
 // export function initProfilePage(): void {
 // 	const storedUsername = localStorage.getItem('username');
@@ -35,7 +36,7 @@ async function displayAvatar(username: string): Promise<void> {
 export async function initProfilePage(): Promise<void> {
 	await fetchProfile();
 
-	const storedUsername = localStorage.getItem('username');
+	const storedUsername = await getUsername();//localStorage.getItem('username');
 	if (storedUsername) {
 		const displayUsername = document.getElementById('display-username');
 		if (displayUsername) {
