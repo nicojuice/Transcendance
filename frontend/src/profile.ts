@@ -1,3 +1,5 @@
+import { fetchProfile } from "./editprofile"
+
 // export function initProfilePage(): void {
 // 	const storedUsername = localStorage.getItem('username');
 // 	if (storedUsername) {
@@ -10,7 +12,7 @@
 
 async function displayAvatar(username: string): Promise<void> {
 	try {
-		console.log("display avatar");
+		//console.log("display avatar");
 		const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
 		if (!res.ok)
 			throw new Error("Avatar not found");
@@ -22,23 +24,24 @@ async function displayAvatar(username: string): Promise<void> {
 		const img = document.getElementById("avatar-preview") as HTMLImageElement;
 		if (img)
 		{
-			console.log("image set");
+			//console.log("image set");
 			img.src = imageUrl;
 		}
 	} catch (err) {
-		// alert(";");
 		console.error("Error fetching avatar:", err);
 	}
 }
 
-export function initProfilePage(): void {
+export async function initProfilePage(): Promise<void> {
+	await fetchProfile();
+
 	const storedUsername = localStorage.getItem('username');
 	if (storedUsername) {
 		const displayUsername = document.getElementById('display-username');
 		if (displayUsername) {
 			displayUsername.textContent = storedUsername;
 		}
-		displayAvatar(storedUsername);
+		await displayAvatar(storedUsername);
 	}
 }
 

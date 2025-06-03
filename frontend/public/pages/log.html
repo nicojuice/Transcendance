@@ -1,12 +1,15 @@
+<!-- Pong ball -->
+<div id="pongBall" class="ball absolute z-2"></div>
+
 <div
-  class="text-neon font-arcade flex items-center justify-center min-h-screen relative overflow-visible p-4"
+  class="text-neon font-pixelify flex items-center justify-center relative overflow-visible p-4"
 >
   <!-- CRT scanlines -->
   <div class="crt-effect absolute inset-0 z-[-1]"></div>
 
   <!-- Conteneur principal : anneaux + formulaire -->
   <div
-    class="relative w-[500px] h-[500px] group flex items-center justify-center z-10"
+    class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center z-10"
   >
     <!-- Anneaux -->
     <div
@@ -50,13 +53,11 @@
         value="Sign in"
         class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
         onclick="connect(event)"
-        
       />
-
-      <div class="h-full text-white">
-        Don't have an account ?
-        <button onclick="navigate('signup')">Sign up</button>
-      </div>
     </form>
+    <div class="font-pixelify flex items-center justify-center relative overflow-visible z-2  text-white">
+        Don't have an account ?&nbsp;
+        <button class="cursor-pointer hover:underline" onclick="navigate('signup')">Sign up</button>
+    </div>
   </div>
 </div>

@@ -1,29 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Arcade Game</title>
-    <link href="../style/output.css" rel="stylesheet" />
+    
     <link
       href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
-  
 
   <body>
     <div
-      class="text-neon font-arcade flex items-center justify-center min-h-screen relative overflow-hidden p-4"
+      class="text-neon font-pexilify flex items-center justify-center min-h-screen relative p-4"
     >
       <img
         src="/assets/pink.png"
-        class="absolute inset-0 w-full h-full object-cover z-[-2]"
+        class="absolute inset-0 w-full h-full object-cover -z-10"
       />
 
       <!-- Page content -->
       <div id="screen-content"></div>
-      <!-- Pong ball -->
-      <div id="pongBall" class="absolute z-2"></div>
 
       <script type="module" src="./src/main.js"></script>
       <script type="module" src="./src/nav.js"></script>
@@ -35,8 +32,12 @@
       <script type="module" src="./src/dataUrltoFile.js"></script>
       <script type="module" src="./src/editprofile.js"></script>
       <script type="module" src="./src/friends.js"></script>
+      <script type="module" src="./src/2FA.ts"></script>
+      <script type="module" src="./src/status.js"></script>
+      <script type="module" src="./src/room.js"></script>
       <script type="module" src="./src/games/init.js"></script>
-      
+      <script type="module" src="./src/showToast.js"></script>
+      <script type="module" src="./src/darkmode.ts"></script>
     </div>
   </body>
 </html>

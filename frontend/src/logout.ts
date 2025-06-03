@@ -17,9 +17,11 @@
 //   }
 // });
 
+import { updateConnectionStatus } from './status';
 import { navigate } from './nav';
 
 export function logout(): void {
+    updateConnectionStatus(0);
     localStorage.removeItem('username');
     localStorage.removeItem('isConnected');
     navigate('log');

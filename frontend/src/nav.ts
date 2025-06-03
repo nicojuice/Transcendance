@@ -1,20 +1,35 @@
 import { initProfilePage } from './profile';
+import { getFriends } from "./friends"
+import { moveBall } from "./pongballeffects"
+import { updateConnectionStatus } from './status';
+import { showToast } from './showToast'
 
-export async function	navigate(page : string) {
+export async function navigate(page : string) {
     try {
+		window.history.replaceState(null, document.title, page);
 		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
         const html = await response.text();
 		const elem = document.getElementById('screen-content');
 		if (elem)
         	elem.innerHTML = html;
+		console.log("navigation by navigate()");
 		if (page === "profile")
-			initProfilePage();
+		{
+			await updateConnectionStatus(1);
+			await initProfilePage();
+		}
+		else if (page === "friends")
+			await getFriends();
+		moveBall();
+		
+		//else if (page === "log" || page === "signup" || page === "2FA" || page === "2FAcode")
+		//	moveBall();
     } catch (error) {
         console.error("Erreur de chargement :", error);
         		const elem = document.getElementById('screen-content'); 
 		if (elem)
-        	elem.innerHTML = "<p>QUITTE LA PAGE VITE!</p>";
+        	elem.innerHTML = "<p>404 - QUITTE LA PAGE VITE!</p>";
     }
 }
 
@@ -36,47 +51,30 @@ export async function user_exist(username: string) : Promise<boolean> {
 		}
 	} catch (err) {
 		console.error('Erreur fetch:', err);
-		alert('Erreur serveur');
+		showToast('Erreur serveur', 'error');
 		return (false);
 	}
 }
 
 async function default_navigate() {
-	if (localStorage.getItem('isConnected') === 'true')
+	const username = localStorage.getItem("username");
+
+	if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true))
 	{
-		const username = localStorage.getItem("username");
-		if (username && await user_exist(username) === true)
-			await navigate("profile");
-		else
-		{
-			localStorage.removeItem("isConnected");
-			localStorage.removeItem("username");
-			await navigate("log");
-		}
+		console.log("navigation by default()");
+		await navigate("profile");
 	}
 	else
 	{
-		await navigate("pong");
+		localStorage.removeItem("isConnected");
+		localStorage.removeItem("username");
+		localStorage.removeItem("email");
+		localStorage.removeItem("token");
+		await navigate("log");
 	}
 }
 
-	default_navigate();
-	(window as any).navigate = navigate;
-	(window as any).default_navigate = default_navigate;
-	
-	// async function navigate(page: string) {
-	//   console.log(page);
-	//   try {
-	//     const response = await fetch(`../pages/${page}.html`);
-	//     if (!response.ok)
-	//       throw new Error('404');
-	//     const html = await response.text();
-	//     document.getElementById('content')!.innerHTML = html;
-	//   } catch {
-	//     const res404 = await fetch('/pages/404.html');
-	//     const html404 = await res404.text();
-	//     document.getElementById('content')!.innerHTML = html404;
-	//   }
-	
-	//   history.pushState(null, '', `#${page}`);
-	// }
+default_navigate();
+
+(window as any).navigate = navigate;
+(window as any).default_navigate = default_navigate;

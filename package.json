@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "babylon": "^6.18.0",
+    "sqlite3": "^5.1.7"
+  }
+}

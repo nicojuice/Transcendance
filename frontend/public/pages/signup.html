@@ -1,61 +1,78 @@
-<div class="text-neon font-arcade flex items-center justify-center min-h-screen relative p-4">
+<!-- Pong ball -->
+<div id="pongBall" class="ball absolute z-2"></div>
 
+<div
+  class="text-neon font-pixelify flex items-center justify-center min-h-screen relative p-4"
+>
   <!-- CRT scanlines -->
   <div class="crt-effect absolute inset-0 z-[-1]"></div>
 
   <!-- Conteneur principal : anneaux + formulaire -->
-  <div class="relative w-[500px] h-[500px] group flex items-center justify-center z-10 overflow-visible">
+  <div
+    class="relative w-[500px] h-[500px] group flex items-center justify-center z-10 overflow-visible"
+  >
     <!-- Anneaux -->
-    <div class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"></div>
-    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"></div>
-    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"></div>
-      
-      <form
-        id="signupForm"
-        class="min-h-screen flex flex-col items-center justify-center relative font-pixelify text-neon text-center px-8 overflow-hidden"
-      >
-        <h2 class="text-2xl mb-4">Create Your Account</h2>
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
+    ></div>
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
+    ></div>
+    <div
+      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
+    ></div>
 
-        <input
-          id="username"
-          type="text"
-          placeholder="Username"
-          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
-          required
-        />
-        <input
-          id="email"
-          type="email"
-          placeholder="Email"
-          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
-          required
-        />
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
-          required
-        />
-        <input
-          id="confirm-password"
-          type="password"
-          placeholder="Confirm Password"
-          class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
-          required
-        />
+    <form
+      id="signupForm"
+      class="min-h-screen flex flex-col items-center justify-center relative font-pixelify text-neon text-center px-8 overflow-hidden"
+    >
+      <h2 class="text-2xl mb-4">Create Your Account</h2>
 
-        <input
-          id="register-button"
-          type="submit"
-          value="Sign Up"
-          class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
-          onclick="register(event)"
-        />
-        
-        <div class="h-full text-white">Already have an account ? <button onclick="navigate('log')">Login</button> </div>
-            </form>
+      <input
+        id="username"
+        type="text"
+        placeholder="Username"
+        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
+        required
+      />
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
+        required
+      />
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
+        required
+      />
+      <input
+        id="confirm-password"
+        type="password"
+        placeholder="Confirm Password"
+        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base w-full"
+        required
+      />
 
-    </div>
-  </div>  
+      <input
+        id="register-button"
+        type="submit"
+        value="Sign Up"
+        class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
+        onclick="register(event)"
+      />
 
+      <div class="h-full text-white">
+        Already have an account ?&nbsp;<button
+          class="cursor-pointer hover:underline"
+          onclick="navigate('log')"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

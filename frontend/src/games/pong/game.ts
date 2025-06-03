@@ -1,7 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 
-
 function handleBallCollisions(
   ball: BABYLON.Mesh,
   paddle1: BABYLON.Mesh,

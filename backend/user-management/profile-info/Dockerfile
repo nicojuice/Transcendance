@@ -25,7 +25,7 @@ RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
 COPY . .
 
-EXPOSE 8090
+EXPOSE 8094
 
 RUN echo "🚀 Lancement du Back/User-Management/profile-info..."
 CMD ["node", "server.js"]

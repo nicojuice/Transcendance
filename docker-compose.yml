@@ -133,6 +133,46 @@ services:
       - Transcendance
     restart: unless-stopped
 
+  games-player:
+    build:
+      context: ./backend/games/player
+      dockerfile: Dockerfile
+    ports:
+      - "8092:8092"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+    restart: unless-stopped
+
+  status-service:
+    build:
+      context: ./backend/user-management/status
+      dockerfile: Dockerfile
+    ports:
+      - "8094:8094"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
+  rooms-local-service:
+    build:
+      context: ./backend/games/rooms/local
+      dockerfile: Dockerfile
+    ports:
+      - "8096:8096"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
   frontend:
     build:
       context: ./frontend
@@ -150,6 +190,8 @@ services:
       - email-service
       - pass-service
       - add-friends-service
+      - games-player
+      - status-service
     networks:
       - Transcendance
 
@@ -158,6 +200,20 @@ services:
       context: ./SQL
       dockerfile: Dockerfile
     volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+  
+  2fa:
+    build:
+      context: ./backend/2FA/
+      dockerfile: Dockerfile
+    ports:
+      - 8100:8100
+    depends_on:
+      - db
+    volumes:
+      - 2fa:/2fa
       - sql:/data
     networks:
       - Transcendance
@@ -208,5 +264,6 @@ volumes:
   node-volume:
   grafana-data:
   public-volume:
+  2fa:
   sql:
   register-data:
