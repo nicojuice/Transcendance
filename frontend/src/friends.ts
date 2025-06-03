@@ -161,7 +161,6 @@ export async function getFriends(): Promise<void> {
   }
 }
 
-window.onload = () => getFriends();
 
 
 // function openFriendsModal() {

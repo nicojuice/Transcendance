@@ -26,7 +26,7 @@ function clearUserData(): void {
   }
 }
 
-async function editUser(): Promise<void> {
+export async function editUser(): Promise<void> {
   const oldUsername = localStorage.getItem("username");
   const newUsernameInput = document.getElementById(
     "username"
@@ -97,7 +97,7 @@ async function editUser(): Promise<void> {
   }
 }
 
-async function editPass(edit: string): Promise<void> {
+export async function editPass(edit: string): Promise<void> {
   const username = localStorage.getItem("username");
 
   //console.log("Changement mot de passe pour:", username);
@@ -143,7 +143,7 @@ async function editPass(edit: string): Promise<void> {
   }
 }
 
-async function editEmail(edit: string): Promise<void> {
+export async function editEmail(edit: string): Promise<void> {
   const username = localStorage.getItem("username");
 
   //console.log("Changement email pour:", username);
