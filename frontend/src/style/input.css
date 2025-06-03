@@ -103,3 +103,14 @@
     animation: float 4s ease-in-out infinite;
   }
 
+#popup {
+  position: absolute;
+  left: 100px; /* valeur initiale */
+  top: 100px;  /* valeur initiale */
+  cursor: grab;
+  user-select: none;
+}
+#drag-handle {
+  cursor: grab;
+  user-select: none;
+}

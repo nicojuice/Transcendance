@@ -1,4 +1,56 @@
 <div class="text-neon font-pixelify flex items-center justify-center min-h-screen p-4">
+      <!-- MODAL FRIENDS -->
+<div
+  id="friends-modal"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50"
+>
+<div
+  id="popup"
+  class="w-[480px] max-w-full h-[700px] bg-white/40 backdrop-blur-md border border-white/50 rounded-xl shadow-lg p-6 flex flex-col overflow-visible"
+  style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+>
+
+    <!-- Bouton fermer -->
+    <button
+      onclick="closeFriendsModal()"
+      class="absolute top-4 right-4 text-white hover:text-neon"
+      title="Close"
+    >
+      ✕
+    </button>
+
+    <h2 id="drag-handle" class="text-white text-3xl font-semibold mb-4 text-center drop-shadow-md">
+      Friends
+    </h2>
+
+    <div
+      class="flex-1 overflow-y-auto bg-white/10 rounded-md p-4 border border-white/20"
+    >
+      <ul id="friends-list" class="space-y-3 text-white font-mono text-sm">
+        <!-- Liste amis -->
+      </ul>
+      <p id="empty-friends-text" class="text-white/50 text-center mt-6">
+        No friends added yet.
+      </p>
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <input
+        id="addfriend"
+        type="text"
+        placeholder="Enter a username..."
+        class="flex-1 px-3 py-2 rounded bg-white text-black font-semibold placeholder-gray-600"
+      />
+      <button
+        onclick="addFriend(document.getElementById('addfriend').value)"
+        class="bg-neon text-black px-5 py-2 rounded hover:brightness-110 font-bold"
+      >
+        Follow
+      </button>
+    </div>
+  </div>
+</div>
+
   <!-- Rectangle vert principal -->
   <div class="w-[1000px] h-[850px] border-2 border-neon shadow-lg bg-gradient-to-br from-green-900/20 to-green-500/10 p-6 flex flex-col rounded-2xl space-y-6 overflow-hidden backdrop-blur-xl">
 
@@ -196,19 +248,14 @@
 
 
 
-  <div class="flex flex-row mt-2 items-center ml-5">
+  <div class="flex flex-row mt-2 items-center ml-10">
+    <button
+      onclick="openFriendsModal()"
+      class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+    >
+      Amis
+    </button>
 
-    <!-- Add Friend -->
-    <div class="p-4 rounded items-center">
-      <button
-        onclick="navigate('friends')"
-        class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-      >
-        Amis
-      </button>
-    </div>
-
-    <!-- Match History -->
     <div class="p-4 rounded items-center">
       <button
         onclick="seeMatchHistory()"
@@ -221,10 +268,3 @@
 </div>
 </div>
 
-
-
-<!-- changement de username / email / mdp 
-avatar ou photo a updload -> sauvegarder |
-add friend
-victoires  
-match history-->
