@@ -13,6 +13,7 @@ import './2FA';
 import './status';
 import './showToast';
 import './darkmode';
-
+import './google';
+import './authCallback';
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');
