@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import { main } from "./pong/game";
+import * as ROOM from "./room";
 
 let engine: BABYLON.Engine | null = null;
 
@@ -32,7 +33,10 @@ function startGame(canvas: HTMLCanvasElement) {
   engine = new BABYLON.Engine(canvas, true);
   engine.renderEvenInBackground = false;
   resizeCanvasAndEngine(canvas);
-  main(engine, canvas); 
+  const room = new ROOM.Room();
+  room.addPlayer("Player1");
+  room.addPlayer("Player2");
+  main(engine, canvas, room); 
 }
 
 function waitForCanvasAndStart() {

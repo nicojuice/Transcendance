@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
+import * as ROOM from "../room";
+//import * as GUI from "@babylonjs/gui";
 
 function handleBallCollisions(
   ball: BABYLON.Mesh,
@@ -92,84 +93,14 @@ function buildTerrain(scene: BABYLON.Scene): void
 
 
 
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
+export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): void
 {
+  const stats = new ROOM.MatchStats();
+  void room;
+  void stats;
   const scene = new BABYLON.Scene(engine);
   scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
-
-
-
-
-
-
-
-
-
-
-  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
-
-  const pingText = new GUI.TextBlock();
-  pingText.text = "Ping: ...";
-  pingText.color = "white";
-  pingText.fontSize = 24;
-  pingText.top = "-45%";
-  //pingText.left = "-45%";
-  pingText.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  pingText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  advancedTexture.addControl(pingText);
-
-
-  
-
-  // WebSocket
-  const socket = new WebSocket("ws://localhost:8180");
-  socket.binaryType = "arraybuffer"; // et décodes à la main
-
-  let lastPingSent = 0;
-  let pingInterval: ReturnType<typeof setInterval> | undefined;
-
-  /*socket.addEventListener("open", () => {
-    pingInterval = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        lastPingSent = performance.now();
-        socket.send(JSON.stringify({ type: "ping", timestamp: lastPingSent }));
-      }
-    }, 1000);
-  });
-
-  socket.addEventListener("close", () => {
-    if (pingInterval) clearInterval(pingInterval);
-    pingText.text = "🔴 Connexion perdue";
-    scene.render();
-    engine.stopRenderLoop();
-  });
-
-
-
-  socket.addEventListener("message", async (event) => {
-    let data: any;
-
-    if (event.data instanceof Blob) {
-      const text = await event.data.text();
-      data = JSON.parse(text);
-    } else {
-      data = JSON.parse(event.data);
-    }
-
-    //console.log("Message from server:", data);
-
-    if (data.type === "pong") {
-      const now = performance.now();
-      const ping = Math.round(now - data.timestamp);
-      pingText.text = `Ping: ${ping} ms`;
-      //console.log(`Ping: ${ping} ms`);
-    }
-  });*/
-
-
-
-
 
 
 
