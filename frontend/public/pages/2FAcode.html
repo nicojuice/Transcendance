@@ -1,52 +1,56 @@
 <!-- Pong ball -->
 <div id="pongBall" class="ball absolute"></div>
 <div
-  class="text-neon font-arcade flex items-center justify-center relative overflow-visible p-4"
-	>
-	<!-- CRT scanlines -->
-	<div class="crt-effect absolute inset-0 z-[-1]"></div>
-	<!-- Conteneur principal : anneaux + formulaire -->
-	<div
-	 class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center"
-	>
-		<!-- Anneaux -->
-		<div
-			class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
-			>
-		</div>
-		<div
-			class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
-			>
-		</div>
-		<div
-			class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
-			>
-		</div>
-		<!-- Formulaire -->
-		<form
-			id="loginForm"
-			class="relative flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
-			>
-			<h2 class="text-2xl mb-4">2FA - Secure Connection</h2>
-			<input
- 				type="text"
- 				id="2FA-code"
- 				name="username"
- 				placeholder="Code d'authentification"
- 				class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
- 				required
-			/>
-			<input
-				id="valid-2FA-button"
-				type="submit"
-				value="Valider le code"
-				class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
-				onclick="check2FACode(event)"
-			/>
-		</form>
-		<div class="font-pixelify flex items-center justify-center relative overflow-visible text-white">
-			Vous n'avez pas recu de code ?&nbsp;
-			<button class="cursor-pointer hover:underline" onclick="resend2FACode(event)">Renvoyez</button>
-		</div>
-	</div>
+  class="text-neon font-pixelify flex items-center justify-center relative overflow-visible p-4"
+>
+  <!-- CRT scanlines -->
+  <div class="crt-effect absolute inset-0 z-[-1]"></div>
+  <!-- Conteneur principal : anneaux + formulaire -->
+  <div
+    class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center"
+  >
+    <!-- Anneaux -->
+    <div
+      class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
+    ></div>
+    <div
+      class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
+    ></div>
+    <div
+      class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
+    ></div>
+    <!-- Formulaire -->
+    <form
+      id="loginForm"
+      class="relative flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
+    >
+      <h2 class="text-2xl mb-4">2FA - Secure Connection</h2>
+      <input
+        type="text"
+        id="2FA-code"
+        name="username"
+        placeholder="Code d'authentification"
+        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
+        required
+      />
+      <input
+        id="valid-2FA-button"
+        type="submit"
+        value="Valider le code"
+        class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
+        onclick="check2FACode(event)"
+      />
+    </form>
+    <div
+      class="font-pixelify flex items-center justify-center relative overflow-visible text-white"
+    >
+      Vous n'avez pas recu de code ?&nbsp;
+      <button
+        class="cursor-pointer hover:underline"
+        onclick="resend2FACode(event)"
+      >
+        Renvoyez
+      </button>
+    </div>
+  </div>
 </div>

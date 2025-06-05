@@ -11,7 +11,8 @@ import './editprofile';
 import './friends';
 import './2FA';
 import './status';
-
+import './showToast';
+import './darkmode';
 
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
+import * as ROOM from "../room";
+//import * as GUI from "@babylonjs/gui";
 
 function handleBallCollisions(
   ball: BABYLON.Mesh,
@@ -57,7 +58,7 @@ function buildTerrain(scene: BABYLON.Scene): void
   const groundMat = new BABYLON.StandardMaterial("groundMat", scene);
   groundMat.emissiveColor = new BABYLON.Color3(0, 22.7/255.0, 45.0/255.0);
   groundMat.diffuseColor = groundMat.emissiveColor;
-  groundMat.alpha = 0.8;
+  //groundMat.alpha = 0.8;
 
   const borderMat = new BABYLON.StandardMaterial("borderMat", scene);
   borderMat.emissiveColor = new BABYLON.Color3(57.3/255.0, 1.0, 1.0);
@@ -74,8 +75,8 @@ function buildTerrain(scene: BABYLON.Scene): void
   const border1 = BABYLON.MeshBuilder.CreateCapsule("border1", {
     radius: 0.25,
     height: 30,
-    subdivisions: 6,
-    tessellation: 12
+    subdivisions: 2,
+    tessellation: 6
   }, scene);
   const subborder = border1.clone("subborder");
   subborder.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
@@ -92,83 +93,14 @@ function buildTerrain(scene: BABYLON.Scene): void
 
 
 
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
+export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): void
 {
+  const stats = new ROOM.MatchStats();
+  void room;
+  void stats;
   const scene = new BABYLON.Scene(engine);
+  scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
-
-
-
-
-
-
-
-
-
-
-  const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
-
-  const pingText = new GUI.TextBlock();
-  pingText.text = "Ping: ...";
-  pingText.color = "white";
-  pingText.fontSize = 24;
-  pingText.top = "-45%";
-  //pingText.left = "-45%";
-  pingText.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  pingText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  advancedTexture.addControl(pingText);
-
-
-  
-
-  // WebSocket
-  const socket = new WebSocket("ws://localhost:8180");
-  socket.binaryType = "arraybuffer"; // et décodes à la main
-
-  let lastPingSent = 0;
-  let pingInterval: ReturnType<typeof setInterval> | undefined;
-
-  socket.addEventListener("open", () => {
-    pingInterval = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        lastPingSent = performance.now();
-        socket.send(JSON.stringify({ type: "ping", timestamp: lastPingSent }));
-      }
-    }, 1000);
-  });
-
-  socket.addEventListener("close", () => {
-    if (pingInterval) clearInterval(pingInterval);
-    pingText.text = "🔴 Connexion perdue";
-    scene.render();
-    engine.stopRenderLoop();
-  });
-
-
-
-  socket.addEventListener("message", async (event) => {
-    let data: any;
-
-    if (event.data instanceof Blob) {
-      const text = await event.data.text();
-      data = JSON.parse(text);
-    } else {
-      data = JSON.parse(event.data);
-    }
-
-    //console.log("Message from server:", data);
-
-    if (data.type === "pong") {
-      const now = performance.now();
-      const ping = Math.round(now - data.timestamp);
-      pingText.text = `Ping: ${ping} ms`;
-      //console.log(`Ping: ${ping} ms`);
-    }
-  });
-
-
-
-
 
 
 
@@ -202,6 +134,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   // === GlowLayer pour effet néon ===
   const glow = new BABYLON.GlowLayer("glow", scene);
   glow.intensity = 0.5;
+  glow.blurKernelSize = 16; // Taille du flou
 
   // === Matériaux néon avec diffusion visible ===
   const paddleMat = new BABYLON.StandardMaterial("paddleMat", scene);
@@ -222,8 +155,8 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
   const paddle1 = BABYLON.MeshBuilder.CreateCapsule("paddle1", {
     radius: paddleRadius,
     height: paddleLength,
-    subdivisions: 6,
-    tessellation: 12
+    subdivisions: 2,
+    tessellation: 6
   }, scene);
   const paddleMat2 = new BABYLON.StandardMaterial("paddleMat2", scene);
   paddleMat2.diffuseColor = new BABYLON.Color3(0, 55.3/255.0, 38.4/255.0);
@@ -279,12 +212,11 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
     if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
-    /*paddle1.position.z = ball.position.z;
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
-    paddle2.position.z = paddle1.position.z;*/
+    paddle2.position.z = BABYLON.Scalar.Clamp(paddle2.position.z, -8, 8);
 
     // Déplacement balle
-    ball.position.addInPlace(ballVelocity);
+    ball.position.addInPlace(ballVelocity.scale(delta));
 
     // Collisions (à implémenter ou déjà faite ailleurs)
     handleBallCollisions(ball, paddle1, paddle2, ballVelocity);
@@ -300,6 +232,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement): void
     }
   });
 
+  scene.freezeActiveMeshes();
   engine.runRenderLoop(() => {
     scene.render();
   });

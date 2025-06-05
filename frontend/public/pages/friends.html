@@ -1,54 +1,68 @@
-<div class="text-neon font-arcade font-pixelify flex items-center justify-center min-h-screen relative p-4">
-  <!-- Rectangle bleu -->
-  <div class="relative m-4 w-[500px] h-[800px] border-2 border-crtBlue rounded-md p-8 overflow-hidden">
-
+<div
+  class="text-neon font-pixelify flex items-center justify-center min-h-screen p-4"
+>
+  <!-- Conteneur principal -->
+  <div
+    class="relative m-4 w-[500px] max-w-full h-[800px] border-2 backdrop-blur-xl border-crtBlue rounded-xl overflow-hidden shadow-2xl bg-gradient-to-b from-zinc-900 via-black to-zinc-900 flex flex-col"
+  >
+    <!-- Bouton retour -->
     <button
       id="return-btn"
       onclick="navigate('profile')"
-      class="absolute top-4 right-4 z-50 cursor-pointer hover:text-red-500 text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
-      title="Log Out">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-corner-down-left-icon lucide-corner-down-left"><path d="M20 4v7a4 4 0 0 1-4 4H4"/><path d="m9 10-5 5 5 5"/></svg>
+      class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
+      title="Back to Profile"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-corner-down-left"
+      >
+        <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+        <path d="m9 10-5 5 5 5" />
+      </svg>
     </button>
 
-    <h2 class="py-8 text-center text-white text-4xl mb-4">Friends</h2>
+    <!-- Titre -->
+    <h2
+      class="py-6 text-center text-4xl text-white tracking-wider drop-shadow-[0_0_6px_#0ff]"
+    >
+      Friends
+    </h2>
 
-    <!-- Add Friend centré en bas du rectangle -->
-    <!-- <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/30 p-4 text-white rounded">
-      <button
-        onclick="addFriend()"
-        class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-      >
-        Add Friend
-      </button> -->
+    <!-- Liste des amis qui prend tout l’espace restant -->
+    <div
+      class="flex-1 p-4 rounded-xl overflow-y-auto border border-crtPurple mx-6"
+    >
+      <ul id="friends-list" class="space-y-2 text-white text-sm font-mono">
+        <!-- amis JS ici -->
+      </ul>
+      <p class="text-center text-white/50 mt-4" id="empty-friends-text">
+        No friends added yet.
+      </p>
+    </div>
 
-
-      <div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
-
-<!-- Username -->
-<div class="flex items-center" id="username-container">
-  <input
-    id="addfriend"
-    type="text"
-    class="flex-1 px-2 rounded bg-white border border-white text-black"
-  />
-  <button
-    onclick="addFriend(document.getElementById('addfriend').value)"
-    class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
-  >
-    Follow Friends
-  </button>
-</div>
-
-<div class="mt-8 space-y-4 overflow-y-scroll max-h-[50svh]">
-  <!-- Les amis ajoutés apparaîtront ici -->
-   <ul id="friends-list">
-
-   </ul>
-</div>
-
-  <!-- Ajoute autant d'amis que nécessaire ici -->
-</div>
-
+    <!-- Champ Ajouter un ami tout en bas -->
+    <div class="mt-auto p-4 mx-6 mb-6 rounded-lg shadow-inner">
+      <div class="flex items-center gap-4">
+        <input
+          id="addfriend"
+          type="text"
+          placeholder="Enter a username..."
+          class="flex-1 px-3 py-2 rounded bg-white border border-white text-black font-semibold text-sm placeholder:text-gray-600"
+        />
+        <button
+          onclick="addFriend(document.getElementById('addfriend').value)"
+          class="px-4 py-2 border-2 border-white text-white rounded hover:bg-white hover:text-black transition font-bold"
+        >
+          Follow
+        </button>
+      </div>
     </div>
   </div>
 </div>

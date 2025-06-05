@@ -2,6 +2,7 @@ import { initProfilePage } from './profile';
 import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status';
+import { showToast } from './showToast'
 
 export async function navigate(page : string) {
     try {
@@ -50,7 +51,7 @@ export async function user_exist(username: string) : Promise<boolean> {
 		}
 	} catch (err) {
 		console.error('Erreur fetch:', err);
-		alert('Erreur serveur');
+		showToast('Erreur serveur', 'error');
 		return (false);
 	}
 }

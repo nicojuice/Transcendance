@@ -119,20 +119,6 @@ services:
     networks:
       - Transcendance
 
-  pong-server:
-    build:
-      context: ./backend/games/pong
-      dockerfile: Dockerfile
-    ports:
-      - "8180:8180"
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - sql:/data
-    networks:
-      - Transcendance
-    restart: unless-stopped
-
   games-player:
     build:
       context: ./backend/games/player
@@ -153,6 +139,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8094:8094"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+
+  rooms-local-service:
+    build:
+      context: ./backend/games/rooms/local
+      dockerfile: Dockerfile
+    ports:
+      - "8096:8096"
     environment:
       - NODE_ENV=production
     volumes:
