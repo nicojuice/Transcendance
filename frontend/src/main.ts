@@ -15,5 +15,6 @@ import './showToast';
 import './darkmode';
 import './google';
 import './authCallback';
+import './i18n';
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

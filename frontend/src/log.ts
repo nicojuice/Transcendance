@@ -2,6 +2,7 @@
 import { navigate } from "./nav";
 import { is2FA, send2FACode } from "./2FA";
 import { showToast } from "./showToast";
+import './i18n';
 //import { initProfilePage } from './profile';
 
 async function connect(e: Event): Promise<void> {

@@ -1,3 +1,5 @@
+import './i18n';
+
 const handleGoogleLogin = () => {
   window.location.href = 'http://localhost:8095/api/auth/google';
 };

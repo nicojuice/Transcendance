@@ -2,6 +2,7 @@ import { fetchProfile } from "./editprofile"
 import { editUser } from "./editprofile"
 import { editEmail } from "./editprofile"
 import { editPass } from "./editprofile"
+import './i18n';
 
 // export function initProfilePage(): void {
 // 	const storedUsername = localStorage.getItem('username');

@@ -25,6 +25,8 @@
     "@babylonjs/gui": "^8.9.0",
     "@babylonjs/materials": "^8.9.0",
     "babylon": "^6.18.0",
+    "i18next": "^25.2.1",
+    "i18next-browser-languagedetector": "^8.1.0",
     "js-cookie": "^3.0.5",
     "typescript-cookie": "^1.0.6",
     "ws": "^8.18.2"

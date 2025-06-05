@@ -1,5 +1,6 @@
 import { user_exist, navigate } from "./nav";
 import { showToast } from "./showToast";
+import './i18n';
 
 function clearUserData(): void {
   localStorage.removeItem("username");

@@ -1,12 +1,23 @@
+<h1>// auth-callback.html</h1>
+<script>
+const params = new URLSearchParams(window.location.search);
+const code = params.get('code');
 
-<script type="module" src="./src/nav.js"></script>
-  <script>
-    setTimeout(() => {
-      navigate('profile');
-    }, 3000); // 3 secondes
-  </script>
-<div>
-  <div>
-    <p>Connexion en cours, merci de patienter...</p>
-  </div>
-</div>
+fetch('/api/auth/google/token', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ code })
+})
+.then(res => res.text()) // ← voir ce que le serveur renvoie
+.then(text => {
+  console.log('[Réponse brute]', text);
+
+  try {
+    const data = JSON.parse(text);
+    console.log('[JSON parsé]', data);
+  } catch (err) {
+    console.error('❌ JSON invalide :', err);
+  }
+});
+
+</script>

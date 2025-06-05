@@ -1,5 +1,6 @@
 import { navigate } from "./nav";
 import { showToast } from "./showToast";
+import './i18n';
 
 async function addFriend(add: string) : Promise<void> {
   const username = localStorage.getItem("username");

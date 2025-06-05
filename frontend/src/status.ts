@@ -1,3 +1,5 @@
+import './i18n';
+
 export async function updateConnectionStatus(status: 0 | 1): Promise<void> 
 {
     const username = localStorage.getItem("username");

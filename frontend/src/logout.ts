@@ -19,6 +19,7 @@
 
 import { updateConnectionStatus } from './status';
 import { navigate } from './nav';
+import './i18n';
 
 export function logout(): void {
     updateConnectionStatus(0);

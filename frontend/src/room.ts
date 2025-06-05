@@ -1,3 +1,5 @@
+import './i18n';
+
 function startGame() {
     const playersElement = document.getElementById("players") as HTMLSelectElement | null;
     const customElement = document.getElementById("custom") as HTMLSelectElement | null;
