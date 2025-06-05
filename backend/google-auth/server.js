@@ -15,6 +15,11 @@ fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
 
+fastify.ready().then(() => {
+  console.log(fastify.printRoutes());
+});
+
+
 const host = '0.0.0.0';
 const port = 8095;
 

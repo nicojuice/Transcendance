@@ -1,5 +1,7 @@
 import { navigate } from "./nav";
 import { showToast } from "./showToast";
+import './i18n';
+
 
 export async function send2FACode(username: string, e: Event): Promise<void> {
   e.preventDefault();

@@ -1,5 +1,6 @@
 import { filenameToFileObject } from "./signup";
 import { showToast } from "./showToast";
+import './i18n';
 
 const avatars: string[] = [
   "/assets/avatar1.png",

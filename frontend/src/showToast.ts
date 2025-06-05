@@ -1,3 +1,5 @@
+import './i18n';
+
 export function showToast(message: string, type: 'success' | 'error' = 'success') {
   const toast = document.createElement('div');
   const id = `toast-${Date.now()}`;

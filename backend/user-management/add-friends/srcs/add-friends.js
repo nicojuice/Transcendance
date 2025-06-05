@@ -65,6 +65,36 @@ async function registerAddFriendsRoute(fastify, opts) {
       return reply.code(500).send({ message: 'Erreur lors de l’ajout.' });
     }
   });
+  fastify.delete('/remove-friend/:username/:friend', async (request, reply) => {
+    const { username, friend } = request.params;
+
+
+    if (!username || !friend) {
+      return reply.code(400).send({ message: 'Champs username et friend requis.' });
+    }
+
+    try {
+      const user = await db.get(`SELECT id FROM users WHERE name = ?`, username);
+      if (!user) return reply.code(404).send({ message: `Utilisateur ${username} introuvable.` });
+
+      const friendUser = await db.get(`SELECT id FROM users WHERE name = ?`, friend);
+      if (!friendUser) return reply.code(404).send({ message: `Ami ${friend} introuvable.` });
+
+      const deleted = await db.run(
+        `DELETE FROM friends WHERE user_id = ? AND friend_id = ?`,
+        [user.id, friendUser.id]
+      );
+
+      if (deleted.changes === 0) {
+        return reply.code(404).send({ message: `${friend} n'était pas dans la liste d'amis de ${username}` });
+      }
+
+      return reply.send({ message: `${friend} supprimé de la liste d'amis de ${username}` });
+    } catch (err) {
+      fastify.log.error(err);
+      return reply.code(500).send({ message: 'Erreur lors de la suppression.' });
+    }
+  });
 }
 
 module.exports = registerAddFriendsRoute;

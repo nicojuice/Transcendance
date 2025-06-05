@@ -1,15 +1,20 @@
 import { navigate } from "./nav";
 import { showToast } from "./showToast";
+import './i18n';
 
 async function addFriend(add: string) : Promise<void> {
   const username = localStorage.getItem("username");
-  //console.log(localStorage.getItem("username"), 'l user en question');
-  //console.log(add,"le compte a add");
+  
+  if (!add || add.trim() === "") {
+    alert("Veuillez entrer un nom d'utilisateur");
+    return;
+  }
+  
+  add = add.trim();
 
-  if (add === localStorage.getItem("username"))
-  {
+  if (add === localStorage.getItem("username")) {
     alert("impossible de s'ajouter soi-meme en ami, t'as pas d'ami ou quoi ??? La honte mdrrr");
-    return ;
+    return;
   }
 
   try {
@@ -22,7 +27,11 @@ async function addFriend(add: string) : Promise<void> {
       const data = await response.json();
 
       if (response.ok) {
-        //alert(data.message);
+        const inputElement = document.getElementById("addfriend") as HTMLInputElement;
+        if (inputElement) {
+          inputElement.value = "";
+        }
+        showToast(data.message || "Ami ajouté avec succès!", "success");
         await getFriends();
       } else {
         alert(data.message || `Failed to add friends.`);
@@ -31,7 +40,7 @@ async function addFriend(add: string) : Promise<void> {
   } catch (err) {
       console.error('Erreur fetch:', err);
       alert('Erreur serveur');
-	}
+  }
 }
 
 export async function getFriends(): Promise<void> {
@@ -48,10 +57,8 @@ export async function getFriends(): Promise<void> {
     if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
 
     const data = await response.json();
-    const friendsList = data.friends as {
-      username: string;
-      avatar?: string | null;
-    }[];
+    const friendsList: string[] = data.friends || [];
+    
     const ul = document.getElementById("friends-list");
     const emptyText = document.getElementById("empty-friends-text");
 
@@ -64,7 +71,16 @@ export async function getFriends(): Promise<void> {
       emptyText.style.display = "none";
     }
 
-    friendsList.forEach((friend) => {
+    friendsList.forEach((friend: string) => {
+      // Vérifier que friend existe et est une string valide
+      if (!friend || typeof friend !== 'string') {
+        console.warn("Nom d'utilisateur invalide:", friend);
+        return;
+      }
+      
+      // Puisque friend est déjà une string, on l'utilise directement
+      const friendUsername = friend;
+      const friendAvatar = null; // Pas d'avatar dans cette structure
       const li = document.createElement("li");
       li.className = `
         p-3 rounded-3xl bg-zinc-900/60 border border-white/20
@@ -74,16 +90,16 @@ export async function getFriends(): Promise<void> {
 
       let avatarEl: HTMLElement;
 
-      if (friend.avatar) {
+      if (friendAvatar) {
         const img = document.createElement("img");
-        img.src = friend.avatar;
-        img.alt = `${friend.username}'s avatar`;
+        img.src = friendAvatar;
+        img.alt = `${friendUsername}'s avatar`;
         img.className =
           "w-9 h-9 rounded-full object-cover border border-white/20";
         avatarEl = img;
       } else {
         const div = document.createElement("div");
-        div.textContent = friend.username.charAt(0).toUpperCase();
+        div.textContent = friendUsername.charAt(0).toUpperCase();
         div.className =
           "w-9 h-9 rounded-full flex items-center justify-center font-bold text-white bg-neon border border-white/20";
         avatarEl = div;
@@ -91,7 +107,7 @@ export async function getFriends(): Promise<void> {
 
       // 🧑‍🤝‍🧑 Nom
       const name = document.createElement("span");
-      name.textContent = friend.username;
+      name.textContent = friendUsername;
       name.className = "text-white text-sm";
 
       // ❌ Bouton Supprimer
@@ -106,18 +122,18 @@ export async function getFriends(): Promise<void> {
       `;
       removeBtn.onclick = async () => {
         const confirmRemove = confirm(
-          `Supprimer ${friend.username} de ta liste ?`
+          `Supprimer ${friendUsername} de ta liste ?`
         );
         if (!confirmRemove) return;
 
         try {
-          const res = await fetch(`http://localhost:8088/api/remove-friend`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, friend: friend.username }),
-          });
+          const res = await fetch(`http://localhost:8088/api/remove-friend/${username}/${friend}`, {
+            method: "DELETE"
+        });
+
 
           if (res.ok) {
+            showToast("Ami supprimé", "success");
             await getFriends(); // Refresh list
           } else {
             const errData = await res.json();
@@ -138,9 +154,70 @@ export async function getFriends(): Promise<void> {
       li.appendChild(removeBtn);
       ul.appendChild(li);
     });
+    
+    console.log(`Liste rafraîchie : ${friendsList.length} amis trouvés`);
   } catch (err) {
     console.error("Erreur lors du chargement des amis :", err);
+    showToast("Erreur lors du chargement des amis", "error");
+  }
+}
+
+
+
+// function openFriendsModal() {
+//   const modal = document.getElementById('friends-modal');
+//   if (modal) {
+//     modal.classList.remove('hidden');
+//   }
+// }
+
+function openFriendsModal() {
+  const modal = document.getElementById("friends-modal");
+  if (modal) modal.classList.remove("hidden");
+
+  // Drag setup ici :
+  const popup = document.getElementById('popup');
+  const dragHandle = document.getElementById('drag-handle');
+
+  if (!popup || !dragHandle) {
+    console.log("Popup ou dragHandle introuvable dans le DOM");
+    return;
+  }
+
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
+
+  dragHandle.style.cursor = 'move';
+
+  dragHandle.onmousedown = (e) => {
+    isDragging = true;
+    offsetX = e.clientX - popup.offsetLeft;
+    offsetY = e.clientY - popup.offsetTop;
+    document.onmousemove = (e) => {
+      if (isDragging) {
+        popup.style.left = `${e.clientX - offsetX}px`;
+        popup.style.top = `${e.clientY - offsetY}px`;
+        popup.style.transform = 'none';
+      }
+    };
+    document.onmouseup = () => {
+      isDragging = false;
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+}
+
+function closeFriendsModal() {
+  const modal = document.getElementById('friends-modal');
+  if (modal) {
+    modal.classList.add('hidden');
   }
 }
 
 (window as any).addFriend = addFriend;
+(window as any).openFriendsModal = openFriendsModal;
+(window as any).closeFriendsModal = closeFriendsModal;
+
+

@@ -1,3 +1,5 @@
+import './i18n';
+
 import { navigate, user_exist } from "./nav";
 import { sendImgToDB } from "./avatarSelector";
 import { showToast } from "./showToast";

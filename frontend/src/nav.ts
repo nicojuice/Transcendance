@@ -3,6 +3,7 @@ import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status';
 import { showToast } from './showToast'
+import './i18n';
 
 export async function navigate(page : string) {
     try {
