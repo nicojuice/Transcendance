@@ -229,6 +229,9 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
         0,
         0.12 * (Math.random() < 0.5 ? 1 : -1)
       );
+
+      //TODO : Simulation de fin du Jeu
+      //Appel du prochain menu avec comme parametre la variable stats
     }
   });
 
