@@ -1,6 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
+import * as GUI from "@babylonjs/gui";
 import * as ROOM from "../room";
-//import * as GUI from "@babylonjs/gui";
 
 function handleBallCollisions(
   ball: BABYLON.Mesh,
@@ -102,11 +102,83 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
 
+  const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+
+
+  // === MENU PAUSE ===
+  const pauseMenu = new GUI.Rectangle();
+  pauseMenu.width = "50%";
+  pauseMenu.height = "40%";
+  pauseMenu.cornerRadius = 20;
+  pauseMenu.color = "white";
+  pauseMenu.thickness = 2;
+  pauseMenu.background = "rgba(0, 0, 0, 0.6)";
+  pauseMenu.isVisible = false;
+  ui.addControl(pauseMenu);
+
+  const pauseText = new GUI.TextBlock();
+  pauseText.text = "Pause";
+  pauseText.color = "white";
+  pauseText.fontSize = 48;
+  pauseText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  pauseText.top = "20px";
+  pauseMenu.addControl(pauseText);
+
+  const resumeBtn = GUI.Button.CreateSimpleButton("resume", "Reprendre");
+  resumeBtn.width = "60%";
+  resumeBtn.height = "40px";
+  resumeBtn.top = "10px";
+  resumeBtn.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+  resumeBtn.color = "white";
+  resumeBtn.background = "#00cc00";
+  resumeBtn.onPointerUpObservable.add(() => {
+    paused = false;
+    pauseMenu.isVisible = false;
+  });
+  pauseMenu.addControl(resumeBtn);
+
+  let paused = false;
+
+  // === Ecouteur de touche "Échap" pour pause ===
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      paused = !paused;
+      pauseMenu.isVisible = paused;
+    }
+  });
+
+  // === Affichage du score ===
+  const scoreText = new GUI.TextBlock();
+  scoreText.text = "0 - 0";
+  scoreText.color = "white";
+  scoreText.fontSize = 48;
+  scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  scoreText.top = "20px";
+  ui.addControl(scoreText);
+
+
+  let scoreLeft = 0;
+  let scoreRight = 0;
+
 
 
   // === Caméra fixe ===
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
+  camera.inputs.clear();
   camera.attachControl(canvas, false);
+  // === BACKGROUND IMAGE ===
+  const bgPlane = BABYLON.MeshBuilder.CreatePlane("bg", { width: 100, height: 50 }, scene);
+  bgPlane.parent = camera;
+  bgPlane.position = new BABYLON.Vector3(0, 0, 75); // Derrière la caméra
+  bgPlane.rotation = new BABYLON.Vector3(0, Math.PI, 0); // Fait face à la caméra
+
+  const bgMat = new BABYLON.StandardMaterial("bgMat", scene);
+  bgMat.diffuseTexture = new BABYLON.Texture("/public/assets/pink.png", scene);
+  bgMat.emissiveTexture = bgMat.diffuseTexture;
+  bgMat.backFaceCulling = false;
+  bgPlane.material = bgMat;
+
   function updateCameraRadius() {
     const fieldWidth = 35;
     const canvasAspect = canvas.width / canvas.height;
@@ -119,7 +191,9 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
 
     camera.radius = requiredRadius;
-    camera.lowerRadiusLimit = camera.upperRadiusLimit = requiredRadius;
+    camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;
+
+    bgPlane.position = new BABYLON.Vector3(0, 0, requiredRadius + 20); // Ajuster la position du fond
   }
   camera.alpha = Math.PI / 2; // vue de côté
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
@@ -223,6 +297,10 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
 
     // Reset si la balle sort
     if (Math.abs(ball.position.x) > 16) {
+      if (ball.position.x > 0) scoreLeft++;
+      else scoreRight++;
+      scoreText.text = `${scoreLeft} - ${scoreRight}`;
+
       ball.position = new BABYLON.Vector3(0, 0.5, 0);
       ballVelocity = new BABYLON.Vector3(
         0.15 * (Math.random() < 0.5 ? 1 : -1),
