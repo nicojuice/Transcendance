@@ -33,29 +33,8 @@ function startGame(canvas: HTMLCanvasElement) {
   engine = new BABYLON.Engine(canvas, true);
   engine.renderEvenInBackground = false;
   resizeCanvasAndEngine(canvas);
-  const storedRoom = localStorage.getItem("currentRoom");
-  let room: ROOM.Room;
-
-  if (storedRoom) {
-    const parsedRoom = JSON.parse(storedRoom);
-    console.log(parsedRoom, " <--- la room parse")
-    room = new ROOM.Room();
-    room.withIA = parsedRoom.withIA;
-    room.withCustom = parsedRoom.withCustom;
-    room.players = parsedRoom.players;
-    
-    if (Array.isArray(parsedRoom.players)) {
-      parsedRoom.players.forEach((playerName: string) => {
-        room.addPlayer(playerName);
-      });
-    }
-  } else {
-    // fallback si rien n'a été trouvé
-    console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
-    room = new ROOM.Room();
-    room.addPlayer("Player1");
-    room.addPlayer("Player2");
-  }
+  let room = new ROOM.Room();
+  room.loadFromLocalStorage();
   console.log(room.withCustom, " <-- avec ou sans custom")
   console.log(room.withIA, " <-- avec ou sans ia")
   console.log(room.players, " <-- le player")

@@ -1,26 +1,5 @@
 import { navigate } from "../nav";
 
-export class Room {
-  players: any;
-  withIA: any;
-  withCustom: any;
-
-  constructor() {
-    this.players = [];
-    this.withIA = false;
-    this.withCustom = false;
-  }
-
-  addPlayer(playerName: string) {
-    this.players.push(playerName);
-  }
-
-  // removePlayer(playerName: string) {
-  //   this.players = this.players.filter(p => p !== playerName);
-  // }
-};
-
-
 export class MatchStats {
   loserName: string;
   maxBallSpeed: number;
@@ -48,6 +27,44 @@ export class MatchStats {
     this.loserName = name;
   }
 };
+
+export class Room {
+  nextPage: string;
+  players: any;
+  withIA: any;
+  withCustom: any;
+  stats: MatchStats;
+
+  constructor() {
+    this.nextPage = "profile";
+    this.players = [];
+    this.withIA = false;
+    this.withCustom = false;
+    this.stats = new MatchStats();
+  }
+
+  addPlayer(playerName: string) {
+    this.players.push(playerName);
+  }
+
+  loadFromLocalStorage() {
+    const storedRoom = localStorage.getItem("currentRoom");
+    if (storedRoom) {
+      const parsedRoom = JSON.parse(storedRoom);
+      this.withIA = parsedRoom.withIA;
+      this.withCustom = parsedRoom.withCustom;
+      this.players = parsedRoom.players || [];
+      this.stats = new MatchStats();
+    } else {
+      console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
+    }
+  }
+
+  saveToLocalStorage() {
+    localStorage.setItem("currentRoom", JSON.stringify(this));
+  }
+};
+
 
 export function startGameAndNavigate() {
   const playersElement = document.getElementById("players") as HTMLSelectElement | null;

@@ -1,74 +1,58 @@
+import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import * as ROOM from "../room";
 
-function handleBallCollisions(
-  ball: BABYLON.Mesh,
-  paddle1: BABYLON.Mesh,
-  paddle2: BABYLON.Mesh,
-  ballVelocity: BABYLON.Vector3
-): void {
+// === Ball collision logic ===
+function handleBallCollisions(ball: BABYLON.Mesh, paddle1: BABYLON.Mesh, paddle2: BABYLON.Mesh, ballVelocity: BABYLON.Vector3): void {
   const halfFieldZ = 9.5;
   const ballRadius = 0.5;
-
-  // Capsule info (alignée sur Z)
   const paddleRadius = 0.25;
   const paddleLength = 3 + (paddleRadius * 2);
   const paddleHalfLength = paddleLength / 2;
 
-  // Rebond haut/bas
   if (ball.position.z >= halfFieldZ || ball.position.z <= -halfFieldZ) {
     ballVelocity.z *= -1;
     ball.position.z = BABYLON.Scalar.Clamp(ball.position.z, -halfFieldZ, halfFieldZ);
   }
 
-  // Rebond paddle1 (gauche)
-  if (
-    ball.position.x - ballRadius <= paddle1.position.x + paddleRadius &&
-    ball.position.x - ballRadius >= paddle1.position.x - paddleRadius &&
-    ball.position.z >= paddle1.position.z - paddleHalfLength &&
-    ball.position.z <= paddle1.position.z + paddleHalfLength &&
-    ballVelocity.x < 0
-  ) {
+  const checkCollision = (ballEdgeX: number, paddle: BABYLON.Mesh, isLeft: boolean) => {
+    const sign = isLeft ? 1 : -1;
+    return (
+      ballEdgeX * sign <= paddle.position.x * sign + paddleRadius &&
+      ballEdgeX * sign >= paddle.position.x * sign - paddleRadius &&
+      ball.position.z >= paddle.position.z - paddleHalfLength &&
+      ball.position.z <= paddle.position.z + paddleHalfLength
+    );
+  };
+
+  if (checkCollision(ball.position.x - ballRadius, paddle1, true) && ballVelocity.x < 0) {
     ballVelocity.x *= -1;
-    const dz = ball.position.z - paddle1.position.z;
-    ballVelocity.z += dz * 0.03;
+    ballVelocity.z += (ball.position.z - paddle1.position.z) * 0.03;
     ball.position.x = paddle1.position.x + paddleRadius + ballRadius;
   }
 
-  // Rebond paddle2 (droite)
-  if (
-    ball.position.x + ballRadius >= paddle2.position.x - paddleRadius &&
-    ball.position.x + ballRadius <= paddle2.position.x + paddleRadius &&
-    ball.position.z >= paddle2.position.z - paddleHalfLength &&
-    ball.position.z <= paddle2.position.z + paddleHalfLength &&
-    ballVelocity.x > 0
-  ) {
+  if (checkCollision(ball.position.x + ballRadius, paddle2, false) && ballVelocity.x > 0) {
     ballVelocity.x *= -1;
-    const dz = ball.position.z - paddle2.position.z;
-    ballVelocity.z += dz * 0.03;
+    ballVelocity.z += (ball.position.z - paddle2.position.z) * 0.03;
     ball.position.x = paddle2.position.x - paddleRadius - ballRadius;
   }
 }
 
-
-function buildTerrain(scene: BABYLON.Scene): void
-{
-
+// === Terrain and border construction ===
+function buildTerrain(scene: BABYLON.Scene): void {
   const groundMat = new BABYLON.StandardMaterial("groundMat", scene);
-  groundMat.emissiveColor = new BABYLON.Color3(0, 22.7/255.0, 45.0/255.0);
+  groundMat.emissiveColor = new BABYLON.Color3(0, 22.7 / 255.0, 45.0 / 255.0);
   groundMat.diffuseColor = groundMat.emissiveColor;
-  //groundMat.alpha = 0.8;
 
   const borderMat = new BABYLON.StandardMaterial("borderMat", scene);
-  borderMat.emissiveColor = new BABYLON.Color3(57.3/255.0, 1.0, 1.0);
+  borderMat.emissiveColor = new BABYLON.Color3(57.3 / 255.0, 1.0, 1.0);
   borderMat.diffuseColor = borderMat.emissiveColor;
 
   const borderMat2 = new BABYLON.StandardMaterial("borderMat2", scene);
-  borderMat2.diffuseColor = new BABYLON.Color3(0, 38.4/255.0, 55.3/255.0);
+  borderMat2.diffuseColor = new BABYLON.Color3(0, 38.4 / 255.0, 55.3 / 255.0);
   borderMat2.emissiveColor = borderMat2.diffuseColor;
 
-  // === Terrain ===
   const ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 30, height: 20 }, scene);
   ground.material = groundMat;
 
@@ -78,6 +62,7 @@ function buildTerrain(scene: BABYLON.Scene): void
     subdivisions: 2,
     tessellation: 6
   }, scene);
+
   const subborder = border1.clone("subborder");
   subborder.scaling = new BABYLON.Vector3(0.98, 1, 1.25);
   subborder.material = borderMat2;
@@ -91,21 +76,80 @@ function buildTerrain(scene: BABYLON.Scene): void
   border2.position = new BABYLON.Vector3(0, 0, -10);
 }
 
+function endGame(engine: BABYLON.Engine, room: ROOM.Room): void {
+  engine.stopRenderLoop(); // Arrête la boucle
+  //engine.dispose(); // Détruit le moteur (y compris la scène et la caméra)
+
+  const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
+  if (canvas) {
+    canvas.remove();
+    document.body.style.backgroundColor = "black";
+  }
+
+  document.body.style.width = "100%";
+  document.body.style.height = "100%";
+
+  room.saveToLocalStorage();
+  navigate(room.nextPage);
+}
 
 
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): void
-{
-  const stats = new ROOM.MatchStats();
-  void room;
-  void stats;
+// === Main game function ===
+export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): void {
   const scene = new BABYLON.Scene(engine);
   scene.autoClear = false;
-  scene.clearColor = new BABYLON.Color4(0, 0, 0, 1); // fond noir
+  scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
+  // Create camera
+  const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
+  camera.inputs.clear();
+  camera.attachControl(canvas, false);
+  camera.alpha = Math.PI / 2;
+  camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
+  camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
 
-  // === MENU PAUSE ===
+  const bgPlane = BABYLON.MeshBuilder.CreatePlane("bg", { width: 100, height: 50 }, scene);
+  bgPlane.parent = camera;
+  bgPlane.position = new BABYLON.Vector3(0, 0, 75);
+  bgPlane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+
+  const bgMat = new BABYLON.StandardMaterial("bgMat", scene);
+  bgMat.diffuseTexture = new BABYLON.Texture("/public/assets/pink.png", scene);
+  bgMat.emissiveTexture = bgMat.diffuseTexture;
+  bgMat.backFaceCulling = false;
+  bgPlane.material = bgMat;
+
+  const updateCameraRadius = () => {
+    const fieldWidth = 35;
+    const canvasAspect = canvas.width / canvas.height;
+    const fov = camera.fov;
+    const fovH = 2 * Math.atan(Math.tan(fov / 2) * canvasAspect);
+    const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
+    camera.radius = requiredRadius;
+    camera.lowerRadiusLimit = camera.upperRadiusLimit = requiredRadius;
+    bgPlane.position = new BABYLON.Vector3(0, 0, requiredRadius + 20);
+  };
+  updateCameraRadius();
+
+  window.addEventListener("resize", updateCameraRadius);
+
+  // Lights and glow
+  new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene).intensity = 0.5;
+  new BABYLON.GlowLayer("glow", scene).intensity = 0.5;
+
+  // Score UI
+  const scoreText = new GUI.TextBlock();
+  scoreText.text = "0 - 0";
+  scoreText.color = "white";
+  scoreText.fontSize = 48;
+  scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+  scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  scoreText.top = "20px";
+  ui.addControl(scoreText);
+
+  // Pause Menu
   const pauseMenu = new GUI.Rectangle();
   pauseMenu.width = "50%";
   pauseMenu.height = "40%";
@@ -127,19 +171,13 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   const resumeBtn = GUI.Button.CreateSimpleButton("resume", "Reprendre");
   resumeBtn.width = "60%";
   resumeBtn.height = "40px";
-  resumeBtn.top = "10px";
   resumeBtn.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
   resumeBtn.color = "white";
   resumeBtn.background = "#00cc00";
-  resumeBtn.onPointerUpObservable.add(() => {
-    paused = false;
-    pauseMenu.isVisible = false;
-  });
+  resumeBtn.onPointerUpObservable.add(() => { paused = false; pauseMenu.isVisible = false; });
   pauseMenu.addControl(resumeBtn);
 
   let paused = false;
-
-  // === Ecouteur de touche "Échap" pour pause ===
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       paused = !paused;
@@ -147,178 +185,71 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     }
   });
 
-  // === Affichage du score ===
-  const scoreText = new GUI.TextBlock();
-  scoreText.text = "0 - 0";
-  scoreText.color = "white";
-  scoreText.fontSize = 48;
-  scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-  scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  scoreText.top = "20px";
-  ui.addControl(scoreText);
-
-
-  let scoreLeft = 0;
-  let scoreRight = 0;
-
-
-
-  // === Caméra fixe ===
-  const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
-  camera.inputs.clear();
-  camera.attachControl(canvas, false);
-  // === BACKGROUND IMAGE ===
-  const bgPlane = BABYLON.MeshBuilder.CreatePlane("bg", { width: 100, height: 50 }, scene);
-  bgPlane.parent = camera;
-  bgPlane.position = new BABYLON.Vector3(0, 0, 75); // Derrière la caméra
-  bgPlane.rotation = new BABYLON.Vector3(0, Math.PI, 0); // Fait face à la caméra
-
-  const bgMat = new BABYLON.StandardMaterial("bgMat", scene);
-  bgMat.diffuseTexture = new BABYLON.Texture("/public/assets/pink.png", scene);
-  bgMat.emissiveTexture = bgMat.diffuseTexture;
-  bgMat.backFaceCulling = false;
-  bgPlane.material = bgMat;
-
-  function updateCameraRadius() {
-    const fieldWidth = 35;
-    const canvasAspect = canvas.width / canvas.height;
-    const fov = camera.fov; // en radians, vertical FOV (par défaut π/3)
-
-    // Convertir FOV vertical en FOV horizontal selon l’aspect
-    const fovH = 2 * Math.atan(Math.tan(fov / 2) * canvasAspect);
-
-    // Calcul du rayon minimal pour voir toute la largeur
-    const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
-
-    camera.radius = requiredRadius;
-    camera.lowerRadiusLimit = camera.upperRadiusLimit = camera.radius;
-
-    bgPlane.position = new BABYLON.Vector3(0, 0, requiredRadius + 20); // Ajuster la position du fond
-  }
-  camera.alpha = Math.PI / 2; // vue de côté
-  camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
-  camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
-  updateCameraRadius();
-
-  
-  // === Lumière ===
-  const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
-  light.intensity = 0.5;
-
-  // === GlowLayer pour effet néon ===
-  const glow = new BABYLON.GlowLayer("glow", scene);
-  glow.intensity = 0.5;
-  glow.blurKernelSize = 16; // Taille du flou
-
-  // === Matériaux néon avec diffusion visible ===
+  // Materials
   const paddleMat = new BABYLON.StandardMaterial("paddleMat", scene);
-  paddleMat.emissiveColor = new BABYLON.Color3(0.0, 1.0, 0.3); // vert néon
+  paddleMat.emissiveColor = new BABYLON.Color3(0.0, 1.0, 0.3);
   paddleMat.diffuseColor = paddleMat.emissiveColor;
 
   const ballMat = new BABYLON.StandardMaterial("ballMat", scene);
-  ballMat.emissiveColor = new BABYLON.Color3(1.0, 0.0, 0.6); // rose néon
+  ballMat.emissiveColor = new BABYLON.Color3(1.0, 0.0, 0.6);
   ballMat.diffuseColor = ballMat.emissiveColor;
 
-  // === Terrain ===
+  // Terrain
   buildTerrain(scene);
 
-  // === Raquettes ===
-  const paddleRadius = 0.25;
-  const paddleLength = 3;
-
-  const paddle1 = BABYLON.MeshBuilder.CreateCapsule("paddle1", {
-    radius: paddleRadius,
-    height: paddleLength,
-    subdivisions: 2,
-    tessellation: 6
-  }, scene);
-  const paddleMat2 = new BABYLON.StandardMaterial("paddleMat2", scene);
-  paddleMat2.diffuseColor = new BABYLON.Color3(0, 55.3/255.0, 38.4/255.0);
-  paddleMat2.emissiveColor = paddleMat2.diffuseColor;
+  // Paddles and ball
+  const paddle1 = BABYLON.MeshBuilder.CreateCapsule("paddle1", { radius: 0.25, height: 3 }, scene);
+  
+  const subpaddleMat = new BABYLON.StandardMaterial("subpaddleMat", scene);
+  subpaddleMat.diffuseColor = new BABYLON.Color3(0, 55.3/255.0, 38.4/255.0);
+  subpaddleMat.emissiveColor = subpaddleMat.diffuseColor;
   const subpaddle = paddle1.clone("subpaddle");
   subpaddle.scaling = new BABYLON.Vector3(0.98, 0.99, 1.25);
-  subpaddle.material = paddleMat2;
+  subpaddle.material = subpaddleMat;
   subpaddle.parent = paddle1;
 
-
   const paddle2 = paddle1.clone("paddle2");
+  paddle1.rotation = paddle2.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+  paddle1.position.set(-14, 0.26, 0);
+  paddle2.position.set(14, 0.26, 0);
+  paddle1.material = paddle2.material = paddleMat;
 
-  // Appliquer la rotation pour les rendre horizontales
-  const rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
-  paddle1.rotation = rotation.clone();
-  paddle2.rotation = rotation.clone();
-
-  const yOffset = paddleRadius + 0.01;
-  paddle1.position.set(-14, yOffset, 0);
-  paddle2.position.set(14, yOffset, 0);
-  paddle1.material = paddleMat;
-  paddle2.material = paddleMat;
-
-
-  
-
-  // === Balle ===
   const ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
   ball.position.y = 0.5;
-  ball.position.z = 0;
   ball.material = ballMat;
 
-  // === Mouvement de la balle ===
   let ballVelocity = new BABYLON.Vector3(0.15, 0, 0.12);
-
-  // === Contrôles clavier ===
   const inputMap: Record<string, boolean> = {};
   scene.actionManager = new BABYLON.ActionManager(scene);
-  scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => {
-    inputMap[evt.sourceEvent.key] = true;
-  }));
-  scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => {
-    inputMap[evt.sourceEvent.key] = false;
-  }));
+  scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => inputMap[evt.sourceEvent.key] = true));
+  scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => inputMap[evt.sourceEvent.key] = false));
 
-  // === Animation ===
+  let scoreLeft = 0, scoreRight = 0;
   scene.onBeforeRenderObservable.add(() => {
+    if (paused) return;
     const delta = engine.getDeltaTime() / 16.666;
-
     const speed = 0.3;
-    // Déplacement raquettes
+
     if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
     if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
     paddle2.position.z = BABYLON.Scalar.Clamp(paddle2.position.z, -8, 8);
-
-    // Déplacement balle
     ball.position.addInPlace(ballVelocity.scale(delta));
-
-    // Collisions (à implémenter ou déjà faite ailleurs)
     handleBallCollisions(ball, paddle1, paddle2, ballVelocity);
 
-    // Reset si la balle sort
     if (Math.abs(ball.position.x) > 16) {
       if (ball.position.x > 0) scoreLeft++;
       else scoreRight++;
       scoreText.text = `${scoreLeft} - ${scoreRight}`;
-
-      ball.position = new BABYLON.Vector3(0, 0.5, 0);
-      ballVelocity = new BABYLON.Vector3(
-        0.15 * (Math.random() < 0.5 ? 1 : -1),
-        0,
-        0.12 * (Math.random() < 0.5 ? 1 : -1)
-      );
-
-      //TODO : Simulation de fin du Jeu
-      //Appel du prochain menu avec comme parametre la variable stats
+      ball.position.set(0, 0.5, 0);
+      ballVelocity = new BABYLON.Vector3(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
+      //endGame(engine,room);
     }
   });
 
   scene.freezeActiveMeshes();
-  engine.runRenderLoop(() => {
-    scene.render();
-  });
-
-  window.addEventListener("resize", () => {
-    updateCameraRadius();
-  });
+  engine.runRenderLoop(() => scene.render());
 }
