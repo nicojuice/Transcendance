@@ -1,0 +1,53 @@
+{
+  "login": {
+    "title": "Iniciar sesión",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "google": "Iniciar sesión con Google",
+    "noAccount": "¿No tienes una cuenta?",
+    "signup": "Registrate"
+  },
+  "signup": {
+    "title": "Crear una cuenta",
+    "username": "Nombre de usuario",
+    "email": "Email",
+    "password": "Contraseña",
+    "confirmPassword": "Confirma la contraseña",
+    "submit": "Registrarse",
+    "alreadyAccount": "¿Ya tienes una cuenta?",
+    "login": "Iniciar sesión"
+  },
+  "profile": {
+    "close": "Cerrar",
+    "friends": "Amigos",
+    "noFriends": "Aún no se han agregado amigos.",
+    "enterUsername": "Introduce un nombre de usuario...",
+    "follow": "Seguir",
+    "editProfile": "Editar Perfil",
+    "username": "Nombre de usuario",
+    "email": "Dirección de correo",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "logout": "Cerrar Sesión",
+    "toggleDarkMode": "Alternar modo oscuro",
+    "settings": "Configuración",
+    "avatar": "Tu Avatar",
+    "changeAvatar": "Cambiar avatar",
+    "select": "Seleccionar",
+    "import": "Importar",
+    "hello": "Hola",
+    "play": "JUGAR",
+    "wins": "Victorias",
+    "losses": "Derrotas",
+    "winRate": "% de victoria",
+    "matchHistory": "Historial de partidas"
+  },
+  "2FA": {
+    "EnableTwoFactor": "Activar la autenticación en dos pasos",
+    "NoTime": "¿No tienes tiempo ahora?",
+    "Later": "Activarlo más tarde"
+  }
+}

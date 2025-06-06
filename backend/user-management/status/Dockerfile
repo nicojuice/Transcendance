@@ -12,6 +12,7 @@ RUN echo "📦 Installation des dépendances..."
 RUN npm install
 RUN npm install sqlite
 RUN npm install sqlite3
+RUN apk add --no-cache sqlite
 RUN npm install fastify
 RUN npm install @fastify/cors
 # RUN npm install @fastify/multipart

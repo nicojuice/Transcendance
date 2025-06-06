@@ -1,5 +1,14 @@
+<select
+  id="language-switcher"
+  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+  <option value="es">Español</option>
+</select>
+
 <div class="text-neon font-pixelify flex items-center justify-center min-h-screen p-4">
-      <!-- MODAL FRIENDS -->
+<!-- MODAL FRIENDS -->
 <div
   id="friends-modal"
   class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50"
@@ -14,12 +23,11 @@
     <button
       onclick="closeFriendsModal()"
       class="absolute top-4 right-4 text-white hover:text-neon"
-      title="Close"
-    >
-      ✕
+      data-i18n="profile.close">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x-icon lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
     </button>
 
-    <h2 id="drag-handle" class="text-white text-3xl font-semibold mb-4 text-center drop-shadow-md">
+    <h2 id="drag-handle" class="text-white text-3xl font-semibold mb-4 text-center drop-shadow-md" data-i18n="profile.friends">
       Friends
     </h2>
 
@@ -29,7 +37,7 @@
       <ul id="friends-list" class="space-y-3 text-white font-mono text-sm">
         <!-- Liste amis -->
       </ul>
-      <p id="empty-friends-text" class="text-white/50 text-center mt-6">
+      <p id="empty-friends-text" class="text-white/50 text-center mt-6" data-i18n="profile.noFriends">
         No friends added yet.
       </p>
     </div>
@@ -38,104 +46,20 @@
       <input
         id="addfriend"
         type="text"
+        data-i18n-placeholder="profile.enterUsername"
         placeholder="Enter a username..."
         class="flex-1 px-3 py-2 rounded bg-white text-black font-semibold placeholder-gray-600"
       />
       <button
         onclick="addFriend(document.getElementById('addfriend').value)"
         class="bg-neon text-black px-5 py-2 rounded hover:brightness-110 font-bold"
+        data-i18n="profile.follow"
       >
         Follow
       </button>
     </div>
   </div>
 </div>
-
-
-
-<!-- MODALE DE PROFIL -->
-<div id="editModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
-  <div
-    id="popup-profile"
-    class="w-[480px] max-w-full bg-white/40 backdrop-blur-md border border-white/50 rounded-xl shadow-lg p-6 flex flex-col overflow-visible relative"
-    style="top: 50%; left: 50%; transform: translate(-50%, -50%); position: absolute;"
-  >
-    <!-- Bouton fermer -->
-    <button
-      onclick="closeModal()"
-      class="absolute top-4 right-4 text-white hover:text-neon"
-      title="Fermer"
-    >
-      ✕
-    </button>
-
-    <h2 id="drag-handle-profile" class="text-white text-3xl font-semibold mb-4 text-center drop-shadow-md">
-      Modifier Profil
-    </h2>
-
-    <div class="space-y-4 bg-white/10 p-4 rounded-md border border-white/20 text-white font-mono text-sm">
-      <!-- Username -->
-      <div class="flex items-center">
-        <input
-          id="modal-username"
-          type="text"
-          placeholder="Nom d'utilisateur"
-          class="flex-1 px-3 py-2 rounded bg-white text-black placeholder-gray-600 font-semibold"
-        />
-
-      </div>
-
-      <!-- Email -->
-      <div class="flex items-center">
-        <input
-          id="modal-email"
-          type="email"
-          placeholder="Adresse email"
-          class="flex-1 px-3 py-2 rounded bg-white text-black placeholder-gray-600 font-semibold"
-        />
-
-      </div>
-
-      <!-- Mot de passe -->
-      <div class="flex items-center">
-        <input
-          id="modal-password"
-          type="password"
-          placeholder="Nouveau mot de passe"
-          class="flex-1 px-3 py-2 rounded bg-white text-black placeholder-gray-600 font-semibold"
-        />
-
-      </div>
-
-      <!-- Confirmation mot de passe -->
-      <div class="flex items-center">
-        <input
-          id="modal-confirm-password"
-          type="password"
-          placeholder="Confirmer mot de passe"
-          class="w-full px-3 py-2 rounded bg-white text-black placeholder-gray-600 font-semibold"
-        />
-      </div>
-
-      <!-- Actions -->
-      <div class="flex justify-end gap-3 pt-2">
-        <button
-          onclick="closeModal()"
-          class="px-4 py-2 border border-white rounded text-white hover:bg-white hover:text-black font-bold"
-        >
-          Annuler
-        </button>
-        <button
-          onclick="saveProfileChanges()"
-          class="bg-neon text-black px-5 py-2 rounded hover:brightness-110 font-bold"
-        >
-          Sauvegarder
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
   <!-- Rectangle vert principal -->
   <div class="w-[1000px] h-[850px] border-2 border-neon shadow-lg bg-gradient-to-br from-green-900/20 to-green-500/10 p-6 flex flex-col rounded-2xl space-y-6 overflow-hidden backdrop-blur-xl">
@@ -149,30 +73,6 @@
         <svg xmlns="http://www.w3.org/2000/svg" text-white width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
     </button>
 
-  <!-- Bouton Dark Mode -->
-  <button onclick="toggleDarkMode()" title="Toggle Dark Mode"
-    class="border-2 border-white text-white hover:text-neon w-10 h-10 rounded-full flex items-center justify-center  transition">
-    <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-moon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
-    </svg>
-  </button>
-
-  <!-- Bouton Settings -->
-  <button onclick="openSettings()" title="Settings"
-    class="border-2 border-white text-white hover:text-neon w-10 h-10 rounded-full flex items-center justify-center transition">
-    <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-settings" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  </button>
-  <select id="language-switcher">
-  <option value="en">English</option>
-  <option value="fr">Français</option>
-  <option value="fr">Spanish</option>
-</select>
-
 </div>
 
 
@@ -180,7 +80,7 @@
 
 <!-- Rectangle bleu -->
 <div class="w-1/2 h-full border-2 border-crtBlue rounded-2xl p-4 overflow-auto">
-    <h2 class="py-8 text-center text-2xl text-white mb-4">Ton Avatar</h2>
+    <h2 class="py-8 text-center text-2xl text-white mb-4" data-i18n="profile.avatar">Ton Avatar</h2>
 
   <div class="flex items-center justify-center space-x-10">
     <div class=" flex flex-col items-center space-y-6">
@@ -194,8 +94,8 @@
 <div class="mt-auto w-full flex justify-center gap-4 pt-8">
 
 
-<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8">
-  Changer d’avatar
+<button onclick="toggleAvatarDropdown()" class="border border-white text-white  px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8" data-i18n="profile.changeAvatar">
+  Changer d'avatar
 </button>
 
 <div id="avatar-dropdown" class="hidden ml-8 absolute left-0 top-1/2 -translate-y-1/2 bg-white/30 border rounded-2xl w-24 z-50 shadow-lg h-[420px] flex flex-col">
@@ -218,8 +118,8 @@
   </div>
 
   <div class="p-2 border-t bg-white/30">
-    <button onclick="confirmAvatarSelection()" class="bg-green-500 text-white px-2 py-1 rounded text-sm w-full">
-      Select
+    <button onclick="confirmAvatarSelection()" class="bg-green-500 text-white px-2 py-1 rounded text-sm w-full" data-i18n="profile.select">
+      Choisir
     </button>
   </div>
 </div>
@@ -228,6 +128,7 @@
   <label
     for="custom-avatar-upload"
         class="text-white text-center border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8"
+        data-i18n="profile.import"
   >
     Importer
     <input
@@ -246,9 +147,10 @@
 <!-- Rectangle rose -->
  <div class="w-1/2 h-full border-2 border-crtPurple rounded-2xl p-4">
     <div class="relative z-10 flex flex-col text-white px-8 py-16 w-full">
-        <h2 class="text-6xl text-white mb-4">Bonjour,
-        <p><span id="display-username"></span></p>  
-    </h2>
+        <h2 class="text-6xl text-white mb-4">
+          <span data-i18n="profile.hello">Bonjour</span>,
+          <p><span id="display-username"></span></p>  
+        </h2>
  
 <!-- Container -->
 <div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
@@ -307,6 +209,7 @@
     <button 
         class="border border-neon text-black px-8 rounded py-4 animate-flashy-neon"
         onclick="navigate('game-choice')"
+        data-i18n="profile.play"
         >
         JOUER
     </button>
@@ -317,7 +220,7 @@
         <div class="flex justify-center items-center text-white text-xl space-x-8">
         <!-- Wins -->
         <div class="flex flex-col items-center">
-            <span class="text-base">Victoires</span>
+            <span class="text-base" data-i18n="profile.wins">Victoires</span>
             <span id="wins-count" class="text-3xl font-bold font-sans">12</span>
         </div>
 
@@ -326,7 +229,7 @@
 
         <!-- Losses -->
         <div class="flex flex-col items-center">
-            <span class="text-base">Défaites</span>
+            <span class="text-base" data-i18n="profile.losses">Défaites</span>
             <span id="losses-count" class="text-3xl font-bold font-sans">5</span>
         </div>
 
@@ -335,7 +238,7 @@
 
         <!-- Win Rate -->
         <div class="flex flex-col items-center text-center ">
-            <span class="text-base">% de victoire</span>
+            <span class="text-base" data-i18n="profile.winRate">% de victoire</span>
             <span id="winrate" class="text-3xl font-bold font-sans">70%</span>
         </div>
     </div>
@@ -346,6 +249,7 @@
     <button
       onclick="openFriendsModal()"
       class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+      data-i18n="profile.friends"
     >
       Amis
     </button>
@@ -354,6 +258,7 @@
       <button
         onclick="seeMatchHistory()"
         class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+        data-i18n="profile.matchHistory"
       >
         Historique des matchs
       </button>
@@ -361,4 +266,3 @@
   </div>
 </div>
 </div>
-

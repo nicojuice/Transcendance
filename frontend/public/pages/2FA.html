@@ -1,3 +1,12 @@
+<select
+  id="language-switcher"
+  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+  <option value="es">Español</option>
+</select>
+
 <!-- Pong ball -->
 <div id="pongBall" class="ball absolute"></div>
 
@@ -22,6 +31,7 @@
       class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
     ></div>
 
+    <!-- Form content -->
     <div
       id="loginForm"
       class="relative flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
@@ -31,20 +41,23 @@
         type="submit"
         class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
         onclick="active2FA(event)"
+        data-i18n="2FA.EnableTwoFactor"
       >
-        Enable Two-Factor Authentication
+        Autoriser l'authentification à deux facteurs
       </button>
     </div>
 
+    <!-- Bottom text + button -->
     <div
       class="font-pixelify flex items-center justify-center relative overflow-visible text-white"
     >
-      No time right now?&nbsp;
+      <span data-i18n="2FA.NoTime">Vous n'avez pas le temps?</span>&nbsp;
       <button
         class="cursor-pointer hover:underline"
         onclick="active2FAlater(event)"
+        data-i18n="2FA.Later"
       >
-        Enable it later
+        Autoriser plus tard
       </button>
     </div>
   </div>

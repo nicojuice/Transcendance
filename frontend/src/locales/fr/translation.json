@@ -1,0 +1,54 @@
+{
+  "login": {
+    "title": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "google": "Se connecter avec Google",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signup": "Créer un compte"
+  },
+  "signup": {
+    "title": "Créer un compte",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmez le mot de passe",
+    "submit": "S'inscrire",
+    "alreadyAccount": "Vous avez déjà un compte ?",
+    "login": "Se connecter"
+  },
+  "profile": {
+    "close": "Fermer",
+    "friends": "Amis",
+    "noFriends": "Aucun ami ajouté pour le moment.",
+    "enterUsername": "Entrez un nom d'utilisateur...",
+    "follow": "Suivre",
+    "editProfile": "Modifier Profil",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse email",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer mot de passe",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "logout": "Déconnexion",
+    "toggleDarkMode": "Basculer mode sombre",
+    "settings": "Paramètres",
+    "avatar": "Ton Avatar",
+    "changeAvatar": "Changer d'avatar",
+    "select": "Choisir",
+    "import": "Importer",
+    "hello": "Bonjour",
+    "play": "JOUER",
+    "wins": "Victoires",
+    "losses": "Défaites",
+    "winRate": "% de victoire",
+    "matchHistory": "Historique des matchs"
+  },
+  "2FA": {
+    "EnableTwoFactor": "Autoriser l'authentification à deux facteurs",
+    "NoTime": "Vous n'avez pas le temps?",
+    "Later": "Autoriser plus tard"
+  }
+
+}

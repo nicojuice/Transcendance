@@ -36,4 +36,28 @@ module.exports = fp(async function (fastify, opts) {
       return reply.code(500).send({ error: 'Erreur serveur' });
     }
   });
+  fastify.get('/api/status', async (request, reply) => {
+    const { username } = request.query;
+    console.log('GET /api/status called for:', username);
+
+    if (typeof username !== 'string') {
+      return reply.code(400).send({ error: 'Paramètre "username" manquant ou invalide' });
+    }
+
+    try {
+      const user = await db.get(
+        'SELECT status FROM users WHERE name = ?',
+        [username]
+      );
+
+      if (!user) {
+        return reply.code(404).send({ error: 'Utilisateur non trouvé' });
+      }
+
+      return reply.send({ username, status: user.status });
+    } catch (err) {
+      request.log.error(err);
+      return reply.code(500).send({ error: 'Erreur serveur' });
+    }
+  });
 });

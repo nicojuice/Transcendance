@@ -1,0 +1,53 @@
+{
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "google": "Sign in with Google",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up"
+  },
+  "signup": {
+    "title": "Create Your Account",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Sign Up",
+    "alreadyAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "profile": {
+    "close": "Close",
+    "friends": "Friends",
+    "noFriends": "No friends added yet.",
+    "enterUsername": "Enter a username...",
+    "follow": "Follow",
+    "editProfile": "Edit Profile",
+    "username": "Username",
+    "email": "Email address",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "cancel": "Cancel",
+    "save": "Save",
+    "logout": "Log Out",
+    "toggleDarkMode": "Toggle Dark Mode",
+    "settings": "Settings",
+    "avatar": "Your Avatar",
+    "changeAvatar": "Change avatar",
+    "select": "Select",
+    "import": "Import",
+    "hello": "Hello",
+    "play": "PLAY",
+    "wins": "Wins",
+    "losses": "Losses",
+    "winRate": "Win Rate",
+    "matchHistory": "Match History"
+  },
+  "2FA": {
+    "EnableTwoFactor": "Enable Two-Factor Authentication",
+    "NoTime": "No time right now?",
+    "Later": "Enable it later"
+  }
+}

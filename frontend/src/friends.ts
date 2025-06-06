@@ -58,7 +58,7 @@ export async function getFriends(): Promise<void> {
 
     const data = await response.json();
     const friendsList: string[] = data.friends || [];
-    
+
     const ul = document.getElementById("friends-list");
     const emptyText = document.getElementById("empty-friends-text");
 
@@ -71,16 +71,28 @@ export async function getFriends(): Promise<void> {
       emptyText.style.display = "none";
     }
 
-    friendsList.forEach((friend: string) => {
-      // Vérifier que friend existe et est une string valide
-      if (!friend || typeof friend !== 'string') {
+    // Fonction pour récupérer le statut d’un ami (0 = hors ligne, 1 = en ligne)
+    // async function getFriendStatus(friendUsername: string): Promise<number | null> {
+    //   try {
+    //     const res = await fetch(`http://localhost:8088/api/status?username=${encodeURIComponent(friendUsername)}`);
+    //     if (!res.ok) return null;
+    //     const statusData = await res.json();
+    //     return statusData.status;
+    //   } catch {
+    //     return null;
+    //   }
+    // }
+
+    for (const friend of friendsList) {
+      if (!friend || typeof friend !== "string") {
         console.warn("Nom d'utilisateur invalide:", friend);
-        return;
+        continue;
       }
-      
-      // Puisque friend est déjà une string, on l'utilise directement
+
       const friendUsername = friend;
-      const friendAvatar = null; // Pas d'avatar dans cette structure
+      const friendStatus = await getFriendStatus(friendUsername);
+
+      // Création de l'élément <li>
       const li = document.createElement("li");
       li.className = `
         p-3 rounded-3xl bg-zinc-900/60 border border-white/20
@@ -88,31 +100,61 @@ export async function getFriends(): Promise<void> {
         flex items-center justify-between gap-4 transition-all
       `;
 
-      let avatarEl: HTMLElement;
+      // Pastille de statut
+      const statusDot = document.createElement("span");
+      statusDot.className = "w-3 h-3 rounded-full flex-shrink-0";
 
-      if (friendAvatar) {
-        const img = document.createElement("img");
-        img.src = friendAvatar;
-        img.alt = `${friendUsername}'s avatar`;
-        img.className =
-          "w-9 h-9 rounded-full object-cover border border-white/20";
-        avatarEl = img;
+      if (friendStatus === 1) {
+        statusDot.classList.add("bg-green-400"); // en ligne = vert
+      } else if (friendStatus === 0) {
+        statusDot.classList.add("bg-gray-400"); // hors ligne = gris clair
       } else {
-        const div = document.createElement("div");
-        div.textContent = friendUsername.charAt(0).toUpperCase();
-        div.className =
-          "w-9 h-9 rounded-full flex items-center justify-center font-bold text-white bg-neon border border-white/20";
-        avatarEl = div;
+        statusDot.classList.add("bg-transparent"); // statut inconnu = invisible
       }
 
-      // 🧑‍🤝‍🧑 Nom
-      const name = document.createElement("span");
-      name.textContent = friendUsername;
-      name.className = "text-white text-sm";
+      // Avatar (lettre)
+      const avatarDiv = document.createElement("div");
+      avatarDiv.textContent = friendUsername.charAt(0).toUpperCase();
+      avatarDiv.className =
+        "w-9 h-9 rounded-full flex items-center justify-center font-bold text-neon border border-neon";
 
-      // ❌ Bouton Supprimer
+      // Nom d'utilisateur + pastille + avatar regroupés à gauche
+      const left = document.createElement("div");
+      left.className = "flex items-center gap-3";
+
+      // On crée un wrapper pour avatar + pastille (pour bien les aligner)
+      const avatarWrapper = document.createElement("div");
+      avatarWrapper.className = "relative flex items-center justify-center";
+
+      avatarWrapper.appendChild(avatarDiv);
+
+      // Positionnement pastille en bas à droite de l'avatar
+      statusDot.style.position = "absolute";
+      statusDot.style.bottom = "0";
+      statusDot.style.right = "0";
+      statusDot.style.border = "2px solid rgba(255,255,255,0.8)";
+      statusDot.style.boxSizing = "content-box bounce";
+
+      avatarWrapper.appendChild(statusDot);
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "text-white text-sm font-semibold";
+      if (friendStatus === 1) {
+        nameSpan.textContent = `${friendUsername} (En ligne)`;
+        nameSpan.style.color = "yellow";
+      } else if (friendStatus === 0) {
+        nameSpan.textContent = `${friendUsername} (Hors ligne)`;
+        nameSpan.style.color = "red";
+      } else {
+        nameSpan.textContent = friendUsername;
+      }
+
+      left.appendChild(avatarWrapper);
+      left.appendChild(nameSpan);
+
+      // Bouton Supprimer
       const removeBtn = document.createElement("button");
-      removeBtn.className = "hover:text-red-500 text-white transition-colors";
+      removeBtn.className = "hover:text-neon text-white transition-colors";
       removeBtn.title = "Remove friend";
       removeBtn.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -121,20 +163,17 @@ export async function getFriends(): Promise<void> {
         </svg>
       `;
       removeBtn.onclick = async () => {
-        const confirmRemove = confirm(
-          `Supprimer ${friendUsername} de ta liste ?`
-        );
+        const confirmRemove = confirm(`Supprimer ${friendUsername} de ta liste ?`);
         if (!confirmRemove) return;
 
         try {
-          const res = await fetch(`http://localhost:8088/api/remove-friend/${username}/${friend}`, {
+          const res = await fetch(`http://localhost:8088/api/remove-friend/${username}/${friendUsername}`, {
             method: "DELETE"
-        });
-
+          });
 
           if (res.ok) {
             showToast("Ami supprimé", "success");
-            await getFriends(); // Refresh list
+            await getFriends(); // Rafraîchir la liste
           } else {
             const errData = await res.json();
             showToast(errData.message || "Échec de la suppression", "error");
@@ -145,17 +184,11 @@ export async function getFriends(): Promise<void> {
         }
       };
 
-      const left = document.createElement("div");
-      left.className = "flex items-center gap-3";
-      left.appendChild(avatarEl);
-      left.appendChild(name);
-
       li.appendChild(left);
       li.appendChild(removeBtn);
       ul.appendChild(li);
-    });
-    
-    console.log(`Liste rafraîchie : ${friendsList.length} amis trouvés`);
+    }
+
   } catch (err) {
     console.error("Erreur lors du chargement des amis :", err);
     showToast("Erreur lors du chargement des amis", "error");
@@ -163,17 +196,28 @@ export async function getFriends(): Promise<void> {
 }
 
 
+async function getFriendStatus(friendUsername: string): Promise<number | null> {
+  try {
+    const response = await fetch(`http://localhost:8094/api/status?username=${encodeURIComponent(friendUsername)}`);
+    if (!response.ok) {
+      console.warn(`Statut non trouvé pour ${friendUsername} (code ${response.status})`);
+      return null;
+    }
+    const data = await response.json();
+    console.log(data);
+    return data.status;
+  } catch (err) {
+    console.error(`Erreur en récupérant le statut de ${friendUsername}:`, err);
+    return null;
+  }
+}
 
-// function openFriendsModal() {
-//   const modal = document.getElementById('friends-modal');
-//   if (modal) {
-//     modal.classList.remove('hidden');
-//   }
-// }
 
-function openFriendsModal() {
+
+async function openFriendsModal() {
   const modal = document.getElementById("friends-modal");
   if (modal) modal.classList.remove("hidden");
+  await getFriends();
 
   // Drag setup ici :
   const popup = document.getElementById('popup');
@@ -217,6 +261,7 @@ function closeFriendsModal() {
 }
 
 (window as any).addFriend = addFriend;
+(window as any).getFriendStatus = getFriendStatus;
 (window as any).openFriendsModal = openFriendsModal;
 (window as any).closeFriendsModal = closeFriendsModal;
 

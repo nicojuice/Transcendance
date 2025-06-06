@@ -1,40 +1,38 @@
-<!-- Pong ball -->
+<select
+  id="language-switcher"
+  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+  <option value="es">Spanish</option>
+</select>
+
 <div id="pongBall" class="ball absolute z-2"></div>
 
-<div
-  class="text-neon font-pixelify flex items-center justify-center relative overflow-visible p-4"
->
+<div class="text-neon font-pixelify flex items-center justify-center relative overflow-visible p-4">
   <!-- CRT scanlines -->
-  <div class="crt-effect absolute inset-0 z-[-1]"></div>
+
 
   <!-- Conteneur principal : anneaux + formulaire -->
-  <div
-    class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center z-10"
-  >
+  <div class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center z-10">
+      <div class="crt-effect absolute inset-0 z-[-1]"></div>
+
     <!-- Anneaux -->
-    <div
-      class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
-    ></div>
-    <div
-      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"
-    ></div>
-    <div
-      class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
-    ></div>
+    <div class="absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"></div>
+    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-reverse-slower group-hover:border-crtPurple group-hover:drop-shadow-[0_0_20px_red] transition-all duration-500"></div>
+    <div class="absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"></div>
 
     <!-- Formulaire -->
-    <form
-      id="loginForm"
-      class="relative z-10 flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
-    >
-      <h2 class="text-2xl mb-4">Login</h2>
+    <form id="loginForm" class="relative z-10 flex flex-col items-center justify-center font-pixelify text-neon text-center px-8">
+      <h2 class="text-2xl mb-4" data-i18n="login.title">Connexion</h2>
 
       <input
         type="text"
         id="username"
         name="username"
-        placeholder="Username"
-        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
+        data-i18n-placeholder="login.username"
+        placeholder="Nom d'utilisateur"
+        class="w-full mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
         required
       />
 
@@ -42,15 +40,17 @@
         type="password"
         id="password"
         name="password"
-        placeholder="Password"
-        class="mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
+        data-i18n-placeholder="login.password"
+        placeholder="Mot de passe"
+        class="w-full mb-4 px-6 py-2 rounded bg-black/30 border border-white text-white placeholder-white text-base"
         required
       />
 
       <input
         id="connect-button"
         type="submit"
-        value="Sign in"
+        data-i18n-value="login.submit"
+        value="Se connecter"
         class="mb-4 cursor-pointer px-6 py-2 bg-neon text-black font-bold rounded hover:brightness-110 transition-all w-full"
         onclick="connect(event)"
       />
@@ -61,14 +61,16 @@
         class="mb-4 px-6 py-2 bg-white text-black font-bold rounded hover:brightness-110 w-full transition-all flex items-center justify-center gap-2"
       >
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="h-5 w-5" />
-        Sign in with Google
+        <span data-i18n="login.google">Se connecter avec Google</span>
       </button>
     </form>
 
+<div class="font-pixelify flex flex-col items-center justify-center relative overflow-visible z-2 text-white text-center">
+  <span data-i18n="login.noAccount">Vous n'avez pas de compte ?</span><br />
+  <button class="cursor-pointer hover:underline" onclick="navigate('signup')" data-i18n="login.signup">
+    Connectez-vous
+  </button>
+</div>
 
-    <div class="font-pixelify flex items-center justify-center relative overflow-visible z-2  text-white">
-        Don't have an account ?&nbsp;
-        <button class="cursor-pointer hover:underline" onclick="navigate('signup')">Sign up</button>
-    </div>
   </div>
 </div>
