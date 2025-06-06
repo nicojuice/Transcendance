@@ -13,7 +13,7 @@ services:
       - sql:/data
     networks:
       - Transcendance
-      
+
   register-service:
     build:
       context: ./backend/register
@@ -43,7 +43,7 @@ services:
       - sql:/data
     networks:
       - Transcendance
-    
+
   pass-service:
     build:
       context: ./backend/user-management/change-pass
@@ -58,7 +58,7 @@ services:
       - sql:/data
     networks:
       - Transcendance
-  
+
   user-service:
     build:
       context: ./backend/user-management/change-user
@@ -73,7 +73,7 @@ services:
       - sql:/data
     networks:
       - Transcendance
-  
+
   avatar-service:
     build:
       context: ./backend/user-management/add-avatar
@@ -146,19 +146,19 @@ services:
     networks:
       - Transcendance
 
-  rooms-local-service:
-    build:
-      context: ./backend/games/rooms/local
-      dockerfile: Dockerfile
-    ports:
-      - "8096:8096"
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - sql:/data
-    networks:
-      - Transcendance
-    
+  # rooms-local-service:
+  #   build:
+  #     context: ./backend/games/rooms/local
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8096:8096"
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - sql:/data
+  #   networks:
+  #     - Transcendance
+
   google-auth-service:
     build:
       context: ./backend/google-auth
@@ -202,7 +202,7 @@ services:
       - sql:/data
     networks:
       - Transcendance
-  
+
   2fa:
     build:
       context: ./backend/2FA/

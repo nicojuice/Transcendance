@@ -1,8 +1,9 @@
-import { fetchProfile } from "./editprofile"
-import { editUser } from "./editprofile"
-import { editEmail } from "./editprofile"
-import { editPass } from "./editprofile"
-import './i18n';
+import { fetchProfile } from "./editprofile";
+import { editUser } from "./editprofile";
+import { editEmail } from "./editprofile";
+import { editPass } from "./editprofile";
+import "./i18n";
+import { showToast } from "./showToast";
 
 // export function initProfilePage(): void {
 // 	const storedUsername = localStorage.getItem('username');
@@ -15,57 +16,64 @@ import './i18n';
 // }
 
 async function displayAvatar(username: string): Promise<void> {
-	try {
-		//console.log("display avatar");
-		const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
-		if (!res.ok)
-			throw new Error("Avatar not found");
+  try {
+    //console.log("display avatar");
+    const res = await fetch(
+      `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`
+    );
+    if (!res.ok) throw new Error("Avatar not found");
 
-		const blob = await res.blob();
-		const imageUrl = URL.createObjectURL(blob);
+    const blob = await res.blob();
+    const imageUrl = URL.createObjectURL(blob);
 
-		// Exemple d’utilisation : afficher l’image dans une balise <img id="avatar">
-		const img = document.getElementById("avatar-preview") as HTMLImageElement;
-		if (img)
-		{
-			//console.log("image set");
-			img.src = imageUrl;
-		}
-	} catch (err) {
-		console.error("Error fetching avatar:", err);
-	}
+    // Exemple d’utilisation : afficher l’image dans une balise <img id="avatar">
+    const img = document.getElementById("avatar-preview") as HTMLImageElement;
+    if (img) {
+      //console.log("image set");
+      img.src = imageUrl;
+    }
+  } catch (err) {
+    console.error("Error fetching avatar:", err);
+  }
 }
 
 export async function initProfilePage(): Promise<void> {
-	await fetchProfile();
+  await fetchProfile();
 
-	const storedUsername = localStorage.getItem('username');
-	if (storedUsername) {
-		const displayUsername = document.getElementById('display-username');
-		if (displayUsername) {
-			displayUsername.textContent = storedUsername;
-		}
-		await displayAvatar(storedUsername);
-	}
+  const storedUsername = localStorage.getItem("username");
+  if (storedUsername) {
+    const displayUsername = document.getElementById("display-username");
+    if (displayUsername) {
+      displayUsername.textContent = storedUsername;
+    }
+    await displayAvatar(storedUsername);
+  }
 }
 
 async function openModalWithUserData(): Promise<void> {
-	await fetchProfile();
-  const username = (document.getElementById('username') as HTMLInputElement)?.value || '';
-  const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
+  await fetchProfile();
+  const username =
+    (document.getElementById("username") as HTMLInputElement)?.value || "";
+  const email =
+    (document.getElementById("email") as HTMLInputElement)?.value || "";
 
-  (document.getElementById('modal-username') as HTMLInputElement).value = username;
-  (document.getElementById('modal-email') as HTMLInputElement).value = email;
-  (document.getElementById('modal-password') as HTMLInputElement).value = '';
-  (document.getElementById('modal-confirm-password') as HTMLInputElement).value = '';
+  (document.getElementById("modal-username") as HTMLInputElement).value =
+    username;
+  (document.getElementById("modal-email") as HTMLInputElement).value = email;
+  (document.getElementById("modal-password") as HTMLInputElement).value = "";
+  (
+    document.getElementById("modal-confirm-password") as HTMLInputElement
+  ).value = "";
 
-  const modal = document.getElementById('editModal') as HTMLElement | null;
-  const popup = modal?.querySelector('#popup-profile') as HTMLElement | null;
-  const handle = document.getElementById('drag-handle-profile') as HTMLElement | null;
+  const modal = document.getElementById("editModal") as HTMLElement | null;
+  const popup = modal?.querySelector("#popup-profile") as HTMLElement | null;
+  const handle = document.getElementById(
+    "drag-handle-profile"
+  ) as HTMLElement | null;
 
   if (!modal || !popup || !handle) return;
 
-  modal.classList.remove('hidden');
+  modal.classList.remove("hidden");
 
   let isDragging = false;
   let offsetX = 0;
@@ -77,8 +85,8 @@ async function openModalWithUserData(): Promise<void> {
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
   };
 
   const onMouseMove = (e: MouseEvent) => {
@@ -89,32 +97,39 @@ async function openModalWithUserData(): Promise<void> {
 
   const onMouseUp = () => {
     isDragging = false;
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
   };
 
-  handle.addEventListener('mousedown', onMouseDown);
+  handle.addEventListener("mousedown", onMouseDown);
 }
 
-
 function closeModal() {
-  document.getElementById('editModal')?.classList.add('hidden');
+  document.getElementById("editModal")?.classList.add("hidden");
 }
 
 async function saveProfileChanges() {
-  const username = (document.getElementById('modal-username') as HTMLInputElement).value.trim();
-  const email = (document.getElementById('modal-email') as HTMLInputElement).value.trim();
-  const password = (document.getElementById('modal-password') as HTMLInputElement).value;
-  const confirmPassword = (document.getElementById('modal-confirm-password') as HTMLInputElement).value;
+  const username = (
+    document.getElementById("modal-username") as HTMLInputElement
+  ).value.trim();
+  const email = (
+    document.getElementById("modal-email") as HTMLInputElement
+  ).value.trim();
+  const password = (
+    document.getElementById("modal-password") as HTMLInputElement
+  ).value;
+  const confirmPassword = (
+    document.getElementById("modal-confirm-password") as HTMLInputElement
+  ).value;
 
-  if (password !== '' && password !== confirmPassword) {
-    alert("Les mots de passe ne correspondent pas.");
+  if (password !== "" && password !== confirmPassword) {
+    showToast("Les mots de passe ne correspondent pas.", "error");
     return;
   }
 
   // Pour mettre à jour le username dans l'input principal (visible sur la page)
-  (document.getElementById('username') as HTMLInputElement).value = username;
-  (document.getElementById('email') as HTMLInputElement).value = email;
+  (document.getElementById("username") as HTMLInputElement).value = username;
+  (document.getElementById("email") as HTMLInputElement).value = email;
 
   try {
     // Appel à editUser() qui utilise l'input principal "username"
@@ -124,7 +139,7 @@ async function saveProfileChanges() {
     await editEmail(email);
 
     // Si mot de passe renseigné, changement de mot de passe
-    if (password !== '') {
+    if (password !== "") {
       await editPass(password);
     }
 
@@ -138,31 +153,36 @@ async function saveProfileChanges() {
 (window as any).saveProfileChanges = saveProfileChanges;
 (window as any).closeModal = closeModal;
 
-
 function showPasswordEdit(): void {
-  const passwordView = document.getElementById('password-view');
-  const passwordEdit = document.getElementById('password-edit');
+  const passwordView = document.getElementById("password-view");
+  const passwordEdit = document.getElementById("password-edit");
   if (passwordView && passwordEdit) {
-    passwordView.classList.add('hidden');
-    passwordEdit.classList.remove('hidden');
+    passwordView.classList.add("hidden");
+    passwordEdit.classList.remove("hidden");
   }
 }
 
 function cancelPasswordEdit(): void {
-  const passwordView = document.getElementById('password-view');
-  const passwordEdit = document.getElementById('password-edit');
-  const oldPassword = document.getElementById('old-password') as HTMLInputElement | null;
-  const newPassword = document.getElementById('new-password') as HTMLInputElement | null;
-  const confirmPassword = document.getElementById('confirm-password') as HTMLInputElement | null;
+  const passwordView = document.getElementById("password-view");
+  const passwordEdit = document.getElementById("password-edit");
+  const oldPassword = document.getElementById(
+    "old-password"
+  ) as HTMLInputElement | null;
+  const newPassword = document.getElementById(
+    "new-password"
+  ) as HTMLInputElement | null;
+  const confirmPassword = document.getElementById(
+    "confirm-password"
+  ) as HTMLInputElement | null;
 
   if (passwordEdit && passwordView) {
-    passwordEdit.classList.add('hidden');
-    passwordView.classList.remove('hidden');
+    passwordEdit.classList.add("hidden");
+    passwordView.classList.remove("hidden");
   }
 
-  if (oldPassword) oldPassword.value = '';
-  if (newPassword) newPassword.value = '';
-  if (confirmPassword) confirmPassword.value = '';
+  if (oldPassword) oldPassword.value = "";
+  if (newPassword) newPassword.value = "";
+  if (confirmPassword) confirmPassword.value = "";
 }
 
 (window as any).showPasswordEdit = showPasswordEdit;
