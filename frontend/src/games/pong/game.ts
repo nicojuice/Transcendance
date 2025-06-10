@@ -340,43 +340,46 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     const delta = engine.getDeltaTime() / 16.666;
     elapsedTimeIA += engine.getDeltaTime();
     const speed = 0.3;
-
-    if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
-    if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
 
 
-
-
-    // IA Paddle Movement
-    //actualiser 1 fois par seconde
-    //if (elapsedTimeIA > 1000)
+    if (room.withIA)
     {
-      elapsedTimeIA = 0;
-      const AI_points = predictIATrajectoryPoints(ball, ballVelocity);
-      void debugLine;
-      //Debug trajectory
-      /*setTimeout(() => 
+      // IA Paddle Movement
+      //actualiser 1 fois par seconde
+      if (elapsedTimeIA > 1000)
       {
-        // Supprimer l'ancienne ligne si elle existe
-        if (debugLine) {
-          debugLine.dispose();
-        }
-        debugLine = BABYLON.MeshBuilder.CreateLines("trajectory", {
-          points: AI_points
-        }, scene);
-        debugLine.color = new BABYLON.Color3(1, 1, 0); // jaune
-      }, 0);*/
-      // Fin debug trajectory
-      predictPaddlePosition = AI_points[AI_points.length - 1].z;
-    }
+        elapsedTimeIA = 0;
+        const AI_points = predictIATrajectoryPoints(ball, ballVelocity);
+        void debugLine;
+        //Debug trajectory
+        /*setTimeout(() => 
+        {
+          // Supprimer l'ancienne ligne si elle existe
+          if (debugLine) {
+            debugLine.dispose();
+          }
+          debugLine = BABYLON.MeshBuilder.CreateLines("trajectory", {
+            points: AI_points
+          }, scene);
+          debugLine.color = new BABYLON.Color3(1, 1, 0); // jaune
+        }, 0);*/
+        // Fin debug trajectory
+        predictPaddlePosition = AI_points[AI_points.length - 1].z;
+      }
 
-    if (paddle2.position.z < predictPaddlePosition - 0.25)
-      paddle2.position.z += speed * delta;
-    else if (paddle2.position.z > predictPaddlePosition + 0.25)
-      paddle2.position.z -= speed * delta;
-    //////////////////////////////////////////
+      if (paddle2.position.z < predictPaddlePosition - 0.25)
+        paddle2.position.z += speed * delta;
+      else if (paddle2.position.z > predictPaddlePosition + 0.25)
+        paddle2.position.z -= speed * delta;
+      //////////////////////////////////////////
+    }
+    else
+    {
+      if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
+      if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+    }
 
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
     paddle2.position.z = BABYLON.Scalar.Clamp(paddle2.position.z, -8, 8);
