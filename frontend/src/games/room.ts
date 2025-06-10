@@ -1,40 +1,12 @@
 import { navigate } from "../nav";
 
-export class MatchStats {
-  loserName: string;
-  maxBallSpeed: number;
-  bounceCount: number;
-  duration: number;
-
-  constructor() {
-    this.loserName = "";
-    this.maxBallSpeed = 0;
-    this.bounceCount = 0;
-    this.duration = 0;
-  }
-
-  updateMaxSpeed(currentSpeed: number) {
-    if (currentSpeed > this.maxBallSpeed) {
-      this.maxBallSpeed = currentSpeed;
-    }
-  }
-
-  incrementBounces() {
-    this.bounceCount++;
-  }
-
-  setLoser(name: string) {
-    this.loserName = name;
-  }
-};
-
 export class Room {
   gameName: string;
   nextPage: string;
   players: any;
   withIA: any;
   withCustom: any;
-  stats: MatchStats;
+  ownerWinner: boolean;
 
   constructor() {
     this.gameName = "pong";
@@ -42,7 +14,7 @@ export class Room {
     this.players = [];
     this.withIA = false;
     this.withCustom = false;
-    this.stats = new MatchStats();
+    this.ownerWinner = false;
   }
 
   addPlayer(playerName: string) {
@@ -56,7 +28,6 @@ export class Room {
       this.withIA = parsedRoom.withIA;
       this.withCustom = parsedRoom.withCustom;
       this.players = parsedRoom.players || [];
-      this.stats = new MatchStats();
     } else {
       console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
     }

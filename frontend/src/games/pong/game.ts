@@ -464,7 +464,10 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
       ball.position.set(0, 0.5, 0);
       ballVelocity = new BABYLON.Vector3(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
       if (Math.abs(scoreLeft - scoreRight) >= 2)
+      {
+        room.ownerWinner = scoreLeft > scoreRight;
         endGame(room);
+      }
     }
   });
 
