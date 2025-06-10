@@ -29,6 +29,7 @@ export class MatchStats {
 };
 
 export class Room {
+  gameName: string;
   nextPage: string;
   players: any;
   withIA: any;
@@ -36,6 +37,7 @@ export class Room {
   stats: MatchStats;
 
   constructor() {
+    this.gameName = "pong";
     this.nextPage = "profile";
     this.players = [];
     this.withIA = false;

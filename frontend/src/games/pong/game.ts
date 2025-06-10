@@ -76,26 +76,14 @@ function buildTerrain(scene: BABYLON.Scene): void {
   border2.position = new BABYLON.Vector3(0, 0, -10);
 }
 
-function endGame(engine: BABYLON.Engine, room: ROOM.Room): void {
-  engine.stopRenderLoop(); // Arrête la boucle
-  //engine.dispose(); // Détruit le moteur (y compris la scène et la caméra)
-
-  const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
-  if (canvas) {
-    canvas.remove();
-    document.body.style.backgroundColor = "black";
-  }
-
-  document.body.style.width = "100%";
-  document.body.style.height = "100%";
-
+function endGame(room: ROOM.Room): void {
   room.saveToLocalStorage();
-  navigate(room.nextPage);
+  setTimeout(() => navigate(room.nextPage), 0);
 }
 
 
 // === Main game function ===
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): void {
+export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): () => void {
   const scene = new BABYLON.Scene(engine);
   scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
@@ -133,8 +121,6 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   };
   updateCameraRadius();
 
-  window.addEventListener("resize", updateCameraRadius);
-
   // Lights and glow
   new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene).intensity = 0.5;
   new BABYLON.GlowLayer("glow", scene).intensity = 0.5;
@@ -160,30 +146,70 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   pauseMenu.isVisible = false;
   ui.addControl(pauseMenu);
 
+  // Nouveau layout vertical
+  const pauseLayout = new GUI.StackPanel();
+  pauseLayout.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  pauseLayout.top = "20px"; // Marge du haut
+  pauseMenu.addControl(pauseLayout);
+
+  // Ajout du texte
   const pauseText = new GUI.TextBlock();
   pauseText.text = "Pause";
   pauseText.color = "white";
   pauseText.fontSize = 48;
-  pauseText.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  pauseText.top = "20px";
-  pauseMenu.addControl(pauseText);
+  pauseText.height = "100px"; // taille fixe utile dans StackPanel
+  pauseLayout.addControl(pauseText);
 
+  // Bouton Reprendre
   const resumeBtn = GUI.Button.CreateSimpleButton("resume", "Reprendre");
   resumeBtn.width = "60%";
   resumeBtn.height = "40px";
-  resumeBtn.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
   resumeBtn.color = "white";
   resumeBtn.background = "#00cc00";
-  resumeBtn.onPointerUpObservable.add(() => { paused = false; pauseMenu.isVisible = false; });
-  pauseMenu.addControl(resumeBtn);
+  resumeBtn.onPointerUpObservable.add(() => {
+    paused = false;
+    pauseMenu.isVisible = false;
+  });
+  pauseLayout.addControl(resumeBtn);
+
+  // === BOUTON PAUSE ===
+  const pauseBtn = GUI.Button.CreateSimpleButton("pauseBtn", "⏸ Pause");
+  pauseBtn.width = "100px";
+  pauseBtn.height = "40px";
+  pauseBtn.color = "white";
+  pauseBtn.background = "#444";
+  pauseBtn.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+  pauseBtn.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+  pauseBtn.top = "10px";
+  pauseBtn.left = "10px";
+
+  pauseBtn.onPointerUpObservable.add(() => {
+    paused = true;
+    pauseMenu.isVisible = true;
+    pauseBtn.isVisible = false;
+  });
+
+  ui.addControl(pauseBtn);
+
+  // === Mettre à jour le bouton dans le resumeBtn existant ===
+  resumeBtn.onPointerUpObservable.add(() => {
+    paused = false;
+    pauseMenu.isVisible = false;
+    pauseBtn.isVisible = true;
+  });
+
+
 
   let paused = false;
-  window.addEventListener("keydown", (e) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
       paused = !paused;
       pauseMenu.isVisible = paused;
+      pauseBtn.isVisible = !paused;
     }
-  });
+  };
+  window.addEventListener("keydown", handleKeyDown);
+
 
   // Materials
   const paddleMat = new BABYLON.StandardMaterial("paddleMat", scene);
@@ -246,10 +272,28 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
       scoreText.text = `${scoreLeft} - ${scoreRight}`;
       ball.position.set(0, 0.5, 0);
       ballVelocity = new BABYLON.Vector3(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
-      //endGame(engine,room);
+      if (Math.abs(scoreLeft - scoreRight) >= 2)
+        endGame(room);
     }
   });
 
   scene.freezeActiveMeshes();
   engine.runRenderLoop(() => scene.render());
+
+  let resizeListener = () => updateCameraRadius();
+  window.addEventListener("resize", resizeListener);
+
+  return () => {
+    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("resize", resizeListener);
+    paused = true;
+    scene.onDisposeObservable.clear();
+    scene.onAfterRenderObservable.clear();
+    scene.onBeforeRenderObservable.clear();
+    engine.stopRenderLoop();
+    scene.actionManager?.dispose();
+    scene.dispose();
+    engine.dispose();
+    return;
+  };
 }

@@ -3,10 +3,15 @@ import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status';
 import { showToast } from './showToast'
+import { EventManager } from './eventManager';
 import './i18n';
+
+
+export const onNavigate = new EventManager();
 
 export async function navigate(page : string) {
     try {
+		onNavigate.dispatch();
 		window.history.replaceState(null, document.title, page);
 		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
