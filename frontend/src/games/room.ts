@@ -6,7 +6,7 @@ export class Room {
   players: any;
   withIA: any;
   withCustom: any;
-  ownerWinner: boolean;
+  playerWinner: number;
 
   constructor() {
     this.gameName = "pong";
@@ -14,7 +14,7 @@ export class Room {
     this.players = [];
     this.withIA = false;
     this.withCustom = false;
-    this.ownerWinner = false;
+    this.playerWinner = 0;
   }
 
   addPlayer(playerName: string) {
@@ -56,7 +56,7 @@ export function startGameAndNavigate() {
   room.withIA = numPlayers;
   room.players = Username;
   room.withCustom = isCustom;
-  localStorage.setItem("currentRoom", JSON.stringify(room));
+  room.saveToLocalStorage();
 
   // Navigation
   navigate("pong");
