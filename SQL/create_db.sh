@@ -7,7 +7,9 @@ sqlite3 /data/data.db "
 		password TEXT NOT NULL,
 		avatar BLOB,
 		enabled_fa INTEGER,
-		status INTEGER
+		status INTEGER,
+		wins INTEGER,
+		all_games INTEGER
 	);"
 sqlite3 /data/data.db "
 	CREATE TABLE IF NOT EXISTS otp_codes (

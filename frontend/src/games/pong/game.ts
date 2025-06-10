@@ -1,4 +1,4 @@
-import { navigate } from "../../nav";
+// import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import * as ROOM from "../room";
@@ -76,22 +76,22 @@ function buildTerrain(scene: BABYLON.Scene): void {
   border2.position = new BABYLON.Vector3(0, 0, -10);
 }
 
-function endGame(engine: BABYLON.Engine, room: ROOM.Room): void {
-  engine.stopRenderLoop(); // Arrête la boucle
-  //engine.dispose(); // Détruit le moteur (y compris la scène et la caméra)
+// function endGame(engine: BABYLON.Engine, room: ROOM.Room): void {
+//   engine.stopRenderLoop(); // Arrête la boucle
+//   //engine.dispose(); // Détruit le moteur (y compris la scène et la caméra)
 
-  const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
-  if (canvas) {
-    canvas.remove();
-    document.body.style.backgroundColor = "black";
-  }
+//   const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
+//   if (canvas) {
+//     canvas.remove();
+//     document.body.style.backgroundColor = "black";
+//   }
 
-  document.body.style.width = "100%";
-  document.body.style.height = "100%";
+//   document.body.style.width = "100%";
+//   document.body.style.height = "100%";
 
-  room.saveToLocalStorage();
-  navigate(room.nextPage);
-}
+//   room.saveToLocalStorage();
+//   navigate(room.nextPage);
+// }
 
 
 // === Main game function ===
@@ -99,7 +99,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   const scene = new BABYLON.Scene(engine);
   scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-
+  void room;
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera
