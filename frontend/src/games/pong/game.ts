@@ -355,6 +355,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     {
       elapsedTimeIA = 0;
       const AI_points = predictIATrajectoryPoints(ball, ballVelocity);
+      void debugLine;
       //Debug trajectory
       /*setTimeout(() => 
       {
@@ -383,7 +384,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     handleBallCollisions(ball, paddle1, paddle2, ballVelocity);
 
     if (Math.abs(ball.position.x) > 16) {
-      if (ball.position.x > 0) scoreLeft++;
+      if (ball.position.x < 0) scoreLeft++;
       else scoreRight++;
       scoreText.text = `${scoreLeft} - ${scoreRight}`;
       ball.position.set(0, 0.5, 0);
@@ -394,6 +395,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
           room.playerWinner = 0;
         else
           room.playerWinner = 1;
+        console.log("Fin du jeu, joueur " + room.playerWinner + " gagne !");
         endGame(room);
       }
     }
