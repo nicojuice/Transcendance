@@ -312,13 +312,12 @@
     </button>
 </div>
 
-
-
+</script>
         <div class="flex justify-center items-center text-white text-xl space-x-8">
         <!-- Wins -->
         <div class="flex flex-col items-center">
             <span class="text-base">Victoires</span>
-            <span id="wins-count" class="text-3xl font-bold font-sans">12</span>
+            <span id="wins-count" class="text-3xl font-bold font-sans"></span>
         </div>
 
         <!-- Bar -->
@@ -326,8 +325,8 @@
 
         <!-- Losses -->
         <div class="flex flex-col items-center">
-            <span class="text-base">Défaites</span>
-            <span id="losses-count" class="text-3xl font-bold font-sans">5</span>
+            <span class="text-base">Total games</span>
+            <span id="total-games" class="text-3xl font-bold font-sans"></span>
         </div>
 
         <!-- Bar -->
@@ -336,7 +335,7 @@
         <!-- Win Rate -->
         <div class="flex flex-col items-center text-center ">
             <span class="text-base">% de victoire</span>
-            <span id="winrate" class="text-3xl font-bold font-sans">70%</span>
+            <span id="win-rate" class="text-3xl font-bold font-sans">%</span>
         </div>
     </div>
 
@@ -361,4 +360,15 @@
   </div>
 </div>
 </div>
+<!-- <script type="module">
+  import { loadPlayerStats, renderPlayerStatsFromLocalStorage } from '/assets/loadPlayerStats.js';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Charge et stocke les données
+    await loadPlayerStats();
+
+    // 2. Rends les stats depuis le localStorage
+    renderPlayerStatsFromLocalStorage();
+  });
+</script> -->
 
