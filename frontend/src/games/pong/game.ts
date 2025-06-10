@@ -39,6 +39,183 @@ function handleBallCollisions(ball: BABYLON.Mesh, paddle1: BABYLON.Mesh, paddle2
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+function raycast(
+  position: BABYLON.Vector3,
+  velocity: BABYLON.Vector3,
+  bounds: { x1: number, x2: number, z1: number, z2: number }
+): {position: BABYLON.Vector3, velocity: BABYLON.Vector3} {
+  const { x1, x2, z1, z2 } = bounds;
+  let pos = position.clone();
+  const dir = velocity.clone();
+  
+  // Vers quelle direction on va ?
+  const goingRight = dir.x > 0;
+  const targetX = goingRight ? x2 : x1;
+
+  // Durée pour atteindre le bord en x
+  let timeToTarget = (targetX - pos.x) / dir.x;
+
+  // Simuler les rebonds verticaux (Z)
+  let z = pos.z;
+  let vz = dir.z;
+  let travelZ = dir.z * timeToTarget;
+
+  z += travelZ;
+
+  // Simule les rebonds verticaux
+  while (z < z1 || z > z2) {
+    if (z < z1) {
+      z = z1 + (z1 - z); // rebond
+      vz = -vz;
+    } else if (z > z2) {
+      z = z2 - (z - z2); // rebond
+      vz = -vz;
+    }
+  }
+
+  // Mettre à jour la direction
+  dir.x = targetX - pos.x;
+  dir.z = vz;
+  dir.normalize();
+  pos.x = targetX;
+  pos.z = z;
+  // Retourner la nouvelle position et la direction
+  pos.y = position.y; // Conserver la hauteur initiale
+  dir.scaleInPlace(velocity.length()); // Conserver la vitesse initiale
+  return { position: pos, velocity: dir };
+}
+
+function predictAIPaddlePosition(
+  ballPosition: BABYLON.Vector3,
+  ballVelocity: BABYLON.Vector3
+): number {
+  let position = ballPosition.clone();
+  let velocity = ballVelocity.clone();
+  const bounds = { x1: -14+0.25+0.5, x2: 14-0.25-0.5, z1: -8+0.5, z2: 8+0.5};
+  const targetX = velocity.x > 0 ? bounds.x2 : bounds.x1;
+  const epsilon = 0.01;
+
+  // On boucle jusqu'à ce que la balle atteigne le mur final
+  while (Math.abs(position.x - targetX) > epsilon) {
+    const result = raycast(position, velocity, bounds);
+    position = result.position;
+    velocity = result.velocity;
+
+    // Sécurité : si la vitesse est trop faible ou bloque, on sort
+    if (Math.abs(velocity.x) < 1e-5) break;
+
+    // Petite avance pour éviter de rester bloqué au bord
+    position = position.add(velocity.scale(0.01));
+  }
+
+  return position.z;
+}
+
+function predictTrajectoryPoints(
+  position: BABYLON.Vector3,
+  velocity: BABYLON.Vector3,
+  bounds: { x1: number; x2: number; z1: number; z2: number }
+): BABYLON.Vector3[] {
+  const points: BABYLON.Vector3[] = [];
+  let pos = position.clone();
+  let vel = velocity.clone();
+
+  const { x1, x2, z1, z2 } = bounds;
+  const goingRight = vel.x > 0;
+  const targetX = goingRight ? x2 : x1;
+
+  points.push(pos.clone());
+
+  let remainingTime = (targetX - pos.x) / vel.x;
+
+  let currentZ = pos.z;
+  let vz = vel.z;
+  let t = 0;
+
+  while (t < remainingTime) {
+    let timeToZBound: number;
+
+    if (vz > 0) {
+      timeToZBound = (z2 - currentZ) / vz;
+    } else {
+      timeToZBound = (z1 - currentZ) / vz;
+    }
+
+    if (t + timeToZBound > remainingTime) break;
+
+    t += timeToZBound;
+    currentZ += vz * timeToZBound;
+
+    // Rebond vertical
+    currentZ = BABYLON.Scalar.Clamp(currentZ, z1, z2);
+    vz *= -1;
+
+    const x = pos.x + vel.x * t;
+    const reboundPoint = new BABYLON.Vector3(x, pos.y, currentZ);
+    points.push(reboundPoint.clone());
+  }
+
+  // Fin de la trajectoire jusqu’à la raquette
+  const finalX = targetX;
+  const finalZ = currentZ + vz * (remainingTime - t);
+  const finalZClamped = BABYLON.Scalar.Clamp(finalZ, z1, z2);
+  points.push(new BABYLON.Vector3(finalX, pos.y, finalZClamped));
+
+  return points;
+}
+
+
+
+
+let debugLine: BABYLON.LinesMesh | null = null;
+
+function updateDebugTrajectory(
+  scene: BABYLON.Scene,
+  ball: BABYLON.Mesh,
+  velocity: BABYLON.Vector3
+) {
+  //const bounds = { x1: -14, x2: 14, z1: -8, z2: 8 };
+  const bounds = { x1: -14, x2: 14, z1: -9.5, z2: 9.5 };
+  const points = predictTrajectoryPoints(ball.position, velocity, bounds);
+
+  // Supprimer l'ancienne ligne si elle existe
+  if (debugLine) {
+    debugLine.dispose();
+  }
+
+  debugLine = BABYLON.MeshBuilder.CreateLines("trajectory", {
+    points: points
+  }, scene);
+  debugLine.color = new BABYLON.Color3(1, 1, 0); // jaune
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // === Terrain and border construction ===
 function buildTerrain(scene: BABYLON.Scene): void {
   const groundMat = new BABYLON.StandardMaterial("groundMat", scene);
@@ -104,7 +281,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   bgPlane.rotation = new BABYLON.Vector3(0, Math.PI, 0);
 
   const bgMat = new BABYLON.StandardMaterial("bgMat", scene);
-  bgMat.diffuseTexture = new BABYLON.Texture("/public/assets/pink.png", scene);
+  bgMat.diffuseTexture = new BABYLON.Texture("/assets/pink.png", scene);
   bgMat.emissiveTexture = bgMat.diffuseTexture;
   bgMat.backFaceCulling = false;
   bgPlane.material = bgMat;
@@ -251,6 +428,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => inputMap[evt.sourceEvent.key] = false));
 
   let scoreLeft = 0, scoreRight = 0;
+  let predictPaddlePosition = 0;
   scene.onBeforeRenderObservable.add(() => {
     if (paused) return;
     const delta = engine.getDeltaTime() / 16.666;
@@ -260,6 +438,19 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+
+
+
+
+    // IA Paddle Movement
+    setTimeout(() => updateDebugTrajectory(scene, ball, ballVelocity), 0);
+    predictPaddlePosition = predictAIPaddlePosition(ball.position, ballVelocity);
+
+    if (paddle2.position.z < predictPaddlePosition - 0.5)
+      paddle2.position.z += speed * delta;
+    else if (paddle2.position.z > predictPaddlePosition + 0.5)
+      paddle2.position.z -= speed * delta;
+    //////////////////////////////////////////
 
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
     paddle2.position.z = BABYLON.Scalar.Clamp(paddle2.position.z, -8, 8);
