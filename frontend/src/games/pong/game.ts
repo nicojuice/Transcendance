@@ -264,7 +264,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   const scene = new BABYLON.Scene(engine);
   scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-
+  void room;
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera

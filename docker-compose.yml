@@ -146,6 +146,21 @@ services:
     networks:
       - Transcendance
 
+  games_data-service:
+    build:
+      context: ./backend/user-management/games_data
+      dockerfile: Dockerfile
+    ports:
+      - "8098:8098"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    depends_on:
+      - db
+    networks:
+      - Transcendance
+
   rooms-local-service:
     build:
       context: ./backend/games/rooms/local
@@ -190,6 +205,7 @@ services:
       - pass-service
       - add-friends-service
       - games-player
+      - games_data-service
       - status-service
     networks:
       - Transcendance
