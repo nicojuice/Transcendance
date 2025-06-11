@@ -1,5 +1,5 @@
 import * as BABYLON from "@babylonjs/core";
-import * as PONG from "./pong/game";
+//import * as PONG from "./pong/game";
 import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";

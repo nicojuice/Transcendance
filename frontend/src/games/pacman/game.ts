@@ -1,117 +1,79 @@
-import { navigate } from "../../nav";
+//import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
+//import * as GUI from "@babylonjs/gui";
 import "@babylonjs/loaders";
 import * as ROOM from "../room";
+import * as Map from "./map";
 
 
-function endGame(room: ROOM.Room): void {
+/*function endGame(room: ROOM.Room): void {
   room.saveToLocalStorage();
   setTimeout(() => navigate(room.nextPage), 0);
-}
-
-let pacman_map = `\
-#######################
-#**********#**********#
-#@###*####*#*####*###@#
-#*###*####*#*####*###*#
-#*********************#
-#*###*#*#######*#*###*#
-#*****#*#######*#*****#
-#*###*#****#****#*#####
-#*###*####*#*####*#####
-#*###*#         #*#####
-#*###*# ### ### #*#####
-#    *  #MM MM#  *    #
-#####*# ####### #*###*#
-#####*#         #*###*#
-#####*# ####### #*###*#
-#####*# ####### #*###*#
-#**********#**********#
-#*###*####*#*####*###*#
-#@**#******C******#**@#
-###*#*#*#######*#*#*###
-#*****#****#****#*****#
-#*########*#*########*#
-#*########*#*########*#
-#*********************#
-#######################`;
+}*/
 
 
+function spawn_terrain(scene: BABYLON.Scene, map: Map.GameMap): {miniBalls: BABYLON.Mesh[], bigBalls: BABYLON.Mesh[]} {
 
-function spawn_terrain(scene: BABYLON.Scene, pacman_map: string): {miniBalls: BABYLON.Mesh[], bigBalls: BABYLON.Mesh[]} {
-
-  function get_c(x: number, y: number, map: string): string {
-      // Convertir la carte en lignes (chaque ligne est une string)
-      const lines = map.split('\n');
-      // Vérifier si les coordonnées (x, y) sont hors des limites de la carte
-      if (y < 0 || y >= lines.length)
-          return " ";  // Hors des limites sur l'axe y
-      const line = lines[lines.length - y - 1];  // Pour inverser l'ordre des lignes (selon la carte)
-      // Vérifier si x est hors des limites de la ligne
-      if (x < 0 || x >= line.length)
-          return " ";  // Hors des limites sur l'axe x
-      // Retourner le caractère à la position (x, y)
-      return line.charAt(x);
+  function get_c(x: number, y: number, map: Map.GameMap): Map.CellType
+  {
+    if (y < 0 || y >= map.length)
+      return Map.CellType.EMPTY;  // Hors des limites sur l'axe y
+    const line = map[map.length - y - 1];  // Pour inverser l'ordre des lignes (selon la carte)
+    // Vérifier si x est hors des limites de la ligne
+    if (x < 0 || x >= line.length)
+      return Map.CellType.EMPTY;  // Hors des limites sur l'axe x
+    // Retourner le caractère à la position (x, y)
+    return line[x];
   }
 
   const miniBalls: BABYLON.Mesh[] = [];
   const bigBalls: BABYLON.Mesh[] = [];
   // Parcourir chaque ligne et chaque caractère de la carte
-  const lines = pacman_map.split('\n');
-  const tileSize = 2;  // Taille d'un carreau (peut être ajustée selon les besoins)
-  let offsetY = -((lines.length / 2) * tileSize) + tileSize/2; // Ajuster l'offset Y pour centrer la carte
-
+  let offsetY = Map.get_offsetY(map); // Ajuster l'offset Y pour centrer la carte
   const wallMaterial = new BABYLON.StandardMaterial("wallMat", scene);
   wallMaterial.diffuseColor = new BABYLON.Color3(0.2, 0.2, 0.6); // Gris pour les murs
   //wallMaterial.disableDepthWrite = true;
   wallMaterial.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.6); // Légère lueur pour les murs
   //wallMaterial.disableLighting = true; // Désactiver l'éclairage pour un rendu uniforme
-  for (let y = 0; y < lines.length; y++) {
-      const line = lines[lines.length - y - 1];
+  for (let y = 0; y < map.length; y++) {
+      const line = map[map.length - y - 1];
       for (let x = 0; x < line.length; x++) {
-          const char = line.charAt(x);
-
+          const char = line[x];
           // Murs
           if (char === '#') {
-              //Test :
-              /*const wall = BABYLON.MeshBuilder.CreateBox("wall", {size: tileSize+0.15}, scene);
-              wall.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize, tileSize / 2);  // Positionner les murs
-              wall.material = wallMaterial;*/
-              //Créer un mur en forme de boîte :
               // Face de devant
-              const wallFront = BABYLON.MeshBuilder.CreatePlane("wallFront", {size: tileSize}, scene);
-              wallFront.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize, 0);  // Positionner les murs
+              const wallFront = BABYLON.MeshBuilder.CreatePlane("wallFront", {size: Map.tileSize}, scene);
+              wallFront.position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + y * Map.tileSize, 0);  // Positionner les murs
               wallFront.material = wallMaterial;
               // Face de Haut
-              if (get_c(x, y + 1, pacman_map) !== '#')
+              if (get_c(x, y + 1, map) !== '#')
               {
-                  const wallTop = BABYLON.MeshBuilder.CreatePlane("wallTop", {size: tileSize}, scene);
-                  wallTop.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize + (tileSize/2), tileSize / 2);  // Positionner les murs
+                  const wallTop = BABYLON.MeshBuilder.CreatePlane("wallTop", {size: Map.tileSize}, scene);
+                  wallTop.position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + y * Map.tileSize + (Map.tileSize/2), Map.tileSize / 2);  // Positionner les murs
                   wallTop.rotation.x = Math.PI / 2; // Rotation pour la face du haut
                   wallTop.material = wallMaterial;
               }
               // Face de Bas
-              if (get_c(x, y - 1, pacman_map) !== '#')
+              if (get_c(x, y - 1, map) !== '#')
               {
-                  const wallBottom = BABYLON.MeshBuilder.CreatePlane("wallBottom", {size: tileSize, sideOrientation: BABYLON.Mesh.BACKSIDE}, scene);
-                  wallBottom.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize - (tileSize/2), tileSize / 2);  // Positionner les murs
+                  const wallBottom = BABYLON.MeshBuilder.CreatePlane("wallBottom", {size: Map.tileSize, sideOrientation: BABYLON.Mesh.BACKSIDE}, scene);
+                  wallBottom.position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + y * Map.tileSize - (Map.tileSize/2), Map.tileSize / 2);  // Positionner les murs
                   wallBottom.rotation.x = Math.PI / 2; // Rotation pour la face du bas
                   wallBottom.material = wallMaterial;
               }
               // Face de Gauche
-              if (get_c(x - 1, y, pacman_map) !== '#')
+              if (get_c(x - 1, y, map) !== '#')
               {
-                  const wallLeft = BABYLON.MeshBuilder.CreatePlane("wallLeft", {size: tileSize}, scene);
-                  wallLeft.position = new BABYLON.Vector3(x * tileSize - 20 - (tileSize/2), offsetY + y * tileSize, tileSize / 2);  // Positionner les murs
+                  const wallLeft = BABYLON.MeshBuilder.CreatePlane("wallLeft", {size: Map.tileSize}, scene);
+                  wallLeft.position = new BABYLON.Vector3(x * Map.tileSize - 20 - (Map.tileSize/2), offsetY + y * Map.tileSize, Map.tileSize / 2);  // Positionner les murs
                   wallLeft.rotation.y = Math.PI / 2; // Rotation pour la face de gauche
                   wallLeft.material = wallMaterial;
               }
               // Face de Droite
-              if (get_c(x + 1, y, pacman_map) !== '#')
+              if (get_c(x + 1, y, map) !== '#')
               {
-                  const wallRight = BABYLON.MeshBuilder.CreatePlane("wallRight", {size: tileSize}, scene);
-                  wallRight.position = new BABYLON.Vector3(x * tileSize - 20 + (tileSize/2), offsetY + y * tileSize, tileSize / 2);  // Positionner les murs
+                  const wallRight = BABYLON.MeshBuilder.CreatePlane("wallRight", {size: Map.tileSize}, scene);
+                  wallRight.position = new BABYLON.Vector3(x * Map.tileSize - 20 + (Map.tileSize/2), offsetY + y * Map.tileSize, Map.tileSize / 2);  // Positionner les murs
                   wallRight.rotation.y = -Math.PI / 2; // Rotation pour la face de droite
                   wallRight.material = wallMaterial;
               }
@@ -120,7 +82,7 @@ function spawn_terrain(scene: BABYLON.Scene, pacman_map: string): {miniBalls: BA
           // Petites boules
           else if (char === '*') {
               const ball = BABYLON.MeshBuilder.CreateSphere("ball", {diameter: 0.5}, scene);
-              ball.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize, tileSize / 2);  // Positionner les boules
+              ball.position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + y * Map.tileSize, Map.tileSize / 2);  // Positionner les boules
               const ballMaterial = new BABYLON.StandardMaterial("ballMat", scene);
               ballMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);  // Jaune pour les boules
               ball.material = ballMaterial;
@@ -129,7 +91,7 @@ function spawn_terrain(scene: BABYLON.Scene, pacman_map: string): {miniBalls: BA
           // Grosses boules
           else if (char === '@') {
               const bigBall = BABYLON.MeshBuilder.CreateSphere("bigBall", {diameter: 1}, scene);
-              bigBall.position = new BABYLON.Vector3(x * tileSize - 20, offsetY + y * tileSize, tileSize / 2);  // Positionner les grosses boules
+              bigBall.position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + y * Map.tileSize, Map.tileSize / 2);  // Positionner les grosses boules
               const bigBallMaterial = new BABYLON.StandardMaterial("bigBallMat", scene);
               bigBallMaterial.diffuseColor = new BABYLON.Color3(0, 0, 1);  // Bleu pour les grosses boules
               bigBall.material = bigBallMaterial;
@@ -145,9 +107,9 @@ function spawn_terrain(scene: BABYLON.Scene, pacman_map: string): {miniBalls: BA
 }
 
 function spawn_pacman(scene: BABYLON.Scene): BABYLON.Mesh {
-  const pacMan = BABYLON.MeshBuilder.CreateSphere("pacMan", {diameter: 2, segments: 16}, scene);
+  let pacMan = BABYLON.MeshBuilder.CreateSphere("pacMan", {diameter: 2, segments: 16}, scene);
   pacMan.isVisible = false;  // Rendre la sphère invisible
-  pacMan.checkCollisions = true;  // Permettre les intersections avec cette sphère
+  //pacMan.checkCollisions = true;  // Permettre les intersections avec cette sphère
 
   // Créer la demi-sphère du haut (partie supérieure de la bouche)
   const pacManMouthUp = BABYLON.CreateHemisphere("pacManMouthUp", {diameter: 2, segments: 16}, scene);
@@ -185,7 +147,6 @@ function spawn_pacman(scene: BABYLON.Scene): BABYLON.Mesh {
   // Ajouter l'animation de rotation aux deux demi-sphères
   pacManMouthUp.animations.push(rotationAnimation);
   pacManMouthDown.animations.push(rotationAnimation);
-
   // Démarrer l'animation
   scene.beginAnimation(pacManMouthUp, 0, 30, true);
   scene.beginAnimation(pacManMouthDown, 0, 30, true);
@@ -230,6 +191,10 @@ function spawnGhosts(scene: BABYLON.Scene): BABYLON.AbstractMesh[] {
   return ghosts;
 }
 
+function distance(a: BABYLON.Vector3, b: BABYLON.Vector3): number {
+  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
+}
+
 // === Main game function ===
 export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): () => void {
   void room;
@@ -267,38 +232,60 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   camera.radius = 60;
 
   const pacMan = spawn_pacman(scene);
-  pacMan.position = new BABYLON.Vector3(0, 0, 1); // Position
-
+  const pos = Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0);
+  pacMan.position = new BABYLON.Vector3(pos.x * Map.tileSize - 20, Map.get_offsetY(Map.pacman_map) + ((Map.pacman_map.length - pos.y - 1) * Map.tileSize), 1);
 
   // Créer un éclairage de base
   new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Backward(), scene);
 
 
-  let balls = spawn_terrain(scene, pacman_map);
-
+  let balls = spawn_terrain(scene, Map.pacman_map);
+  void balls;
   // Déplacement de Pac-Man avec les touches fléchées
   const speed = 0.1;
   scene.onBeforeRenderObservable.add(() => {
-      if (inputMap["ArrowUp"]) pacMan.position.y += speed;
-      else if (inputMap["ArrowDown"]) pacMan.position.y -= speed;
-      else if (inputMap["ArrowLeft"]) pacMan.position.x -= speed;
-      else if (inputMap["ArrowRight"]) pacMan.position.x += speed;
+      /*//change material of children of pacMan
+      const pacManMaterial = new BABYLON.StandardMaterial("pacManMat", scene);
+      pacManMaterial.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); // Jaune pour
+      pacMan.getChildMeshes().forEach(child => {
+          if (child.material) {
+              child.material = pacManMaterial; // Appliquer le matériau à chaque enfant
+          }
+      });*/
+      if (inputMap["ArrowUp"])
+      {
+        pacMan.rotation.z = Math.PI / 2; // Tourner
+        pacMan.position.y += speed;
+      }
+      else if (inputMap["ArrowDown"])
+      {
+        pacMan.rotation.z = -Math.PI / 2; // Tourner
+        pacMan.position.y -= speed;
+      }
+      else if (inputMap["ArrowLeft"])
+      {
+        pacMan.rotation.z = Math.PI; // Tourner
+        pacMan.position.x -= speed;
+      }
+      else if (inputMap["ArrowRight"])
+      {
+        pacMan.rotation.z = 0; // Tourner
+        pacMan.position.x += speed;
+      }
 
       // Vérifier les collisions avec les billes
+      let toRemoveBalls: number[] = [];
       balls.miniBalls.forEach((ball, index) => {
-          if (pacMan.intersectsMesh(ball, false)) {
-              ball.dispose(); // Supprimer la petite boule
-              balls.miniBalls.splice(index, 1);
-          }
-      }
-      );
+          if (distance(pacMan.position, ball.position) < 1)
+              toRemoveBalls.push(index);
+      });
+      toRemoveBalls.reverse().forEach(index =>{balls.miniBalls[index].dispose(); balls.miniBalls.splice(index, 1);});
+      toRemoveBalls = [];
       balls.bigBalls.forEach((bigBall, index) => {
-          if (pacMan.intersectsMesh(bigBall, false)) {
-              bigBall.dispose(); // Supprimer la grosse boule
-              balls.bigBalls.splice(index, 1);
-          }
-      }
-      );
+          if (distance(pacMan.position, bigBall.position) < 1)
+              toRemoveBalls.push(index);
+      });
+      toRemoveBalls.reverse().forEach(index =>{balls.bigBalls[index].dispose(); balls.bigBalls.splice(index, 1);});
 
   });
 
