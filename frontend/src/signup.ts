@@ -44,7 +44,7 @@ async function register(e: Event): Promise<void> {
     const data = await response.json();
     if (response.ok) {
       //alert(data.message);
-      sendImgToDB(await filenameToFileObject("/assets/avatar1.png"), username);
+      sendImgToDB(await filenameToFileObject("/assets/avatars/avatar1.png"), username);
       await navigate("log");
     } else {
       showToast(data.message || "Erreur lors de l’inscription.", "error");

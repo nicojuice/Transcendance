@@ -167,9 +167,7 @@ function endGame(room: ROOM.Room): void {
 // === Main game function ===
 export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): () => void {
   const scene = new BABYLON.Scene(engine);
-  scene.autoClear = false;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-  void room;
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera

@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import * as PONG from "./pong/game";
+import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";
 
@@ -25,13 +26,15 @@ function startGame(canvas: HTMLCanvasElement) {
   canvas.setAttribute("tabindex", "1");
   canvas.focus();
 
-  engine = new BABYLON.Engine(canvas, true);
+  engine = new BABYLON.Engine(canvas, true, {antialias: true});
   engine.renderEvenInBackground = false;
   resizeCanvasAndEngine(canvas);
   let room = new ROOM.Room();
   room.loadFromLocalStorage();
-  if (room.gameName === "pong")
+  /*if (room.gameName === "pong")
     cleanup = PONG.main(engine, canvas, room);
+  else if (room.gameName === "pacman")*/
+    cleanup = PACMAN.main(engine, canvas, room);
 }
 
 function waitForCanvasAndStart() {

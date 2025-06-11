@@ -59,7 +59,7 @@ export function startGameAndNavigate() {
   room.saveToLocalStorage();
 
   // Navigation
-  navigate("pong");
+  navigate("game");
 }
 
 (window as any).startGameAndNavigate = startGameAndNavigate;
