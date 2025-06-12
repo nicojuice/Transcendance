@@ -1,24 +1,10 @@
-import * as BABYLON from "@babylonjs/core";
-//import * as PONG from "./pong/game";
+import * as PONG from "./pong/game";
 import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";
+import * as Engine from "./engine";
 
-let engine: BABYLON.Engine | null = null;
-
-function resizeCanvasAndEngine(canvas: HTMLCanvasElement) {
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
-  if (engine) {
-    const maxWidth = 1280;
-    const widthRatio = window.innerWidth / maxWidth;
-    const scaling = widthRatio;
-    engine.setHardwareScalingLevel(scaling);
-    engine.resize();
-  }
-}
-
-let cleanup: (() => void) | null = null;
+let engine: Engine.GameEngine | null = null;
 
 function startGame(canvas: HTMLCanvasElement) {
 
@@ -26,15 +12,14 @@ function startGame(canvas: HTMLCanvasElement) {
   canvas.setAttribute("tabindex", "1");
   canvas.focus();
 
-  engine = new BABYLON.Engine(canvas, true, {antialias: true});
-  engine.renderEvenInBackground = false;
-  resizeCanvasAndEngine(canvas);
+  engine = new Engine.GameEngine(canvas);
+  engine.Resize();
   let room = new ROOM.Room();
   room.loadFromLocalStorage();
   /*if (room.gameName === "pong")
-    cleanup = PONG.main(engine, canvas, room);
+    PONG.main(engine, room);
   else if (room.gameName === "pacman")*/
-    cleanup = PACMAN.main(engine, canvas, room);
+    PACMAN.main(engine, room);
 }
 
 function waitForCanvasAndStart() {
@@ -49,17 +34,17 @@ function waitForCanvasAndStart() {
 
 window.addEventListener("resize", () => {
   const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement | null;
-  if (!canvas) return;
-  resizeCanvasAndEngine(canvas);
+  if (!canvas || !engine) return;
+  engine.Resize();
 });
 
 waitForCanvasAndStart();
 
 NAV.onNavigate.addEventListener(() => {
-  if (cleanup) {
+  if (engine) {
     console.log("Navigation detected, cleaning up game resources.");
-    cleanup();
-    cleanup = null;
+    engine.dispose();
+    engine = null;
     waitForCanvasAndStart();
   }
 }

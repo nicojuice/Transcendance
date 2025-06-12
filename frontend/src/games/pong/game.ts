@@ -2,6 +2,7 @@ import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import * as ROOM from "../room";
+import * as Engine from "../engine";
 
 // === Ball collision logic ===
 function handleBallCollisions(ball: BABYLON.Mesh, paddle1: BABYLON.Mesh, paddle2: BABYLON.Mesh, ballVelocity: BABYLON.Vector3): void {
@@ -165,15 +166,15 @@ function endGame(room: ROOM.Room): void {
 
 
 // === Main game function ===
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): () => void {
-  const scene = new BABYLON.Scene(engine);
+export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
+  const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.inputs.clear();
-  camera.attachControl(canvas, false);
+  camera.attachControl(engine.canvas, false);
   camera.alpha = Math.PI / 2;
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
   camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
@@ -191,7 +192,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
 
   const updateCameraRadius = () => {
     const fieldWidth = 35;
-    const canvasAspect = canvas.width / canvas.height;
+    const canvasAspect = engine.canvas.width / engine.canvas.height;
     const fov = camera.fov;
     const fovH = 2 * Math.atan(Math.tan(fov / 2) * canvasAspect);
     const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
@@ -404,19 +405,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   engine.runRenderLoop(() => scene.render());
 
   let resizeListener = () => updateCameraRadius();
-  window.addEventListener("resize", resizeListener);
 
-  return () => {
-    window.removeEventListener("keydown", handleKeyDown);
-    window.removeEventListener("resize", resizeListener);
-    paused = true;
-    scene.onDisposeObservable.clear();
-    scene.onAfterRenderObservable.clear();
-    scene.onBeforeRenderObservable.clear();
-    engine.stopRenderLoop();
-    scene.actionManager?.dispose();
-    scene.dispose();
-    engine.dispose();
-    return;
-  };
+  engine.OnResize.addEventListener(updateCameraRadius);
+  engine.OnDispose.addEventListener(() => window.removeEventListener("keydown", handleKeyDown));
 }
