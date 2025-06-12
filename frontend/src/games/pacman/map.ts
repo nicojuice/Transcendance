@@ -73,6 +73,18 @@ export function get_coord(map: GameMap, c: CellType, index: number): {x: number,
   return {x: -1, y: -1}; // Retourne -1 si le caractère n'est pas trouvé
 }
 
+export function get_c(x: number, y: number, map: GameMap): CellType
+{
+  if (y < 0 || y >= map.length)
+    return CellType.EMPTY;  // Hors des limites sur l'axe y
+  const line = map[y];  // Pour inverser l'ordre des lignes (selon la carte)
+  // Vérifier si x est hors des limites de la ligne
+  if (x < 0 || x >= line.length)
+    return CellType.EMPTY;  // Hors des limites sur l'axe x
+  // Retourner le caractère à la position (x, y)
+  return line[x];
+}
+
 
 
 let pacman_map_string = `\
