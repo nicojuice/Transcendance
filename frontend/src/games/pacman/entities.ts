@@ -34,11 +34,15 @@ export abstract class Character {
 
     // Si le joueur est centré sur la case, changer la direction selon les touches
     if (isCentered) {
+      const isBlocked = Number(Map.get_c(player_coord.x + 1, player_coord.y, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(player_coord.x - 1, player_coord.y, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(player_coord.x, player_coord.y + 1, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(player_coord.x, player_coord.y - 1, this.map) === Map.CellType.WALL) >= 3;
       const [up, down, left, right] = this.Input(engine); // Récupérer les entrées directionnelles
-      if (up && direction.y == 0) this.obj.rotation.z = Math.PI / 2;
-      else if (down && direction.y == 0) this.obj.rotation.z = -Math.PI / 2;
-      else if (left && direction.x == 0) this.obj.rotation.z = Math.PI;
-      else if (right && direction.x == 0) this.obj.rotation.z = 0;
+      if (up && (direction.y == 0 || isBlocked)) this.obj.rotation.z = Math.PI / 2;
+      else if (down && (direction.y == 0 || isBlocked)) this.obj.rotation.z = -Math.PI / 2;
+      else if (left && (direction.x == 0 || isBlocked)) this.obj.rotation.z = Math.PI;
+      else if (right && (direction.x == 0 || isBlocked)) this.obj.rotation.z = 0;
 
       direction = Utils.getDirection(this.obj.rotation.z);
       next_coord = { x: player_coord.x + direction.x, y: player_coord.y - direction.y };

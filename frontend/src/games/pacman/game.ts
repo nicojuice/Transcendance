@@ -22,7 +22,7 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   const scene = engine.scene;
   let characters: Entities.Character[] = [];
   
-  Spawn.spawnGhosts(scene);
+  console.log("ghost",Spawn.spawn_ghost(scene));
 
 
   //spawn ghost

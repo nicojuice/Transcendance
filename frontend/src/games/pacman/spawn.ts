@@ -129,8 +129,8 @@ export function spawn_pacman(scene: BABYLON.Scene): BABYLON.Mesh {
   return pacMan;
 }
 
-export function spawnGhosts(scene: BABYLON.Scene): BABYLON.AbstractMesh[] {
-  let ghosts: BABYLON.AbstractMesh[] = [];
+/*export function spawn_ghost(scene: BABYLON.Scene): BABYLON.Mesh | null{
+  let ghost: BABYLON.Mesh | null = null;
   BABYLON.SceneLoader.ImportMesh(
       "", 
       "./assets/games/pacman/", 
@@ -149,6 +149,11 @@ export function spawnGhosts(scene: BABYLON.Scene): BABYLON.AbstractMesh[] {
                 mesh.material = ghostMaterial; // Appliquer le même matériau
                 mesh.scaling = new BABYLON.Vector3(0.065, 0.065, 0.065); // Redimensionner
                 mesh.position = new BABYLON.Vector3(0, -1.5, 1); // Positionner le fantôme
+                //convert AbstractMesh to Mesh
+                if (mesh instanceof BABYLON.AbstractMesh) {
+                    ghost = mesh as BABYLON.Mesh; // Convertir en Mesh
+                    console.log("Ghost mesh imported successfully.");
+                }
             });
           //Supprimer les meshes importés
         } else {
@@ -164,5 +169,51 @@ export function spawnGhosts(scene: BABYLON.Scene): BABYLON.AbstractMesh[] {
         console.error("Erreur de chargement du modèle : ", message);
       }
   );
-  return ghosts;
+  BABYLON.LoadAssetContainerAsync
+  return ghost;
+}*/
+
+export async function spawn_ghost(scene: BABYLON.Scene): Promise<BABYLON.Mesh | null> {
+  let ghost: BABYLON.Mesh | null = null;
+
+  try {
+    // Charger le modèle STL dans un AssetContainer
+    const container = await BABYLON.LoadAssetContainerAsync(
+      "./assets/games/pacman/ghost.stl",  // Dossier où se trouve le modèle
+      scene                      // La scène où charger l'asset
+    );
+
+    // Une fois le modèle chargé, on récupère les meshes dans le container
+    const meshes = container.meshes;
+
+    // Vérifier si des meshes ont été chargés
+    if (meshes.length > 0) {
+      const ghostMaterial = new BABYLON.StandardMaterial("ghostMat", scene);
+      ghostMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);  // Rouge pour le fantôme
+      // ghostMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);  // Légère lueur rouge
+
+      // Appliquer le matériau et la transformation à tous les meshes
+      meshes.forEach(mesh => {
+        mesh.material = ghostMaterial; // Appliquer le même matériau
+        mesh.scaling = new BABYLON.Vector3(0.065, 0.065, 0.065); // Redimensionner
+        mesh.position = new BABYLON.Vector3(0, -1.5, 1); // Positionner le fantôme
+
+        // Vérifier que c'est un AbstractMesh et le convertir en Mesh
+        if (mesh instanceof BABYLON.AbstractMesh) {
+          ghost = mesh as BABYLON.Mesh; // Convertir en Mesh
+          console.log("Ghost mesh imported successfully.");
+        }
+      });
+
+      // Ajouter le container à la scène, pour que les meshes soient rendus
+      container.addAllToScene();
+    } else {
+      console.warn("Aucun mesh trouvé dans le fichier ghost.stl");
+    }
+  } catch (error) {
+    console.error("Erreur de chargement du modèle : ", error);
+  }
+
+  return ghost;
 }
+
