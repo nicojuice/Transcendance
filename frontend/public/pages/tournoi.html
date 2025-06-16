@@ -1,0 +1,105 @@
+<div
+  class="text-neon font-pixelify flex items-center justify-center min-h-screen relative p-4"
+>
+  <!-- CRT scanlines -->
+  <div class="crt-effect absolute inset-0 z-[-1] pointer-events-none"></div>
+
+  <!-- Conteneur principal -->
+  <div
+    class="relative border-2 border-neon shadow-[0_0_30px_#00ffcc] rounded-2xl w-[360px] p-8 flex flex-col items-center justify-center space-y-6 z-10"
+  >
+    <!-- Titre -->
+    <h2 class="text-3xl font-pixelify text-neon text-center">Tournoi</h2>
+<button
+  id="return-btn"
+  onclick="navigate('game-choice')"
+  class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-8 h-8 border border-neon bg-black font-bold rounded-md hover:brightness-110 transition-all flex items-center justify-center"
+  title="Retour"
+>X
+</button>
+    <!-- Formulaire -->
+    <form
+      id="SettingForm"
+      class="flex flex-col items-center justify-center w-full font-pixelify text-neon space-y-4"
+      onsubmit="return false;"
+    >
+      <!-- Choix du nombre de joueurs -->
+    <!-- Choix des joueurs -->
+<div class="w-full space-y-4">
+  <label class="block mb-2 text-left">Nom des joueurs</label>
+  <div class="grid grid-cols-2 gap-4">
+    <!-- Joueur 1 -->
+    <div class="flex flex-col space-y-1">
+      <label for="player1" class="text-sm">Joueur 1</label>
+      <input
+        type="text"
+        id="display-username"
+        name="player1"
+        class="w-full p-2 bg-black border border-neon text-neon rounded-md"
+        placeholder="Nom du joueur 1"
+      />
+    </div>
+
+    <!-- Joueur 2 -->
+    <div class="flex flex-col space-y-1">
+      <label for="player2" class="text-sm">Joueur 2</label>
+      <input
+        type="text"
+        id="player2"
+        name="player2"
+        class="w-full p-2 bg-black border border-neon text-neon rounded-md"
+        placeholder="Nom du joueur 2"
+      />
+    </div>
+
+    <!-- Joueur 3 -->
+    <div class="flex flex-col space-y-1">
+      <label for="player3" class="text-sm">Joueur 3</label>
+      <input
+        type="text"
+        id="player3"
+        name="player3"
+        class="w-full p-2 bg-black border border-neon text-neon rounded-md"
+        placeholder="Nom du joueur 3"
+      />
+    </div>
+
+    <!-- Joueur 4 -->
+    <div class="flex flex-col space-y-1">
+      <label for="player4" class="text-sm">Joueur 4</label>
+      <input
+        type="text"
+        id="player4"
+        name="player4"
+        class="w-full p-2 bg-black border border-neon text-neon rounded-md"
+        placeholder="Nom du joueur 4"
+      />
+    </div>
+  </div>
+</div>
+
+
+      <!-- Choix du mode custom -->
+      <div class="w-full">
+        <label for="custom" class="block mb-1 text-left">Partie personnalisée ?</label>
+        <select
+          id="custom"
+          name="custom"
+          class="w-full p-2 bg-black border border-neon text-neon rounded-md"
+        >
+          <option value="no">Non</option>
+          <option value="yes">Oui</option>
+        </select>
+      </div>
+
+      <!-- Bouton de soumission -->
+      <button
+        type="button"
+        onclick="startGameAndNavigate()"
+        class="w-full mt-2 px-4 py-2 border border-neon text-neon rounded hover:bg-neon hover:text-black transition-all duration-300"
+      >
+        Lancer la partie
+      </button>
+    </form>
+  </div>
+</div>
