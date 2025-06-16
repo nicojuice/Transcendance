@@ -3,13 +3,17 @@ import { getFriends } from "./friends"
 import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status'
 import { showToast } from './showToast'
-import { updateTexts, initializeLanguageSwitcher } from './i18n'
-import './i18n'
+import { EventManager } from './eventManager';
+import './i18n';
 
-export async function navigate(page: string) {
+
+export const onNavigate = new EventManager();
+
+export async function navigate(page : string) {
     try {
-        window.history.replaceState(null, document.title, page);
-        const response = await fetch(`../pages/${page}.html`);
+		onNavigate.dispatch();
+		window.history.replaceState(null, document.title, page);
+		const response = await fetch(`../pages/${page}.html`);
         if (!response.ok) throw new Error("Page not found");
         const html = await response.text();
         const elem = document.getElementById('screen-content');
