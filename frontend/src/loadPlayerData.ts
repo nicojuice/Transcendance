@@ -1,7 +1,7 @@
 
 interface PlayerStats {
   wins: number;
-  total_games: number;
+  losses: number;
   win_rate: number;
 }
 
@@ -38,23 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function renderPlayerStatsFromLocalStorage(): void {
-  // Récupération des données
-  const winsRaw  = localStorage.getItem('playerWins')      || '0';
-  const totalRaw = localStorage.getItem('playerTotalGames') || '0';
-  const rateRaw  = localStorage.getItem('playerWinRate')    || '0';
+  const rawStats = localStorage.getItem('playerStats');
+  if (!rawStats) {
+    console.warn("Aucune stats trouvée en localStorage");
+    return;
+  }
 
-  const wins  = Number(winsRaw);
-  const total = Number(totalRaw);
-  const rate  = Number(rateRaw);
+  const stats: PlayerStats = JSON.parse(rawStats);
 
-  // Sélecteurs
   const winsEl  = document.getElementById('wins-count');
-  const totalEl = document.getElementById('total-games');
+  const totalEl = document.getElementById('losses-count');
   const rateEl  = document.getElementById('win-rate');
 
-  // Injection dans le DOM
-  if (winsEl)  winsEl.textContent  = wins.toString();
-  if (totalEl) totalEl.textContent = total.toString();
-  if (rateEl)  rateEl.textContent  = `${rate}%`;
+  if (winsEl)  winsEl.textContent  = stats.wins.toString();
+  if (totalEl) totalEl.textContent = stats.losses.toString();
+  if (rateEl)  rateEl.textContent  = `${stats.win_rate}%`;
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadPlayerStats();
+  renderPlayerStatsFromLocalStorage();
+});
 

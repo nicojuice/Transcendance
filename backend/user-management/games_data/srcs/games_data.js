@@ -54,6 +54,7 @@ module.exports = async function (fastify, opts) {
       return reply.code(500).send({ message: 'Erreur serveur' });
     }
   });
+
   fastify.get('/user-management/games_data/:username', async (request, reply) => {
     const { username } = request.params;
 
@@ -81,7 +82,7 @@ module.exports = async function (fastify, opts) {
       return reply.send({
         username: username,
         wins: stats.wins,
-        total_games: stats.all_games,
+        losses: stats.all_games - stats.wins,
         win_rate: stats.all_games > 0 
           ? Math.round((stats.wins / stats.all_games) * 100) 
           : 0

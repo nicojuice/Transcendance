@@ -4,6 +4,8 @@ import { moveBall } from "./pongballeffects"
 import { updateConnectionStatus } from './status'
 import { showToast } from './showToast'
 import { EventManager } from './eventManager';
+import { initializeLanguageSwitcher } from './i18n';
+import { updateTexts } from './i18n'
 import './i18n';
 
 

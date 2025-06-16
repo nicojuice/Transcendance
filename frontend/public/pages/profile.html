@@ -263,150 +263,201 @@
                 </div>
               </div>
 
-  <label
-    for="custom-avatar-upload"
-        class="text-white text-center border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8"
-  >
-    Importer
-    <input
-      id="custom-avatar-upload"
-      type="file"
-      accept="image/*"
-      onchange="uploadCustomAvatar(event)"
-      class="hidden"
-    />
-    </label>
+              <label
+                for="custom-avatar-upload"
+                class="text-white text-center border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8"
+                data-i18n="profile.import"
+              >
+                Importer
+                <input
+                  id="custom-avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onchange="uploadCustomAvatar(event)"
+                  class="hidden"
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rectangle rose -->
+      <div class="w-1/2 h-full border-2 border-crtPurple rounded-2xl p-4">
+        <div class="relative z-10 flex flex-col text-white px-8 py-16 w-full">
+          <h2 class="text-6xl text-white mb-4">
+            <span data-i18n="profile.hello">Bonjour</span>,
+            <p><span id="display-username"></span></p>
+          </h2>
+
+          <!-- Container -->
+          <div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
+            <!-- Username -->
+            <div class="flex items-center" id="username-container">
+              <input
+                id="username"
+                type="text"
+                class="flex-1 px-2 rounded bg-white border border-white text-black"
+              />
+              <button
+                onclick="editUser()"
+                class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-pencil-line-icon lucide-pencil-line"
+                >
+                  <path d="M12 20h9" />
+                  <path
+                    d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"
+                  />
+                  <path d="m15 5 3 3" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Email -->
+            <div class="flex items-center">
+              <input
+                id="email"
+                type="email"
+                class="flex-1 px-2 rounded bg-white border border-white text-black"
+              />
+              <button
+                onclick="editEmail(document.getElementById('email').value)"
+                class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-pencil-line-icon lucide-pencil-line"
+                >
+                  <path d="M12 20h9" />
+                  <path
+                    d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"
+                  />
+                  <path d="m15 5 3 3" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Password -->
+            <div class="flex items-center">
+              <input
+                id="password"
+                type="password"
+                class="flex-1 px-2 rounded bg-white border border-white text-black"
+              />
+              <button
+                onclick="editPass(document.getElementById('password').value)"
+                class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-pencil-line-icon lucide-pencil-line"
+                >
+                  <path d="M12 20h9" />
+                  <path
+                    d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"
+                  />
+                  <path d="m15 5 3 3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- <button onclick="openModalWithUserData()" class="px-4 py-2 bg-blue-600 text-white rounded">Modifier profil</button> -->
+
+          <div
+            class="mt-8 mb-10 flex flex-row p-4 rounded items-center justify-center"
+          >
+            <button
+              class="border border-neon text-black px-8 rounded py-4 animate-flashy-neon"
+              onclick="navigate('game-choice')"
+              data-i18n="profile.play"
+            >
+              JOUER
+            </button>
+          </div>
+
+          <div
+            class="flex justify-center items-center text-white text-xl space-x-8"
+          >
+            <!-- Wins -->
+            <div id="wins-count" class="flex flex-col items-center">
+              <span class="text-base" data-i18n="profile.wins">Victoires</span>
+              <span id="wins-count" class="text-3xl font-bold font-sans"
+                >12</span
+              >
+            </div>
+
+            <!-- Bar -->
+            <div class="w-px h-16 bg-white mx-2"></div>
+
+            <!-- Losses -->
+            <div id="losses-count" class="flex flex-col items-center">
+              <span class="text-base" data-i18n="profile.losses">Défaites</span>
+              <span class="text-3xl font-bold font-sans"
+                >5</span
+              >
+            </div>
+
+            <!-- Bar -->
+            <div class="w-px h-16 bg-white mx-2"></div>
+
+            <!-- Win Rate -->
+            <div id="win-rate" class="flex flex-col items-center text-center">
+              <span class="text-base" data-i18n="profile.winRate"
+                >% de victoire</span
+              >
+              <span id="winrate" class="text-3xl font-bold font-sans">70%</span>
+            </div>
+          </div>
+
+          <div class="flex flex-row mt-2 items-center ml-10">
+            <button
+              onclick="openFriendsModal()"
+              class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+              data-i18n="profile.friends"
+            >
+              Amis
+            </button>
+
+            <div class="p-4 rounded items-center">
+              <button
+                onclick="seeMatchHistory()"
+                class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+                data-i18n="profile.matchHistory"
+              >
+                Historique des matchs
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-    
-<!-- Rectangle rose -->
- <div class="w-1/2 h-full border-2 border-crtPurple rounded-2xl p-4">
-    <div class="relative z-10 flex flex-col text-white px-8 py-16 w-full">
-        <h2 class="text-6xl text-white mb-4">Bonjour,
-        <p><span id="display-username"></span></p>  
-    </h2>
- 
-<!-- Container -->
-<div class="mt-8 space-y-2 p-2 bg-white/10 rounded-xl">
-
-  <!-- Username -->
-  <div class="flex items-center" id="username-container">
-    <input
-      id="username"
-      type="text"
-      class="flex-1 px-2 rounded bg-white border border-white text-black"
-    />
-    <button
-      onclick="editUser()"
-      class="ml-4 px-2 border-2 border-white text-white rounded hover:bg-white hover:text-black"
-    >
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-line-icon lucide-pencil-line"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/><path d="m15 5 3 3"/></svg>
-    </button>
-  </div>
-
-
-  <!-- Email -->
-  <div class="flex items-center">
-    <input
-      id="email"
-      type="email"
-      class="flex-1 px-2 rounded bg-white border border-white text-black"
-    />
-    <button
-      onclick="editEmail(document.getElementById('email').value)"
-      class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
-    >
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-line-icon lucide-pencil-line"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/><path d="m15 5 3 3"/></svg>
-    </button>
-  </div>
-
-  <!-- Password -->
- <div class="flex items-center">
-    <input
-      id="password"
-      type="password"
-      class="flex-1 px-2 rounded bg-white border border-white text-black"
-    />
-    <button
-      onclick="editPass(document.getElementById('password').value)"
-      class="ml-4 px-2 border-2 border-white text-white rounded hover:text-black hover:bg-white"
-    >
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-line-icon lucide-pencil-line"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/><path d="m15 5 3 3"/></svg>     
-    </button>
-  </div>
-</div> 
-
-<!-- <button onclick="openModalWithUserData()" class="px-4 py-2 bg-blue-600 text-white rounded">Modifier profil</button> -->
-
-
-<div class="mt-8 mb-10 flex flex-row p-4 rounded items-center justify-center">
-    <button 
-        class="border border-neon text-black px-8 rounded py-4 animate-flashy-neon"
-        onclick="navigate('game-choice')"
-        >
-        JOUER
-    </button>
-</div>
-
-</script>
-        <div class="flex justify-center items-center text-white text-xl space-x-8">
-        <!-- Wins -->
-        <div class="flex flex-col items-center">
-            <span class="text-base">Victoires</span>
-            <span id="wins-count" class="text-3xl font-bold font-sans"></span>
-        </div>
-
-        <!-- Bar -->
-        <div class="w-px h-16 bg-white mx-2"></div>
-
-        <!-- Losses -->
-        <div class="flex flex-col items-center">
-            <span class="text-base">Total games</span>
-            <span id="total-games" class="text-3xl font-bold font-sans"></span>
-        </div>
-
-        <!-- Bar -->
-        <div class="w-px h-16 bg-white mx-2"></div>
-
-        <!-- Win Rate -->
-        <div class="flex flex-col items-center text-center ">
-            <span class="text-base">% de victoire</span>
-            <span id="win-rate" class="text-3xl font-bold font-sans">%</span>
-        </div>
-    </div>
-
-
-
-  <div class="flex flex-row mt-2 items-center ml-10">
-    <button
-      onclick="openFriendsModal()"
-      class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-    >
-      Amis
-    </button>
-
-    <div class="p-4 rounded items-center">
-      <button
-        onclick="seeMatchHistory()"
-        class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-      >
-        Historique des matchs
-      </button>
-    </div>
-  </div>
-</div>
-</div>
-<!-- <script type="module">
-  import { loadPlayerStats, renderPlayerStatsFromLocalStorage } from '/assets/loadPlayerStats.js';
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Charge et stocke les données
-    await loadPlayerStats();
-
-    // 2. Rends les stats depuis le localStorage
-    renderPlayerStatsFromLocalStorage();
-  });
-</script> -->
-
