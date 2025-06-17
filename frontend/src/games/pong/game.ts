@@ -2,6 +2,7 @@ import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import * as ROOM from "../room";
+import * as Engine from "../engine";
 
 // === Ball collision logic ===
 function handleBallCollisions(ball: BABYLON.Mesh, paddle1: BABYLON.Mesh, paddle2: BABYLON.Mesh, ballVelocity: BABYLON.Vector3): void {
@@ -39,94 +40,11 @@ function handleBallCollisions(ball: BABYLON.Mesh, paddle1: BABYLON.Mesh, paddle2
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-function raycast(
-  position: BABYLON.Vector3,
-  velocity: BABYLON.Vector3,
-  bounds: { x1: number, x2: number, z1: number, z2: number }
-): {position: BABYLON.Vector3, velocity: BABYLON.Vector3} {
-  const { x1, x2, z1, z2 } = bounds;
-  let pos = position.clone();
-  const dir = velocity.clone();
-  
-  // Vers quelle direction on va ?
-  const goingRight = dir.x > 0;
-  const targetX = goingRight ? x2 : x1;
-
-  // Durée pour atteindre le bord en x
-  let timeToTarget = (targetX - pos.x) / dir.x;
-
-  // Simuler les rebonds verticaux (Z)
-  let z = pos.z;
-  let vz = dir.z;
-  let travelZ = dir.z * timeToTarget;
-
-  z += travelZ;
-
-  // Simule les rebonds verticaux
-  while (z < z1 || z > z2) {
-    if (z < z1) {
-      z = z1 + (z1 - z); // rebond
-      vz = -vz;
-    } else if (z > z2) {
-      z = z2 - (z - z2); // rebond
-      vz = -vz;
-    }
-  }
-
-  // Mettre à jour la direction
-  dir.x = targetX - pos.x;
-  dir.z = vz;
-  dir.normalize();
-  pos.x = targetX;
-  pos.z = z;
-  // Retourner la nouvelle position et la direction
-  pos.y = position.y; // Conserver la hauteur initiale
-  dir.scaleInPlace(velocity.length()); // Conserver la vitesse initiale
-  return { position: pos, velocity: dir };
-}
-
-function predictAIPaddlePosition(
-  ballPosition: BABYLON.Vector3,
-  ballVelocity: BABYLON.Vector3
-): number {
-  let position = ballPosition.clone();
-  let velocity = ballVelocity.clone();
-  const bounds = { x1: -14+0.25+0.5, x2: 14-0.25-0.5, z1: -8+0.5, z2: 8+0.5};
-  const targetX = velocity.x > 0 ? bounds.x2 : bounds.x1;
-  const epsilon = 0.01;
-
-  // On boucle jusqu'à ce que la balle atteigne le mur final
-  while (Math.abs(position.x - targetX) > epsilon) {
-    const result = raycast(position, velocity, bounds);
-    position = result.position;
-    velocity = result.velocity;
-
-    // Sécurité : si la vitesse est trop faible ou bloque, on sort
-    if (Math.abs(velocity.x) < 1e-5) break;
-
-    // Petite avance pour éviter de rester bloqué au bord
-    position = position.add(velocity.scale(0.01));
-  }
-
-  return position.z;
-}
-
 function predictTrajectoryPoints(
   position: BABYLON.Vector3,
   velocity: BABYLON.Vector3,
   bounds: { x1: number; x2: number; z1: number; z2: number }
-): BABYLON.Vector3[] {
+): {points : BABYLON.Vector3[], position: BABYLON.Vector3, velocity: BABYLON.Vector3} {
   const points: BABYLON.Vector3[] = [];
   let pos = position.clone();
   let vel = velocity.clone();
@@ -171,49 +89,37 @@ function predictTrajectoryPoints(
   const finalZ = currentZ + vz * (remainingTime - t);
   const finalZClamped = BABYLON.Scalar.Clamp(finalZ, z1, z2);
   points.push(new BABYLON.Vector3(finalX, pos.y, finalZClamped));
+  if (finalZClamped !== finalZ) {
+    // Si on a rebondi sur le bord, on inverse la vitesse
+    vel.z *= -1;
+  } else {
+    // Si on n'a pas rebondi, on garde la vitesse
+    vel.z = vz;
+  }
+  vel.x = goingRight ? Math.abs(vel.x) : -Math.abs(vel.x);
+  return {points, position: points[points.length - 1], velocity: vel.clone()}
+}
 
+
+function predictIATrajectoryPoints(
+  ball: BABYLON.Mesh,
+  velocity: BABYLON.Vector3,
+):BABYLON.Vector3[]
+{
+  //const bounds = { x1: -14, x2: 14, z1: -8, z2: 8 };
+  const bounds = { x1: -14+0.5, x2: 14-0.5, z1: -9.5, z2: 9.5 };
+  const ret = predictTrajectoryPoints(ball.position, velocity, bounds);
+  let points = ret.points;
+  if (velocity.x < 0)
+  {
+    ret.velocity.x *= -1;
+    const ret2 = predictTrajectoryPoints(ret.position, ret.velocity, bounds);
+    points = points.concat(ret2.points);
+  }
   return points;
 }
 
-
-
-
 let debugLine: BABYLON.LinesMesh | null = null;
-
-function updateDebugTrajectory(
-  scene: BABYLON.Scene,
-  ball: BABYLON.Mesh,
-  velocity: BABYLON.Vector3
-) {
-  //const bounds = { x1: -14, x2: 14, z1: -8, z2: 8 };
-  const bounds = { x1: -14, x2: 14, z1: -9.5, z2: 9.5 };
-  const points = predictTrajectoryPoints(ball.position, velocity, bounds);
-
-  // Supprimer l'ancienne ligne si elle existe
-  if (debugLine) {
-    debugLine.dispose();
-  }
-
-  debugLine = BABYLON.MeshBuilder.CreateLines("trajectory", {
-    points: points
-  }, scene);
-  debugLine.color = new BABYLON.Color3(1, 1, 0); // jaune
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // === Terrain and border construction ===
@@ -260,17 +166,15 @@ function endGame(room: ROOM.Room): void {
 
 
 // === Main game function ===
-export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: ROOM.Room): () => void {
-  const scene = new BABYLON.Scene(engine);
-  scene.autoClear = false;
+export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
+  const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-  void room;
   const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.inputs.clear();
-  camera.attachControl(canvas, false);
+  camera.attachControl(engine.canvas, false);
   camera.alpha = Math.PI / 2;
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
   camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
@@ -288,7 +192,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
 
   const updateCameraRadius = () => {
     const fieldWidth = 35;
-    const canvasAspect = canvas.width / canvas.height;
+    const canvasAspect = engine.canvas.width / engine.canvas.height;
     const fov = camera.fov;
     const fovH = 2 * Math.atan(Math.tan(fov / 2) * canvasAspect);
     const requiredRadius = (fieldWidth / 2) / Math.sin(fovH / 2);
@@ -421,7 +325,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
   ball.position.y = 0.5;
   ball.material = ballMat;
 
-  let ballVelocity = new BABYLON.Vector3(0.15, 0, 0.12);
+  let ballVelocity = new BABYLON.Vector3(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
   const inputMap: Record<string, boolean> = {};
   scene.actionManager = new BABYLON.ActionManager(scene);
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => inputMap[evt.sourceEvent.key] = true));
@@ -429,28 +333,52 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
 
   let scoreLeft = 0, scoreRight = 0;
   let predictPaddlePosition = 0;
+  let elapsedTimeIA = 0;
   scene.onBeforeRenderObservable.add(() => {
     if (paused) return;
     const delta = engine.getDeltaTime() / 16.666;
+    elapsedTimeIA += engine.getDeltaTime();
     const speed = 0.3;
-
-    if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
-    if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
     if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
     if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
 
 
+    if (room.withIA)
+    {
+      // IA Paddle Movement
+      //actualiser 1 fois par seconde
+      if (elapsedTimeIA > 1000)
+      {
+        elapsedTimeIA = 0;
+        const AI_points = predictIATrajectoryPoints(ball, ballVelocity);
+        void debugLine;
+        //Debug trajectory
+        /*setTimeout(() => 
+        {
+          // Supprimer l'ancienne ligne si elle existe
+          if (debugLine) {
+            debugLine.dispose();
+          }
+          debugLine = BABYLON.MeshBuilder.CreateLines("trajectory", {
+            points: AI_points
+          }, scene);
+          debugLine.color = new BABYLON.Color3(1, 1, 0); // jaune
+        }, 0);*/
+        // Fin debug trajectory
+        predictPaddlePosition = AI_points[AI_points.length - 1].z;
+      }
 
-
-    // IA Paddle Movement
-    setTimeout(() => updateDebugTrajectory(scene, ball, ballVelocity), 0);
-    predictPaddlePosition = predictAIPaddlePosition(ball.position, ballVelocity);
-
-    if (paddle2.position.z < predictPaddlePosition - 0.5)
-      paddle2.position.z += speed * delta;
-    else if (paddle2.position.z > predictPaddlePosition + 0.5)
-      paddle2.position.z -= speed * delta;
-    //////////////////////////////////////////
+      if (paddle2.position.z < predictPaddlePosition - 0.25)
+        paddle2.position.z += speed * delta;
+      else if (paddle2.position.z > predictPaddlePosition + 0.25)
+        paddle2.position.z -= speed * delta;
+      //////////////////////////////////////////
+    }
+    else
+    {
+      if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
+      if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+    }
 
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
     paddle2.position.z = BABYLON.Scalar.Clamp(paddle2.position.z, -8, 8);
@@ -458,7 +386,7 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
     handleBallCollisions(ball, paddle1, paddle2, ballVelocity);
 
     if (Math.abs(ball.position.x) > 16) {
-      if (ball.position.x > 0) scoreLeft++;
+      if (ball.position.x < 0) scoreLeft++;
       else scoreRight++;
       scoreText.text = `${scoreLeft} - ${scoreRight}`;
       ball.position.set(0, 0.5, 0);
@@ -469,28 +397,13 @@ export function main(engine: BABYLON.Engine, canvas: HTMLCanvasElement, room: RO
           room.playerWinner = 0;
         else
           room.playerWinner = 1;
+        console.log("Fin du jeu, joueur " + room.playerWinner + " gagne !");
         endGame(room);
       }
     }
   });
-
-  scene.freezeActiveMeshes();
   engine.runRenderLoop(() => scene.render());
 
-  let resizeListener = () => updateCameraRadius();
-  window.addEventListener("resize", resizeListener);
-
-  return () => {
-    window.removeEventListener("keydown", handleKeyDown);
-    window.removeEventListener("resize", resizeListener);
-    paused = true;
-    scene.onDisposeObservable.clear();
-    scene.onAfterRenderObservable.clear();
-    scene.onBeforeRenderObservable.clear();
-    engine.stopRenderLoop();
-    scene.actionManager?.dispose();
-    scene.dispose();
-    engine.dispose();
-    return;
-  };
+  engine.OnResize.addEventListener(updateCameraRadius);
+  engine.OnDispose.addEventListener(() => window.removeEventListener("keydown", handleKeyDown));
 }

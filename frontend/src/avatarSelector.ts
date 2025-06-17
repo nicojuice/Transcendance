@@ -3,22 +3,22 @@ import { showToast } from "./showToast";
 import './i18n';
 
 const avatars: string[] = [
-  "/assets/avatar1.png",
-  "/assets/avatar2.png",
-  "/assets/avatar3.png",
-  "/assets/avatar4.png",
-  "/assets/avatar5.png",
-  "/assets/avatar6.png",
-  "/assets/avatar7.png",
-  "/assets/avatar8.png",
-  "/assets/avatar9.png",
-  "/assets/avatar10.png",
-  "/assets/avatar11.png",
-  "/assets/avatar12.png",
-  "/assets/avatar12.png",
-  "/assets/avatar13.png",
-  "/assets/avatar14.png",
-  "/assets/avatar15.png",
+  "/assets/avatars/avatar1.png",
+  "/assets/avatars/avatar2.png",
+  "/assets/avatars/avatar3.png",
+  "/assets/avatars/avatar4.png",
+  "/assets/avatars/avatar5.png",
+  "/assets/avatars/avatar6.png",
+  "/assets/avatars/avatar7.png",
+  "/assets/avatars/avatar8.png",
+  "/assets/avatars/avatar9.png",
+  "/assets/avatars/avatar10.png",
+  "/assets/avatars/avatar11.png",
+  "/assets/avatars/avatar12.png",
+  "/assets/avatars/avatar12.png",
+  "/assets/avatars/avatar13.png",
+  "/assets/avatars/avatar14.png",
+  "/assets/avatars/avatar15.png",
 ];
 
 let currentIndex: number = 0;
