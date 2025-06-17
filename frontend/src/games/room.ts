@@ -25,8 +25,11 @@ export class Room {
     const storedRoom = localStorage.getItem("currentRoom");
     if (storedRoom) {
       const parsedRoom = JSON.parse(storedRoom);
-      this.withIA = parsedRoom.withIA;
-      this.withCustom = parsedRoom.withCustom;
+      this.gameName = parsedRoom.gameName || "";
+      this.nextPage = parsedRoom.nextPage || "profile";
+      this.playerWinner = parsedRoom.playerWinner || 0;
+      this.withIA = parsedRoom.withIA || false;
+      this.withCustom = parsedRoom.withCustom || false;
       this.players = parsedRoom.players || [];
     } else {
       console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");

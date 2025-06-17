@@ -1,4 +1,4 @@
-//import * as PONG from "./pong/game";
+import * as PONG from "./pong/game";
 import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";
@@ -16,9 +16,9 @@ function startGame(canvas: HTMLCanvasElement) {
   engine.Resize();
   let room = new ROOM.Room();
   room.loadFromLocalStorage();
-  /*if (room.gameName === "pong")
+  if (room.gameName === "pong")
     PONG.main(engine, room);
-  else if (room.gameName === "pacman")*/
+  else if (room.gameName === "pacman")
     PACMAN.main(engine, room);
 }
 

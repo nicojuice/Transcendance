@@ -1,4 +1,4 @@
-import * as BABYLON from "@babylonjs/core";
+//import * as BABYLON from "@babylonjs/core";
 import * as GUI from "@babylonjs/gui";
 import * as Entities from "./entities";
 import * as Engine from "../engine";
