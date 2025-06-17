@@ -9,7 +9,7 @@ export class Room {
   playerWinner: number;
 
   constructor() {
-    this.gameName = "pong";
+    this.gameName = "";
     this.nextPage = "profile";
     this.players = [];
     this.withIA = false;
@@ -39,7 +39,7 @@ export class Room {
 };
 
 
-export function startGameAndNavigate() {
+export function startGameAndNavigate(GameName: string) {
   const playersElement = document.getElementById("players") as HTMLSelectElement | null;
   const customElement = document.getElementById("custom") as HTMLSelectElement | null;
   console.log(customElement, "  avec ou pas custom")
@@ -55,6 +55,7 @@ export function startGameAndNavigate() {
   const room = new Room();
   room.withIA = numPlayers;
   room.players = Username;
+  room.gameName = GameName
   room.withCustom = isCustom;
   room.saveToLocalStorage();
 
