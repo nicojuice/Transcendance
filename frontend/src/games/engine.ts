@@ -5,6 +5,7 @@ export class GameEngine extends BABYLON.Engine {
   canvas: HTMLCanvasElement;
   inputMap: Record<string, boolean>;
   scene: BABYLON.Scene;
+  paused: boolean; // Indicate if the game is paused
 
   OnDispose: EventManager;
   OnResize: EventManager;
@@ -14,6 +15,7 @@ export class GameEngine extends BABYLON.Engine {
     this.enableOfflineSupport = false;
     this.renderEvenInBackground = false;
     this.scene = new BABYLON.Scene(this);
+    this.paused = false; // Initialize paused state
     this.inputMap = {};
     this.scene.actionManager = new BABYLON.ActionManager(this.scene);
     this.scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => this.inputMap[evt.sourceEvent.key] = true));

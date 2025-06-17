@@ -1,6 +1,8 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders";
 import * as Map from "./map";
+import * as Entities from "./entities";
+import * as Utils from "./utils";
 
 export function spawn_terrain(scene: BABYLON.Scene, map: Map.GameMap): {miniBalls: BABYLON.Mesh[], bigBalls: BABYLON.Mesh[]} {
 
@@ -13,11 +15,18 @@ export function spawn_terrain(scene: BABYLON.Scene, map: Map.GameMap): {miniBall
   //wallMaterial.disableDepthWrite = true;
   wallMaterial.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.6); // Légère lueur pour les murs
   //wallMaterial.disableLighting = true; // Désactiver l'éclairage pour un rendu uniforme
+
+  const ballMaterial = new BABYLON.StandardMaterial("ballMat", scene);
+  ballMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);  // Jaune pour les boules
+  ballMaterial.emissiveColor = new BABYLON.Color3(1, 1, 0); // Légère lueur jaune pour les boules
+  const bigBallMaterial = new BABYLON.StandardMaterial("bigBallMat", scene);
+  bigBallMaterial.diffuseColor = new BABYLON.Color3(0, 0, 1);  // Bleu pour les grosses boules
+  bigBallMaterial.emissiveColor = new BABYLON.Color3(1, 0, 1); // Légère lueur bleue pour les grosses boules
   for (let y = 0; y < map.length; y++) {
       const line = map[y];
       for (let x = 0; x < line.length; x++) {
           const char = line[x];
-          let position = new BABYLON.Vector3(x * Map.tileSize - 20, offsetY + (map.length - y - 1) * Map.tileSize, Map.tileSize / 2); 
+          let position = new BABYLON.Vector3(x * Map.tileSize - ((line.length*Map.tileSize)/2) + (Map.tileSize/2), offsetY + (map.length - y - 1) * Map.tileSize, Map.tileSize / 2); 
           // Murs
           if (char === Map.CellType.WALL) {
               // Face de devant
@@ -62,8 +71,6 @@ export function spawn_terrain(scene: BABYLON.Scene, map: Map.GameMap): {miniBall
           else if (char === Map.CellType.SMALL_BALL) {
               const ball = BABYLON.MeshBuilder.CreateSphere("ball", {diameter: 0.5}, scene);
               ball.position = new BABYLON.Vector3(position.x, position.y, Map.tileSize / 2);  // Positionner les boules
-              const ballMaterial = new BABYLON.StandardMaterial("ballMat", scene);
-              ballMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);  // Jaune pour les boules
               ball.material = ballMaterial;
               miniBalls.push(ball);  // Ajouter la boule à la liste des petites boules
           }
@@ -71,8 +78,6 @@ export function spawn_terrain(scene: BABYLON.Scene, map: Map.GameMap): {miniBall
           else if (char === Map.CellType.BIG_BALL) {
               const bigBall = BABYLON.MeshBuilder.CreateSphere("bigBall", {diameter: 1}, scene);
               bigBall.position = new BABYLON.Vector3(position.x, position.y, Map.tileSize / 2);  // Positionner les grosses boules
-              const bigBallMaterial = new BABYLON.StandardMaterial("bigBallMat", scene);
-              bigBallMaterial.diffuseColor = new BABYLON.Color3(0, 0, 1);  // Bleu pour les grosses boules
               bigBall.material = bigBallMaterial;
               bigBalls.push(bigBall);  // Ajouter la grosse boule à la liste des grosses boules
           }
@@ -97,7 +102,7 @@ export function spawn_pacman(scene: BABYLON.Scene): BABYLON.Mesh {
   pacManMouthDown.rotation.x = Math.PI;  // Inverser la demi-sphère du bas pour qu'elle soit orientée vers le bas
 
   // Définir le matériau pour les deux demi-sphères de la bouche
-  const pacManMouthMaterial = new BABYLON.StandardMaterial("mouth", scene);
+  const pacManMouthMaterial = new BABYLON.StandardMaterial("pacManMat", scene);
   pacManMouthMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0); // Noir pour la bouche
   //pacManMouthMaterial.emissiveColor = new BABYLON.Color3(1, 0, 0); // Noir pour l'émissivité
   //pacManMouthMaterial.disableLighting = true; // Désactive l'influence des lumières
@@ -129,57 +134,11 @@ export function spawn_pacman(scene: BABYLON.Scene): BABYLON.Mesh {
   return pacMan;
 }
 
-/*export function spawn_ghost(scene: BABYLON.Scene): BABYLON.Mesh | null{
-  let ghost: BABYLON.Mesh | null = null;
-  BABYLON.SceneLoader.ImportMesh(
-      "", 
-      "./assets/games/pacman/", 
-      "ghost.stl", 
-      scene, 
-      (meshes) => {
-        //merge les meshes importés
-        // Vérifier si des meshes ont été chargés
-        if (meshes.length > 0) {
-          const ghostMaterial = new BABYLON.StandardMaterial("ghostMat", scene);
-            ghostMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);  // Rouge pour le fantôme
-            //ghostMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);  // Légère lueur rouge
-
-            // Appliquer le matériau à tous les meshes avant la fusion
-            meshes.forEach(mesh => {
-                mesh.material = ghostMaterial; // Appliquer le même matériau
-                mesh.scaling = new BABYLON.Vector3(0.065, 0.065, 0.065); // Redimensionner
-                mesh.position = new BABYLON.Vector3(0, -1.5, 1); // Positionner le fantôme
-                //convert AbstractMesh to Mesh
-                if (mesh instanceof BABYLON.AbstractMesh) {
-                    ghost = mesh as BABYLON.Mesh; // Convertir en Mesh
-                    console.log("Ghost mesh imported successfully.");
-                }
-            });
-          //Supprimer les meshes importés
-        } else {
-          console.warn("Aucun mesh trouvé dans le fichier ghost.stl");
-        }
-      },
-      (progress) => {
-        void progress;
-        //console.log("Progression du chargement : ", progress);
-      },
-      (scene, message) => {
-        void scene;
-        console.error("Erreur de chargement du modèle : ", message);
-      }
-  );
-  BABYLON.LoadAssetContainerAsync
-  return ghost;
-}*/
-
-export async function spawn_ghost(scene: BABYLON.Scene): Promise<BABYLON.Mesh | null> {
-  let ghost: BABYLON.Mesh | null = null;
-
+export async function spawn_ghosts(scene: BABYLON.Scene, map: Map.GameMap, characters: Entities.Character[]): Promise<void> {
   try {
     // Charger le modèle STL dans un AssetContainer
     const container = await BABYLON.LoadAssetContainerAsync(
-      "./assets/games/pacman/ghost.stl",  // Dossier où se trouve le modèle
+      "./assets/games/pacman/ghost.glb",  // Dossier où se trouve le modèle
       scene                      // La scène où charger l'asset
     );
 
@@ -188,32 +147,29 @@ export async function spawn_ghost(scene: BABYLON.Scene): Promise<BABYLON.Mesh | 
 
     // Vérifier si des meshes ont été chargés
     if (meshes.length > 0) {
-      const ghostMaterial = new BABYLON.StandardMaterial("ghostMat", scene);
-      ghostMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);  // Rouge pour le fantôme
-      // ghostMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);  // Légère lueur rouge
-
-      // Appliquer le matériau et la transformation à tous les meshes
-      meshes.forEach(mesh => {
-        mesh.material = ghostMaterial; // Appliquer le même matériau
-        mesh.scaling = new BABYLON.Vector3(0.065, 0.065, 0.065); // Redimensionner
-        mesh.position = new BABYLON.Vector3(0, -1.5, 1); // Positionner le fantôme
-
-        // Vérifier que c'est un AbstractMesh et le convertir en Mesh
-        if (mesh instanceof BABYLON.AbstractMesh) {
-          ghost = mesh as BABYLON.Mesh; // Convertir en Mesh
-          console.log("Ghost mesh imported successfully.");
-        }
-      });
+      const ghost = meshes[0] as BABYLON.Mesh; // Prendre le premier mesh du container
+      //add other meshes to ghost (has children)
+      for (let i = 1; i < meshes.length; i++) {
+        const childMesh = meshes[i] as BABYLON.Mesh;
+        ghost.addChild(childMesh); // Ajouter le mesh enfant au fantôme
+      }
+      //ghost.position = new BABYLON.Vector3(1, 2, -1); // Positionner le fantôme
 
       // Ajouter le container à la scène, pour que les meshes soient rendus
       container.addAllToScene();
+      for (let i = 0; i < 4; i++) {
+        const coord = Map.get_coord(map, Map.CellType.GHOST, i);
+        const ghostClone = ghost.clone("ghost" + i);
+        ghostClone.position = Utils.coordToPosition(coord, map);
+        characters.push(new Entities.Ghost(i, ghostClone, map, 0.1));
+      }
+      //delete the original ghost mesh
+      ghost.dispose();
     } else {
       console.warn("Aucun mesh trouvé dans le fichier ghost.stl");
     }
   } catch (error) {
     console.error("Erreur de chargement du modèle : ", error);
   }
-
-  return ghost;
 }
 

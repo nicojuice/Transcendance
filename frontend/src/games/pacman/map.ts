@@ -2,7 +2,8 @@ export enum CellType {
     WALL = '#',     // Mur
     SMALL_BALL = '*', // Petite boule
     BIG_BALL = '@',   // Grosse boule
-    PLAYER = 'C',  // Joueur (Pacman)
+    PLAYER = 'P',  // Joueur (Pacman)
+    GHOST = 'G', // Monstre (Fantôme)
     EMPTY = ' '      // Espace vide
 }
 
@@ -35,8 +36,11 @@ function convertMapToEnum(map: string): GameMap {
                 case '@':
                     row.push(CellType.BIG_BALL);
                     break;
-                case 'C':
+                case 'P':
                     row.push(CellType.PLAYER);
+                    break;
+                case 'G':
+                    row.push(CellType.GHOST);
                     break;
                 case ' ':
                     row.push(CellType.EMPTY);
@@ -92,21 +96,21 @@ let pacman_map_string = `\
 #**********#**********#
 #@###*####*#*####*###@#
 #*###*####*#*####*###*#
-#**********C**********#
+#**********P**********#
 #*###*#*#######*#*###*#
 #*****#*#######*#*****#
 #*###*#****#****#*#####
 #*###*####*#*####*#####
 #*###*#         #*#####
 #*###*# ### ### #*#####
-#    *  #MM MM#  *    #
+#*****  #GG GG#  *****#
 #####*# ####### #*###*#
-#####*#         #*###*#
+#####*#    @    #*###*#
 #####*# ####### #*###*#
 #####*# ####### #*###*#
 #**********#**********#
 #*###*####*#*####*###*#
-#@**#******C******#**@#
+#@**#******P******#**@#
 ###*#*#*#######*#*#*###
 #*****#****#****#*****#
 #*########*#*########*#

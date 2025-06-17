@@ -7,11 +7,15 @@ export abstract class Character {
   obj: BABYLON.Mesh; // L'objet du personnage
   map: Map.GameMap; // La carte du jeu
   speed: number; // La vitesse de déplacement du personnage
+  direction: {x: number, y: number};
+  private last_crossing: {x: number, y: number}; // Dernière fois que la direction a été changée
 
   constructor(obj: BABYLON.Mesh, map: Map.GameMap, speed: number) {
     this.obj = obj;
     this.map = map;
     this.speed = speed;
+    this.direction = {x: 0, y: 0};
+    this.last_crossing = {x: -1, y: -1}; // Initialiser le dernier croisement à 0
   }
 
   // Méthode abstraite : Chaque classe dérivée doit définir cette méthode
@@ -22,45 +26,45 @@ export abstract class Character {
   // Méthode pour effectuer le déplacement basé sur les entrées et la carte
   Move(engine: Engine.GameEngine) {
     const delta = engine.getDeltaTime() / 16.666;  // Calcul du temps entre les frames
-    let direction = Utils.getDirection(this.obj.rotation.z); // Direction du mouvement
-    const player_coord = Utils.positionToCoord(this.obj.position, this.map); // Coordonnées du joueur
-    const ajustPosition = Utils.coordToPosition(player_coord, this.map); // Position ajustée au centre de la case
-    let next_coord = { x: player_coord.x + direction.x, y: player_coord.y - direction.y }; // Prochaine coordonnée
+    const new_speed = Math.min(this.speed * delta, Map.tileSize/4); // Vitesse ajustée pour le delta
+    const obj_coord = Utils.positionToCoord(this.obj.position, this.map); // Coordonnées du joueur
+    const ajustPosition = Utils.coordToPosition(obj_coord, this.map); // Position ajustée au centre de la case
+    let next_coord = { x: obj_coord.x + this.direction.x, y: obj_coord.y - this.direction.y }; // Prochaine coordonnée
 
     // Vérification si Pac-Man est centré sur la case
-    let isCentered = Utils.distance(this.obj.position, ajustPosition) <= (this.speed * delta) * 1.1;
+    let isCentered = Utils.distance(this.obj.position, ajustPosition) <= new_speed * 1.1;
 
-    let old_data = { rotation: this.obj.rotation.z, direction: direction, next_coord: next_coord };
+    let old_data = { rotation: this.obj.rotation.z, direction: this.direction, next_coord: next_coord };
 
     // Si le joueur est centré sur la case, changer la direction selon les touches
-    if (isCentered) {
-      const isBlocked = Number(Map.get_c(player_coord.x + 1, player_coord.y, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(player_coord.x - 1, player_coord.y, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(player_coord.x, player_coord.y + 1, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(player_coord.x, player_coord.y - 1, this.map) === Map.CellType.WALL) >= 3;
+    if (isCentered && (this.last_crossing.x !== ajustPosition.x || this.last_crossing.y !== ajustPosition.y)) {
+      const isBlocked = Number(Map.get_c(obj_coord.x + 1, obj_coord.y, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(obj_coord.x - 1, obj_coord.y, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(obj_coord.x, obj_coord.y + 1, this.map) === Map.CellType.WALL) +
+                      Number(Map.get_c(obj_coord.x, obj_coord.y - 1, this.map) === Map.CellType.WALL) >= 3;
       const [up, down, left, right] = this.Input(engine); // Récupérer les entrées directionnelles
-      if (up && (direction.y == 0 || isBlocked)) this.obj.rotation.z = Math.PI / 2;
-      else if (down && (direction.y == 0 || isBlocked)) this.obj.rotation.z = -Math.PI / 2;
-      else if (left && (direction.x == 0 || isBlocked)) this.obj.rotation.z = Math.PI;
-      else if (right && (direction.x == 0 || isBlocked)) this.obj.rotation.z = 0;
-
-      direction = Utils.getDirection(this.obj.rotation.z);
-      next_coord = { x: player_coord.x + direction.x, y: player_coord.y - direction.y };
+      if (up && (this.direction.y == 0 || isBlocked)) this.direction = {x: 0, y: 1}; // Haut
+      else if (down && (this.direction.y == 0 || isBlocked)) this.direction = {x: 0, y: -1}; // Bas
+      else if (left && (this.direction.x == 0 || isBlocked)) this.direction = {x: -1, y: 0}; // Gauche
+      else if (right && (this.direction.x == 0 || isBlocked)) this.direction = {x: 1, y: 0}; // Droite
+      next_coord = { x: obj_coord.x + this.direction.x, y: obj_coord.y - this.direction.y };
 
       // Vérifier si la case suivante est un mur
       if (Map.get_c(next_coord.x, next_coord.y, this.map) === Map.CellType.WALL) {
         this.obj.rotation.z = old_data.rotation; // Revenir à l'ancienne rotation
-        direction = old_data.direction; // Revenir à l'ancienne direction
+        this.direction = old_data.direction; // Revenir à l'ancienne direction
         next_coord = old_data.next_coord; // Revenir à l'ancienne coordonnée
       }
+      else if (!isBlocked)
+        this.last_crossing = {x: ajustPosition.x, y: ajustPosition.y}; // Mettre à jour le dernier croisement
     }
 
     // Si Pac-Man n'est pas centré ou qu'il n'y a pas de mur, se déplacer
     if (Map.get_c(next_coord.x, next_coord.y, this.map) !== Map.CellType.WALL || !isCentered)
     {
-      this.obj.position = this.obj.position.add(new BABYLON.Vector3(direction.x * (this.speed * delta), direction.y * (this.speed * delta), 0));
+      this.obj.position = this.obj.position.add(new BABYLON.Vector3(this.direction.x * new_speed, this.direction.y * new_speed, 0));
       // Ajuster la position de Pac-Man en fonction de la direction
-      if (direction.x !== 0) this.obj.position.y = ajustPosition.y;
+      if (this.direction.x !== 0) this.obj.position.y = ajustPosition.y;
       else this.obj.position.x = ajustPosition.x;
     } else {
       // Si Pac-Man est centré sur la case et n'y a pas de mur, ajuster la position exactement au centre
@@ -74,12 +78,56 @@ export abstract class Character {
   }
 }
 
+export class Ghost extends Character {
+  id: number; // Identifiant du joueur
+  constructor(id: number, obj: BABYLON.Mesh, map: Map.GameMap, speed: number) {
+    super(obj, map, speed); // Appel du constructeur parent (Character)
+    this.id = id; // Initialiser l'identifiant du joueur
+  }
+
+  Input(engine: Engine.GameEngine): boolean[] {
+    void engine; // Pas d'entrées pour les fantômes
+    //return [false, false, false, false]; // Pas d'entrées pour les fantômes
+    //random input for ghost movement
+    return [
+      Math.random() < 0.3, // Up
+      Math.random() < 0.4, // Down
+      Math.random() < 0.5, // Left
+      Math.random() < 0.6  // Right
+    ]; // Retourne un tableau de booléens aléatoires pour simuler le mouvement des fantômes
+  }
+  Update(engine: Engine.GameEngine): void {
+    this.Move(engine); // Appeler la méthode Move pour déplacer le fantôme
+  }
+}
+
 
 export class Player extends Character {
-    inputKey: string[]; // Clés d'entrée pour le joueur
-  constructor(obj: BABYLON.Mesh, map: Map.GameMap, speed: number, inputKey: string[]) {
+  id: number; // Identifiant du joueur
+  inputKey: string[]; // Clés d'entrée pour le joueur
+  score: number; // Score du joueur
+  invulnerable: boolean; // Indique si le joueur est invulnérable
+  invulnerableTime: number = 0; // Temps d'invulnérabilité
+  base_color: BABYLON.Color3; // Couleur du joueur
+  constructor(id: number, obj: BABYLON.Mesh, base_color: BABYLON.Color3, map: Map.GameMap, speed: number, inputKey: string[]) {
     super(obj, map, speed); // Appel du constructeur parent (Character)
+    this.id = id; // Initialiser l'identifiant du joueur
     this.inputKey = inputKey;
+    this.score = 0; // Initialiser le score à 0
+    this.invulnerable = false; // Initialiser l'état d'invulnérabilité à faux
+    this.base_color = base_color; // Couleur de base du joueur
+    this.SetColor(base_color); // Appliquer la couleur de base
+  }
+
+  SetColor(color: BABYLON.Color3) {
+    const pacManMaterial = new BABYLON.StandardMaterial("pacManMat", this.obj.getScene()).clone("pacManMat"+this.id);
+    pacManMaterial.diffuseColor = color; // Appliquer la couleur spécifiée
+    this.obj.getChildMeshes().forEach(child => {
+        if (child.material) {
+            child.material = pacManMaterial; // Appliquer le matériau à chaque enfant
+        }
+    });
+    this.obj.material = pacManMaterial; // Appliquer le matériau à l'objet principal
   }
 
   // Redéfinir la méthode Input pour gérer les entrées spécifiques au joueur
@@ -92,8 +140,24 @@ export class Player extends Character {
     ];
   }
 
+  SetInvulnerable() {
+    this.invulnerable = true; // Activer l'invulnérabilité
+    //10 secondes d'invulnérabilité
+    this.invulnerableTime = 10 * 1000; // 10 secondes en millisecondes
+    this.SetColor(new BABYLON.Color3(1, 0, 1)); // Changer la couleur en rose
+  }
+
   Update(engine: Engine.GameEngine): void {
+    // Vérifier si le joueur est invulnérable
+    if (this.invulnerable) {
+      this.invulnerableTime -= engine.getDeltaTime(); // Décrémenter le temps d'invulnérabilité
+      if (this.invulnerableTime <= 0) {
+        this.invulnerable = false; // Désactiver l'invulnérabilité
+        this.SetColor(this.base_color); // Revenir à la couleur de base
+      }
+    }
     // Mettre à jour la position du joueur en fonction des entrées
     this.Move(engine);
+    this.obj.rotation.z = Utils.getRotation(this.direction); // Mettre à jour la rotation du joueur en fonction de la direction
   }
 }

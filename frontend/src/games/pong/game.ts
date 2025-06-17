@@ -404,8 +404,6 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   });
   engine.runRenderLoop(() => scene.render());
 
-  let resizeListener = () => updateCameraRadius();
-
   engine.OnResize.addEventListener(updateCameraRadius);
   engine.OnDispose.addEventListener(() => window.removeEventListener("keydown", handleKeyDown));
 }

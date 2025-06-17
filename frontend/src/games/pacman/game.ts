@@ -1,4 +1,4 @@
-//import { navigate } from "../../nav";
+import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
 //import * as GUI from "@babylonjs/gui";
 import "@babylonjs/loaders";
@@ -8,12 +8,13 @@ import * as Utils from "./utils";
 import * as Spawn from "./spawn";
 import * as Entities from "./entities";
 import * as Engine from "../engine";
+import { drawUI } from "./draw_ui";
 
 
-/*function endGame(room: ROOM.Room): void {
+function endGame(room: ROOM.Room): void {
   room.saveToLocalStorage();
   setTimeout(() => navigate(room.nextPage), 0);
-}*/
+}
 
 
 // === Main game function ===
@@ -21,8 +22,6 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   void room;
   const scene = engine.scene;
   let characters: Entities.Character[] = [];
-  
-  console.log("ghost",Spawn.spawn_ghost(scene));
 
 
   //spawn ghost
@@ -46,15 +45,19 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha = -Math.PI / 2;
   camera.radius = 60;
 
-  let player = new Entities.Player(Spawn.spawn_pacman(scene), Map.pacman_map, 0.1, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
-  player.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0));
-  player.obj.rotation.z = Math.PI / 2; // Orientation initiale vers le haut
-  characters.push(player);
+  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, 0.1, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  player1.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0));
+  player1.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
+  characters.push(player1);
 
-  player = new Entities.Player(Spawn.spawn_pacman(scene), Map.pacman_map, 0.1, ['w', 's', 'a', 'd']);
-  player.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 1));
-  player.obj.rotation.z = Math.PI / 2; // Orientation initiale vers le haut
-  characters.push(player);
+  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, 0.1, ['w', 's', 'a', 'd']);
+  player2.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 1));
+  player2.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
+  characters.push(player2);
+
+  Spawn.spawn_ghosts(scene, Map.pacman_map, characters);
+
+  drawUI(engine, player1, player2);
 
   // Créer un éclairage de base
   new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Backward(), scene);
@@ -64,16 +67,9 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   void balls;
   // Déplacement de Pac-Man avec les touches fléchées
   scene.onBeforeRenderObservable.add(() => {
+    if (engine.paused)
+      return; // Ne pas mettre à jour si le jeu est en pause
     //const delta = engine.getDeltaTime() / 16.666;
-    /*//change material of children of pacMan
-    const pacManMaterial = new BABYLON.StandardMaterial("pacManMat", scene);
-    pacManMaterial.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random()); // Jaune pour
-    pacMan.getChildMeshes().forEach(child => {
-        if (child.material) {
-            child.material = pacManMaterial; // Appliquer le matériau à chaque enfant
-        }
-    });*/
-
     characters.forEach(character => {
       character.Update(engine);
       //check if character is Player
@@ -81,16 +77,32 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
         // Vérifier les collisions avec les billes
         let toRemoveBalls: number[] = [];
         balls.miniBalls.forEach((ball, index) => {
-            if (Utils.distance(character.obj.position, ball.position) < 1)
-                toRemoveBalls.push(index);
+          if (Utils.distance(character.obj.position, ball.position) < 1)
+          {
+            character.score += 1; // Ajouter 1 point pour une petite bille
+            toRemoveBalls.push(index);
+          }
         });
         toRemoveBalls.reverse().forEach(index =>{balls.miniBalls[index].dispose(); balls.miniBalls.splice(index, 1);});
         toRemoveBalls = [];
         balls.bigBalls.forEach((bigBall, index) => {
-            if (Utils.distance(character.obj.position, bigBall.position) < 1)
-                toRemoveBalls.push(index);
+          if (Utils.distance(character.obj.position, bigBall.position) < 1)
+          {
+            character.score += 10; // Ajouter 10 points pour une petite bille
+            character.SetInvulnerable(); // Activer l'invulnérabilité
+            toRemoveBalls.push(index);
+          }
         });
         toRemoveBalls.reverse().forEach(index =>{balls.bigBalls[index].dispose(); balls.bigBalls.splice(index, 1);});
+      }
+      // Vérifier la fin du jeu
+      if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0) {
+        if (player1.score > player2.score)
+          room.playerWinner = player1.id;
+        else 
+          room.playerWinner = player2.id;
+        console.log("Game Over! All balls collected.");
+        endGame(room);
       }
     });
 
