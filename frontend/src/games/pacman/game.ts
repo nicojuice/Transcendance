@@ -16,6 +16,40 @@ function endGame(room: ROOM.Room): void {
   setTimeout(() => navigate(room.nextPage), 0);
 }
 
+function respawnPlayer(player: Entities.Player, map: Map.GameMap, characters: Entities.Character[]): void
+{
+  let _floodfill = Utils.emptyfloodfill(map);
+  characters.forEach(character => {
+    if (character instanceof Entities.Ghost)
+      _floodfill = Utils.addfloodfill(_floodfill, Utils.floodfill(map, character.get_coordinates()));
+  });
+  // Trouver la case avec la distance maximale dans le floodfill
+  let maxDistance = -1;
+  let spawnCoord = Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, player.id);
+  for (let y = 0; y < _floodfill.length; y++) {
+    for (let x = 0; x < _floodfill[y].length; x++) {
+      if (_floodfill[y][x] > maxDistance && Map.get_c(x, y, map) != Map.CellType.WALL) {
+        maxDistance = _floodfill[y][x];
+        spawnCoord = {x: x, y: y};
+      }
+    }
+  }
+  /*console.log("Floodfill distances:");
+  _floodfill.forEach(row => {
+    console.log(row.map(cell => cell.toString().padStart(3, ' ')).join(' '));
+  });*/
+  // Mettre à jour la position du joueur
+  player.set_coordinates(spawnCoord);
+  player.invulnerableTime = 0; // Réinitialiser le temps d'invulnérabilité
+  player.invulnerable = false; // Réinitialiser l'état d'invulnérabilité
+  player.SetColor(player.base_color); // Réinitialiser la couleur du joueur
+}
+
+function respawnGhost(ghost: Entities.Ghost, map: Map.GameMap): void
+{
+  ghost.set_coordinates(Map.get_coord(map, Map.CellType.GHOST, ghost.id));
+  ghost.direction = {x: 1, y: 0}; // Réinitialiser la direction du fantôme
+}
 
 // === Main game function ===
 export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
@@ -45,12 +79,12 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha = -Math.PI / 2;
   camera.radius = 60;
 
-  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, 0.1, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, 0.12, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
   player1.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0));
   player1.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player1);
 
-  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, 0.1, ['w', 's', 'a', 'd']);
+  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, 0.12, ['w', 's', 'a', 'd']);
   player2.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 1));
   player2.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player2);
@@ -88,25 +122,36 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
         balls.bigBalls.forEach((bigBall, index) => {
           if (Utils.distance(character.obj.position, bigBall.position) < 1)
           {
-            character.score += 10; // Ajouter 10 points pour une petite bille
+            character.score += 5; // Ajouter 10 points pour une petite bille
             character.SetInvulnerable(); // Activer l'invulnérabilité
             toRemoveBalls.push(index);
           }
         });
         toRemoveBalls.reverse().forEach(index =>{balls.bigBalls[index].dispose(); balls.bigBalls.splice(index, 1);});
-      }
-      // Vérifier la fin du jeu
-      if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0) {
-        if (player1.score > player2.score)
-          room.playerWinner = player1.id;
-        else 
-          room.playerWinner = player2.id;
-        console.log("Game Over! All balls collected.");
-        endGame(room);
+        //check contact with ghosts
+        characters.forEach(otherCharacter => {
+          if (otherCharacter instanceof Entities.Ghost && Utils.distance(character.obj.position, otherCharacter.obj.position) < 1) {
+            if (character.invulnerable) {
+              respawnGhost(otherCharacter, Map.pacman_map); // Réapparaître le fantôme
+              character.score = Math.max(0, character.score + 10); // Bonus de score
+            } else {
+              respawnPlayer(character, Map.pacman_map, characters); // Réapparaître le joueur
+              character.score = Math.max(0, character.score - 10); // Pénalité de score
+            }
+          }
+        });
       }
     });
 
-    
+    // Vérifier la fin du jeu
+    if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0) {
+      if (player1.score > player2.score)
+        room.playerWinner = player1.id;
+      else 
+        room.playerWinner = player2.id;
+      console.log("Game Over! All balls collected.");
+      endGame(room);
+    }
 
   });
 

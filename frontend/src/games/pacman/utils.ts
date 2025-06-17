@@ -36,3 +36,73 @@ export function getRotation(direction: {x: number, y: number}): number {
   if (direction.x === 0 && direction.y === -1) return -Math.PI / 2; // Bas
   return 0; // Par défaut, retourner zéro si la direction n'est pas reconnue
 }
+
+
+export function floodfill(map: Map.GameMap, start_coord:{x: number, y: number}): number[][] {
+  const width = map[0].length;
+  const height = map.length;
+  const visited: boolean[][] = Array.from({ length: height }, () => Array(width).fill(false));
+  const queue: {x: number, y: number}[] = [start_coord];
+  const distances: number[][] = Array.from({ length: height }, () => Array(width).fill(-1));
+  
+  distances[start_coord.y][start_coord.x] = 0; // Distance de départ est 0
+  visited[start_coord.y][start_coord.x] = true;
+
+  while (queue.length > 0) {
+    const { x, y } = queue.shift()!;
+    
+    // Vérifier les directions (haut, bas, gauche, droite)
+    const directions = [
+      { dx: 0, dy: -1 }, // Haut
+      { dx: 0, dy: 1 }, // Bas
+      { dx: -1, dy: 0 }, // Gauche
+      { dx: 1, dy: 0 } // Droite
+    ];
+
+    for (const { dx, dy } of directions) {
+      const newX = x + dx;
+      const newY = y + dy;
+
+      if (newX >= 0 && newX < width && newY >= 0 && newY < height &&
+          !visited[newY][newX] && map[newY][newX] !== Map.CellType.WALL) {
+        visited[newY][newX] = true;
+        distances[newY][newX] = distances[y][x] + 1; // Mettre à jour la distance
+        queue.push({ x: newX, y: newY });
+      }
+    }
+  }
+
+  return distances;
+}
+
+export function emptyfloodfill(map: Map.GameMap): number[][] {
+  const width = map[0].length;
+  const height = map.length;
+  //return a 2D array filled with -1 if the cell is a wall, and 0 otherwise
+  const distances: number[][] = Array.from({ length: height }, () => Array(width).fill(-1));
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (map[y][x] !== Map.CellType.WALL) {
+        distances[y][x] = 0; // Initialiser la distance à 0 pour les cellules non murées
+      }
+    }
+  }
+  return distances;
+}
+
+export function addfloodfill(floodfill_1: number[][], floodfill_2: number[][]): number[][] {
+  const height = floodfill_1.length;
+  const width = floodfill_1[0].length;
+  //if case is not -1, add the two values
+  const result: number[][] = Array.from({ length: height }, () => Array(width).fill(-1));
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (floodfill_1[y][x] !== -1 && floodfill_2[y][x] !== -1) {
+        result[y][x] = floodfill_1[y][x] + floodfill_2[y][x];
+      } else {
+        result[y][x] = -1; // Si l'une des cases est -1, on met -1
+      }
+    }
+  }
+  return result;
+}

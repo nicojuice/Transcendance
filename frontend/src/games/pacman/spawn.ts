@@ -161,7 +161,7 @@ export async function spawn_ghosts(scene: BABYLON.Scene, map: Map.GameMap, chara
         const coord = Map.get_coord(map, Map.CellType.GHOST, i);
         const ghostClone = ghost.clone("ghost" + i);
         ghostClone.position = Utils.coordToPosition(coord, map);
-        characters.push(new Entities.Ghost(i, ghostClone, map, 0.1));
+        characters.push(new Entities.Ghost(i, ghostClone, map, 0.08));
       }
       //delete the original ghost mesh
       ghost.dispose();

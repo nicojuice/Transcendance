@@ -75,6 +75,12 @@ export abstract class Character {
   set_coordinates(coord: {x: number, y: number}) {
     // Mettre à jour la position de l'objet en fonction des coordonnées x et y
     this.obj.position = Utils.coordToPosition({ x: coord.x, y: coord.y }, this.map);
+    this.last_crossing = {x: -1, y: -1};
+  }
+
+  get_coordinates(): {x: number, y: number} {
+    // Convertir la position de l'objet en coordonnées x et y
+    return Utils.positionToCoord(this.obj.position, this.map);
   }
 }
 
@@ -83,6 +89,7 @@ export class Ghost extends Character {
   constructor(id: number, obj: BABYLON.Mesh, map: Map.GameMap, speed: number) {
     super(obj, map, speed); // Appel du constructeur parent (Character)
     this.id = id; // Initialiser l'identifiant du joueur
+    this.direction = {x: 1, y: 0};
   }
 
   Input(engine: Engine.GameEngine): boolean[] {
