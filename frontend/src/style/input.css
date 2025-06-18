@@ -141,3 +141,51 @@
 .volet-deroulant:nth-child(2) {
   animation-delay: 0.3s;
 }
+
+
+
+
+
+  .btn-mode {
+    @apply w-full py-3 text-lg text-white border border-white/30 rounded-xl backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_12px_rgba(255,255,255,0.2)];
+  }
+
+
+
+
+    .card-container { perspective: 1200px; }
+    .game-card {
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+      position: absolute;
+      inset: 0;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      color: white;
+      cursor: pointer;
+    }
+    .neon-border {
+      box-shadow: 0 0 15px rgba(0,255,255,0.4), inset 0 0 5px rgba(0,255,255,0.2);
+    }
+    .card-hover:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    }
+    .bubble { animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+    .thought-bubble::before {
+      content: ''; position: absolute; bottom: -8px; left: 15px;
+      border-left: 12px solid transparent; border-right: 12px solid transparent;
+      border-top: 12px solid white;
+    }
+.card-tilt-left {
+  transform: rotateZ(-10deg) translate(-70px, 40px);
+  transition: transform 0.4s ease;
+}
+
+.card-tilt-right {
+  transform: rotateZ(10deg) translate(70px, 40px);
+  transition: transform 0.4s ease;
+}
+
+
