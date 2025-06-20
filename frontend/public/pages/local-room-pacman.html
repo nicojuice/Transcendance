@@ -13,13 +13,14 @@
   >
     <!-- Titre -->
     <h2 class="text-3xl font-pixelify text-neon text-center">Game Settings</h2>
-<button
-  id="return-btn"
-  onclick="navigate('game-choice')"
-  class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-8 h-8 border border-neon bg-black font-bold rounded-md hover:brightness-110 transition-all flex items-center justify-center"
-  title="Retour"
->X
-</button>
+    <button
+      id="return-btn"
+      onclick="navigate('game-choice')"
+      class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-8 h-8 border border-neon bg-black font-bold rounded-md hover:brightness-110 transition-all flex items-center justify-center"
+      title="Retour"
+    >
+      X
+    </button>
     <!-- Formulaire -->
     <form
       id="SettingForm"
@@ -28,8 +29,9 @@
     >
       <!-- Choix du nombre de joueurs -->
       <div class="w-full">
-        
-        <label for="players" class="block mb-1 text-left">Combien de joueurs ?</label>
+        <label for="players" class="block mb-1 text-left"
+          >Combien de joueurs ?</label
+        >
         <select
           id="players"
           name="players"
@@ -42,7 +44,9 @@
 
       <!-- Choix du mode custom -->
       <div class="w-full">
-        <label for="custom" class="block mb-1 text-left">Partie personnalisée ?</label>
+        <label for="custom" class="block mb-1 text-left"
+          >Partie personnalisée ?</label
+        >
         <select
           id="custom"
           name="custom"
