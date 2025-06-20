@@ -1,20 +1,11 @@
-import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
-//import * as GUI from "@babylonjs/gui";
 import "@babylonjs/loaders";
-import * as ROOM from "../room";
 import * as Map from "./map";
 import * as Utils from "./utils";
 import * as Spawn from "./spawn";
 import * as Entities from "./entities";
 import * as Engine from "../engine";
-import { drawUI } from "./draw_ui";
-
-
-function endGame(room: ROOM.Room): void {
-  room.saveToLocalStorage();
-  setTimeout(() => navigate(room.nextPage), 0);
-}
+import * as GUI from "@babylonjs/gui";
 
 function respawnPlayer(player: Entities.Player, map: Map.GameMap, characters: Entities.Character[]): void
 {
@@ -52,9 +43,12 @@ function respawnGhost(ghost: Entities.Ghost, map: Map.GameMap): void
 }
 
 // === Main game function ===
-export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
-  void room;
+export function main(engine: Engine.GameEngine): void {
   const scene = engine.scene;
+  //get scoreContainer from engine.ui
+  const scoreContainer = engine.ui.getControlByName("scoreContainer") as GUI.Rectangle;
+  scoreContainer.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+  scoreContainer.left = "-10px";
   let characters: Entities.Character[] = [];
 
 
@@ -91,8 +85,6 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
 
   Spawn.spawn_ghosts(scene, Map.pacman_map, characters);
 
-  drawUI(engine, player1, player2);
-
   // Créer un éclairage de base
   new BABYLON.HemisphericLight("light1", BABYLON.Vector3.Backward(), scene);
 
@@ -101,6 +93,8 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   void balls;
   // Déplacement de Pac-Man avec les touches fléchées
   scene.onBeforeRenderObservable.add(() => {
+    engine.room.score.p1 = player1.score;
+    engine.room.score.p2 = player2.score;
     if (engine.paused)
       return; // Ne pas mettre à jour si le jeu est en pause
     //const delta = engine.getDeltaTime() / 16.666;
@@ -144,14 +138,8 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
     });
 
     // Vérifier la fin du jeu
-    if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0) {
-      if (player1.score > player2.score)
-        room.playerWinner = player1.id;
-      else 
-        room.playerWinner = player2.id;
-      console.log("Game Over! All balls collected.");
-      endGame(room);
-    }
+    if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0)
+      engine.EndGame();
 
   });
 

@@ -1,12 +1,22 @@
 import { navigate } from "../nav";
 
+export enum Winner {
+  PLAYER1 = "PLAYER1",
+  PLAYER2 = "PLAYER2",
+  IA = "IA",
+  DRAW = "DRAW",
+  NONE = "NONE"
+}
+
 export class Room {
   gameName: string;
   nextPage: string;
   players: any;
   withIA: any;
   withCustom: any;
-  playerWinner: number;
+  score: { p1: number; p2: number };
+  winner: Winner;
+  manualQuit: boolean;
 
   constructor() {
     this.gameName = "";
@@ -14,7 +24,9 @@ export class Room {
     this.players = [];
     this.withIA = false;
     this.withCustom = false;
-    this.playerWinner = 0;
+    this.score = { p1: 0, p2: 0 };
+    this.winner = Winner.NONE;
+    this.manualQuit = false;
   }
 
   addPlayer(playerName: string) {
@@ -27,7 +39,9 @@ export class Room {
       const parsedRoom = JSON.parse(storedRoom);
       this.gameName = parsedRoom.gameName || "";
       this.nextPage = parsedRoom.nextPage || "profile";
-      this.playerWinner = parsedRoom.playerWinner || 0;
+      this.score = parsedRoom.score || { p1: 0, p2: 0 };
+      this.winner = parsedRoom.winner || Winner.NONE;
+      this.manualQuit = parsedRoom.manualQuit || false;
       this.withIA = parsedRoom.withIA || false;
       this.withCustom = parsedRoom.withCustom || false;
       this.players = parsedRoom.players || [];

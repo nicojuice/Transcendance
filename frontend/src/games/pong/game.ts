@@ -1,7 +1,4 @@
-import { navigate } from "../../nav";
 import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
-import * as ROOM from "../room";
 import * as Engine from "../engine";
 
 // === Ball collision logic ===
@@ -128,7 +125,7 @@ function buildTerrain(scene: BABYLON.Scene): void {
   //groundMat.emissiveColor = new BABYLON.Color3(0, 22.7 / 255.0, 45.0 / 255.0);
   groundMat.emissiveColor = new BABYLON.Color3(1,1,1);
   groundMat.diffuseColor = groundMat.emissiveColor;
-  groundMat.alpha = 0.1;
+  groundMat.alpha = 0.05;
 
   const borderMat = new BABYLON.StandardMaterial("borderMat", scene);
   borderMat.emissiveColor = new BABYLON.Color3(57.3 / 255.0, 1.0, 1.0);
@@ -180,23 +177,17 @@ function buildTerrain(scene: BABYLON.Scene): void {
   borderLimit2.position = new BABYLON.Vector3(-14.85, 0, 0);
 }
 
-function endGame(room: ROOM.Room): void {
-  room.saveToLocalStorage();
-  setTimeout(() => navigate(room.nextPage), 0);
-}
-
 
 // === Main game function ===
-export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
+export function main(engine: Engine.GameEngine): void {
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-  const ui = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
   // Create camera
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
   camera.inputs.clear();
   camera.attachControl(engine.canvas, false);
-  camera.alpha = Math.PI / 2;
+  camera.alpha = -Math.PI / 2;
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha;
   camera.lowerBetaLimit = camera.upperBetaLimit = camera.beta;
 
@@ -226,92 +217,6 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   // Lights and glow
   new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene).intensity = 0.5;
   new BABYLON.GlowLayer("glow", scene).intensity = 0.5;
-
-  // Score UI
-  const scoreText = new GUI.TextBlock();
-  scoreText.text = "0 - 0";
-  scoreText.color = "white";
-  scoreText.fontSize = 48;
-  scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
-  scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  scoreText.top = "20px";
-  ui.addControl(scoreText);
-
-  // Pause Menu
-  const pauseMenu = new GUI.Rectangle();
-  pauseMenu.width = "50%";
-  pauseMenu.height = "40%";
-  pauseMenu.cornerRadius = 20;
-  pauseMenu.color = "white";
-  pauseMenu.thickness = 2;
-  pauseMenu.background = "rgba(0, 0, 0, 0.6)";
-  pauseMenu.isVisible = false;
-  ui.addControl(pauseMenu);
-
-  // Nouveau layout vertical
-  const pauseLayout = new GUI.StackPanel();
-  pauseLayout.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  pauseLayout.top = "20px"; // Marge du haut
-  pauseMenu.addControl(pauseLayout);
-
-  // Ajout du texte
-  const pauseText = new GUI.TextBlock();
-  pauseText.text = "Pause";
-  pauseText.color = "white";
-  pauseText.fontSize = 48;
-  pauseText.height = "100px"; // taille fixe utile dans StackPanel
-  pauseLayout.addControl(pauseText);
-
-  // Bouton Reprendre
-  const resumeBtn = GUI.Button.CreateSimpleButton("resume", "Reprendre");
-  resumeBtn.width = "60%";
-  resumeBtn.height = "40px";
-  resumeBtn.color = "white";
-  resumeBtn.background = "#00cc00";
-  resumeBtn.onPointerUpObservable.add(() => {
-    paused = false;
-    pauseMenu.isVisible = false;
-  });
-  pauseLayout.addControl(resumeBtn);
-
-  // === BOUTON PAUSE ===
-  const pauseBtn = GUI.Button.CreateSimpleButton("pauseBtn", "⏸ Pause");
-  pauseBtn.width = "100px";
-  pauseBtn.height = "40px";
-  pauseBtn.color = "white";
-  pauseBtn.background = "#444";
-  pauseBtn.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-  pauseBtn.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-  pauseBtn.top = "10px";
-  pauseBtn.left = "10px";
-
-  pauseBtn.onPointerUpObservable.add(() => {
-    paused = true;
-    pauseMenu.isVisible = true;
-    pauseBtn.isVisible = false;
-  });
-
-  ui.addControl(pauseBtn);
-
-  // === Mettre à jour le bouton dans le resumeBtn existant ===
-  resumeBtn.onPointerUpObservable.add(() => {
-    paused = false;
-    pauseMenu.isVisible = false;
-    pauseBtn.isVisible = true;
-  });
-
-
-
-  let paused = false;
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      paused = !paused;
-      pauseMenu.isVisible = paused;
-      pauseBtn.isVisible = !paused;
-    }
-  };
-  window.addEventListener("keydown", handleKeyDown);
-
 
   // Materials
   const paddleMat = new BABYLON.StandardMaterial("paddleMat", scene);
@@ -352,19 +257,17 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, (evt) => inputMap[evt.sourceEvent.key] = true));
   scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyUpTrigger, (evt) => inputMap[evt.sourceEvent.key] = false));
 
-  let scoreLeft = 0, scoreRight = 0;
   let predictPaddlePosition = 0;
   let elapsedTimeIA = 0;
   scene.onBeforeRenderObservable.add(() => {
-    if (paused) return;
+    if (engine.paused) return;
     const delta = engine.getDeltaTime() / 16.666;
     elapsedTimeIA += engine.getDeltaTime();
     const speed = 0.3;
-    if (inputMap["ArrowUp"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
-    if (inputMap["ArrowDown"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+    if (inputMap["w"] && paddle1.position.z < 8) paddle1.position.z += speed * delta;
+    if (inputMap["s"] && paddle1.position.z > -8) paddle1.position.z -= speed * delta;
 
-
-    if (room.withIA)
+    if (engine.room.withIA)
     {
       // IA Paddle Movement
       //actualiser 1 fois par seconde
@@ -397,8 +300,8 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
     }
     else
     {
-      if (inputMap["w"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
-      if (inputMap["s"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+      if (inputMap["ArrowUp"] && paddle2.position.z < 8) paddle2.position.z += speed * delta;
+      if (inputMap["ArrowDown"] && paddle2.position.z > -8) paddle2.position.z -= speed * delta;
     }
 
     paddle1.position.z = BABYLON.Scalar.Clamp(paddle1.position.z, -8, 8);
@@ -407,24 +310,15 @@ export function main(engine: Engine.GameEngine, room: ROOM.Room): void {
     handleBallCollisions(ball, paddle1, paddle2, ballVelocity);
 
     if (Math.abs(ball.position.x) > 16) {
-      if (ball.position.x < 0) scoreLeft++;
-      else scoreRight++;
-      scoreText.text = `${scoreLeft} - ${scoreRight}`;
+      if (ball.position.x < 0) engine.room.score.p2++;
+      else engine.room.score.p1++;
       ball.position.set(0, 0.5, 0);
       ballVelocity = new BABYLON.Vector3(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
-      if (Math.abs(scoreLeft - scoreRight) >= 2)
-      {
-        if (scoreLeft > scoreRight)
-          room.playerWinner = 0;
-        else
-          room.playerWinner = 1;
-        console.log("Fin du jeu, joueur " + room.playerWinner + " gagne !");
-        endGame(room);
-      }
+      if (Math.abs(engine.room.score.p1 - engine.room.score.p2) >= 2)
+        engine.EndGame();
     }
   });
   engine.runRenderLoop(() => scene.render());
 
   engine.OnResize.addEventListener(updateCameraRadius);
-  engine.OnDispose.addEventListener(() => window.removeEventListener("keydown", handleKeyDown));
 }
