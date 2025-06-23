@@ -1,99 +1,200 @@
-<div class="text-neon font-pixelify flex items-center justify-center min-h-screen p-6">
-  <!-- Conteneur principal -->
-  <div class="w-full max-w-[1600px] flex gap-8 flex-wrap justify-center items-start">
+<select
+  id="language-switcher"
+  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+  <option value="es">Español</option>
+</select>
 
-    <!-- Bloc Game 1 -->
-    <div class="w-[500px] h-[700px] bg-gradient-to-br backdrop-blur-xl from-crtBlue/30 to-blue-10 border-2 border-crtBlue shadow-neon-blue rounded-2xl p-6 flex flex-col justify-between">
-      <h2 class="text-center text-3xl text-white uppercase tracking-widest mb-6 drop-shadow-neon">Game 1</h2>
-        <button
-          id="settings-btn"
-          onclick="navigate('Local-room-game-1')"
-          class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
-          title="Paramètres"
+<!-- ... select etc. inchangé ... -->
+
+<div class="min-h-screen flex items-center font-pixelify justify-center p-6">
+  <div class="card-container relative w-80 h-96">
+    <!-- PONG Card -->
+    <div
+      id="pong-card"
+      class="game-card border border-white top-card card-tilt-left neon-border z-10 bg-black"
+      onclick="selectGame('pong')"
+    >
+      <div class="card-inner">
+        <!-- Face avant -->
+        <div
+          class="font-pixelify card-front flex flex-col items-center justify-center h-full"
         >
-
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-settings"
+          <h2 class="text-4xl text-white text-center mt-6 mb-3">PONG</h2>
+          <img
+            src="assets/pong.gif"
+            alt="Pong Animation"
+            class="w-64 h-64 object-contain"
+          />
+          <button
+            class="font-pixelify mt-4 param-button"
+            onclick="event.stopPropagation(); flipCard('pong-card')"
           >
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
+            JOUER
+          </button>
+        </div>
 
-        </button>
-      <div class="flex flex-col gap-4 mt-auto">
-        <button onclick="navigate('Local-room-game-pong')" class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
-          Local
-        </button>
-                  <img
-  src="/assets/cat.gif"
-  alt="Animation tournoi"
-/>
-        <button onclick="navigate('tournoi')" class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
-          Tournoi
-        </button>
+        <!-- Face arrière -->
+        <div
+          class="card-back flex flex-col items-center justify-center h-full p-6 relative"
+        >
+          <button
+            class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
+            onclick="event.stopPropagation(); closeCard('pong-card')"
+            aria-label="Close settings"
+          >
+            &times;
+          </button>
+
+          <h3 class="text-4xl text-white text-center mb-3">PONG</h3>
+          <div class="flex flex-col space-y-4 toggle-switch-container">
+            <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="local"
+              ></div>
+              <span class="text-white select-none">Local</span>
+            </label>
+
+            <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="tournament"
+              ></div>
+              <span class="text-white select-none">Tournoi</span>
+              <!-- À l’intérieur de la card-back -->
+              <div
+                id="tournament-settings"
+                class="hidden flex flex-col space-y-4 mt-4"
+              >
+                <label class="text-white font-semibold">
+                  Pseudo Joueur 1 :
+                  <input
+                    id="player1-nickname"
+                    type="text"
+                    placeholder="Ton pseudo"
+                    class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
+                  />
+                </label>
+                <div class="text-white">
+                  Joueurs invités : Invité1, Invité2, Invité3
+                </div>
+                <button id="start-tournament-btn" class="param-button mt-2">
+                  Lancer le tournoi
+                </button>
+              </div>
+            </label>
+
+            <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="bonus"
+              ></div>
+              <span class="text-white select-none">Activer les bonus</span>
+            </label>
+
+            <button
+              class="mt-4 param-button"
+              onclick="startGameAndNavigate('pong')"
+            >
+              C'EST PARTI
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Bloc Game 2 -->
-    <div class="w-[500px] h-[700px] backdrop-blur-xl bg-gradient-to-br from-crtPurple/30 to-purple-10 border-2 border-crtPurple shadow-neon-purple rounded-2xl p-6 flex flex-col justify-between">
-      <h2 class="text-center text-3xl text-white uppercase tracking-widest mb-6 drop-shadow-neon">Game 2</h2>
-        <button
-          id="return-btn"
-          onclick="navigate('profile')"
-          class="absolute top-4 right-4 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
-          title="Back to Profile"
+    <!-- PACMAN Card -->
+    <div
+      id="pacman-card"
+      onclick="selectGame('other')"
+      class="game-card border border-white bottom-card card-tilt-right neon-border z-5 bg-black"
+    >
+      <div class="card-inner">
+        <!-- Face avant -->
+        <div
+          class="card-front flex flex-col items-center justify-center h-full"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-corner-down-left"
+          <h2 class="text-4xl text-white text-center mt-6 mb-3">PACMAN</h2>
+          <img
+            src="assets/pacman.gif"
+            alt="Pacman Animation"
+            class="w-64 h-64 object-contain"
+          />
+          <button
+            class="mt-4 param-button"
+            onclick="event.stopPropagation(); flipCard('pacman-card')"
           >
-            <path d="M20 4v7a4 4 0 0 1-4 4H4" />
-            <path d="m9 10-5 5 5 5" />
-          </svg>
-        </button>
+            JOUER
+          </button>
+        </div>
 
-        <button
-          id="settings-btn"
-          onclick="navigate('Local-room-game-1')"
-          class="absolute top-4 right-16 z-50 cursor-pointer hover:text-neon text-white w-10 h-10 border-2 border-white bg-black font-bold rounded-full hover:brightness-110 transition-all flex items-center justify-center"
-          title="Paramètres"
+        <!-- Face arrière -->
+        <div
+          class="card-back flex flex-col items-center justify-center h-full p-6"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-settings"
+          <button
+            class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
+            onclick="event.stopPropagation(); closeCard('pacman-card')"
+            aria-label="Close settings"
           >
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
-      <div class="flex flex-col gap-4 mt-auto">
-        <button onclick="navigate('local-room-pacman')" class="bg-transparent border border-white text-white px-6 py-3 rounded-xl hover:bg-white hover:text-black transition-all duration-200 shadow-md hover:shadow-white/50">
-          Local
-        </button>
+            &times;
+          </button>
+          <h3 class="text-4xl text-white text-center mb-3">PACMAN</h3>
+          <div class="flex flex-col space-y-4">
+            <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="local"
+              ></div>
+              <span class="text-white select-none">Local</span>
+            </label>
+
+                        <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="tournament"
+              ></div>
+              <span class="text-white select-none">Tournoi</span>
+            </label>
+
+            <label
+              class="flex items-center space-x-3 cursor-pointer select-none"
+            >
+              <input type="checkbox" class="hidden toggle-checkbox" />
+              <div
+                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
+                data-option="bonus"
+              ></div>
+              <span class="text-white select-none">Activer les bonus</span>
+            </label>
+
+            <button
+              class="mt-4 param-button"
+              onclick="startGameAndNavigate('pacman')"
+            >
+              C'EST PARTI
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-
   </div>
 </div>

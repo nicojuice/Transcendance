@@ -1,4 +1,5 @@
 import { navigate } from "../nav";
+import { showToast } from "../showToast";
 
 export enum Winner {
   PLAYER1 = "PLAYER1",
@@ -29,6 +30,7 @@ export class Room {
   withCustom: any;
   winner: Winner;
   manualQuit: boolean;
+>>>>>>> lfarhi
 
   constructor() {
     this.gameName = "";
@@ -48,6 +50,9 @@ export class Room {
     const storedRoom = localStorage.getItem("currentRoom");
     if (storedRoom) {
       const parsedRoom = JSON.parse(storedRoom);
+<<<<<<< HEAD
+      Object.assign(this, parsedRoom);
+=======
       this.gameName = parsedRoom.gameName || "";
       this.nextPage = parsedRoom.nextPage || "profile";
       this.winner = parsedRoom.winner || Winner.NONE;
@@ -57,6 +62,7 @@ export class Room {
       this.players = parsedRoom.players || [];
     } else {
       console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
+>>>>>>> lfarhi
     }
   }
 
@@ -108,11 +114,11 @@ export async function startGameAndNavigate(GameName: string) {
   room.withCustom = isCustom;
   room.saveToLocalStorage();
 
-  // Navigation
-  navigate("game");
+    navigate("game");
+  } catch (err) {
+    console.error("Erreur lors de la création de la partie:", err);
+  }
 }
 
 
 (window as any).startGameAndNavigate = startGameAndNavigate;
-
-
