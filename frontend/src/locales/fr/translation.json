@@ -49,6 +49,12 @@
     "EnableTwoFactor": "Autoriser l'authentification à deux facteurs",
     "NoTime": "Vous n'avez pas le temps?",
     "Later": "Autoriser plus tard"
+  },
+  "game":{
+    "pause": "PAUSE",
+    "btnPause": "Pause",
+    "resume": "Reprendre",
+    "quit": "Quitter"
   }
 
 }

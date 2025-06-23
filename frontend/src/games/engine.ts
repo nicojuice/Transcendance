@@ -3,6 +3,7 @@ import { EventManager } from '../eventManager';
 import * as ROOM from "./room";
 import * as GUI from "@babylonjs/gui";
 import { navigate } from "../nav";
+import { getText } from "../i18n";
 
 export class GameEngine extends BABYLON.Engine {
   canvas: HTMLCanvasElement;
@@ -110,7 +111,7 @@ export class GameEngine extends BABYLON.Engine {
     
       // Ajout du texte
       const pauseText = new GUI.TextBlock();
-      pauseText.text = "PAUSE";
+      pauseText.text = getText("game.pause");
       pauseText.fontFamily = "Pixelify Sans, sans-serif";
       pauseText.color = "white";
       pauseText.fontSize = 48;
@@ -118,7 +119,7 @@ export class GameEngine extends BABYLON.Engine {
       pauseLayout.addControl(pauseText);
     
       // Bouton Reprendre
-      const resumeBtn = GUI.Button.CreateSimpleButton("resume", "Reprendre");
+      const resumeBtn = GUI.Button.CreateSimpleButton("resume", getText("game.resume"));
       resumeBtn.fontFamily = "Pixelify Sans, sans-serif";
       resumeBtn.fontSize = 24;
       resumeBtn.cornerRadius = 10;
@@ -133,7 +134,7 @@ export class GameEngine extends BABYLON.Engine {
       pauseLayout.addControl(resumeBtn);
 
       // Bouton Quitter
-      const quitBtn = GUI.Button.CreateSimpleButton("quit", "Quitter");
+      const quitBtn = GUI.Button.CreateSimpleButton("quit", getText("game.quit"));
       quitBtn.fontFamily = "Pixelify Sans, sans-serif";
       quitBtn.fontSize = 24;
       quitBtn.cornerRadius = 10;
@@ -150,7 +151,7 @@ export class GameEngine extends BABYLON.Engine {
       pauseLayout.addControl(quitBtn);
     
       // === BOUTON PAUSE ===
-      const pauseBtn = GUI.Button.CreateSimpleButton("pauseBtn", "⏸ Pause");
+      const pauseBtn = GUI.Button.CreateSimpleButton("pauseBtn", "⏸" + getText("game.btnPause"));
       pauseBtn.fontFamily = "Pixelify Sans, sans-serif";
       pauseBtn.fontSize = 22;
       pauseBtn.cornerRadius = 10;

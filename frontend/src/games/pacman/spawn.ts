@@ -1,5 +1,5 @@
 import * as BABYLON from "@babylonjs/core";
-// import "@babylonjs/loaders";
+import "@babylonjs/loaders/glTF";
 import * as Map from "./map";
 import * as Entities from "./entities";
 import * as Utils from "./utils";

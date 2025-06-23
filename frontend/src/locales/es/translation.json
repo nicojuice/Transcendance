@@ -49,5 +49,11 @@
     "EnableTwoFactor": "Activar la autenticación en dos pasos",
     "NoTime": "¿No tienes tiempo ahora?",
     "Later": "Activarlo más tarde"
+  },
+  "game": {
+    "pause": "PAUSA",
+    "btnPause": "Pausar",
+    "resume": "Reanudar",
+    "quit": "Salir"
   }
 }

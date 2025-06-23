@@ -49,5 +49,11 @@
     "EnableTwoFactor": "Enable Two-Factor Authentication",
     "NoTime": "No time right now?",
     "Later": "Enable it later"
+  },
+  "game": {
+    "pause": "PAUSE",
+    "btnPause": "Pause",
+    "resume": "Resume",
+    "quit": "Quit"
   }
 }
