@@ -12,14 +12,14 @@ function startGame(canvas: HTMLCanvasElement) {
   canvas.setAttribute("tabindex", "1");
   canvas.focus();
 
-  engine = new Engine.GameEngine(canvas);
-  engine.Resize();
   let room = new ROOM.Room();
   room.loadFromLocalStorage();
+  engine = new Engine.GameEngine(canvas, room);
+  engine.Resize();
   if (room.gameName === "pong")
-    PONG.main(engine, room);
+    PONG.main(engine);
   else if (room.gameName === "pacman")
-    PACMAN.main(engine, room);
+    PACMAN.main(engine);
 }
 
 function waitForCanvasAndStart() {

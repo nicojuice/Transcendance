@@ -1,13 +1,30 @@
 import { navigate } from "../nav";
 import { showToast } from "../showToast";
 
+export enum Winner {
+  PLAYER1 = "PLAYER1",
+  PLAYER2 = "PLAYER2",
+  IA = "IA",
+  DRAW = "DRAW",
+  NONE = "NONE"
+}
+
 export class Room {
   gameName: string;
   nextPage: string;
+<<<<<<< HEAD
   players: string[];
   withIA: boolean;
   withCustom: boolean;
   playerWinner: number;
+=======
+  players: any;
+  withIA: any;
+  withCustom: any;
+  score: { p1: number; p2: number };
+  winner: Winner;
+  manualQuit: boolean;
+>>>>>>> lfarhi
 
   constructor() {
     this.gameName = "";
@@ -15,7 +32,9 @@ export class Room {
     this.players = [];
     this.withIA = false;
     this.withCustom = false;
-    this.playerWinner = 0;
+    this.score = { p1: 0, p2: 0 };
+    this.winner = Winner.NONE;
+    this.manualQuit = false;
   }
   // if (mode === "tournament" && game === "pong") {  // if (mode === "tournament" && game === "pong") {
   //   showToast("Veuillez utiliser le formulaire tournoi.", "info");
@@ -25,7 +44,20 @@ export class Room {
     const storedRoom = localStorage.getItem("currentRoom");
     if (storedRoom) {
       const parsedRoom = JSON.parse(storedRoom);
+<<<<<<< HEAD
       Object.assign(this, parsedRoom);
+=======
+      this.gameName = parsedRoom.gameName || "";
+      this.nextPage = parsedRoom.nextPage || "profile";
+      this.score = parsedRoom.score || { p1: 0, p2: 0 };
+      this.winner = parsedRoom.winner || Winner.NONE;
+      this.manualQuit = parsedRoom.manualQuit || false;
+      this.withIA = parsedRoom.withIA || false;
+      this.withCustom = parsedRoom.withCustom || false;
+      this.players = parsedRoom.players || [];
+    } else {
+      console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
+>>>>>>> lfarhi
     }
   }
 

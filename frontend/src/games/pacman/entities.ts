@@ -23,6 +23,8 @@ export abstract class Character {
 
   abstract Update(engine: Engine.GameEngine): void;
 
+  abstract is_wall(x: number, y: number, map: Map.GameMap): boolean;
+
   // Méthode pour effectuer le déplacement basé sur les entrées et la carte
   Move(engine: Engine.GameEngine) {
     const delta = engine.getDeltaTime() / 16.666;  // Calcul du temps entre les frames
@@ -38,10 +40,10 @@ export abstract class Character {
 
     // Si le joueur est centré sur la case, changer la direction selon les touches
     if (isCentered && (this.last_crossing.x !== ajustPosition.x || this.last_crossing.y !== ajustPosition.y)) {
-      const isBlocked = Number(Map.get_c(obj_coord.x + 1, obj_coord.y, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(obj_coord.x - 1, obj_coord.y, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(obj_coord.x, obj_coord.y + 1, this.map) === Map.CellType.WALL) +
-                      Number(Map.get_c(obj_coord.x, obj_coord.y - 1, this.map) === Map.CellType.WALL) >= 3;
+      const isBlocked = Number(this.is_wall(obj_coord.x + 1, obj_coord.y, this.map)) +
+                      Number(this.is_wall(obj_coord.x - 1, obj_coord.y, this.map)) +
+                      Number(this.is_wall(obj_coord.x, obj_coord.y + 1, this.map)) +
+                      Number(this.is_wall(obj_coord.x, obj_coord.y - 1, this.map)) >= 3;
       const [up, down, left, right] = this.Input(engine); // Récupérer les entrées directionnelles
       if (up && (this.direction.y == 0 || isBlocked)) this.direction = {x: 0, y: 1}; // Haut
       else if (down && (this.direction.y == 0 || isBlocked)) this.direction = {x: 0, y: -1}; // Bas
@@ -50,7 +52,7 @@ export abstract class Character {
       next_coord = { x: obj_coord.x + this.direction.x, y: obj_coord.y - this.direction.y };
 
       // Vérifier si la case suivante est un mur
-      if (Map.get_c(next_coord.x, next_coord.y, this.map) === Map.CellType.WALL) {
+      if (this.is_wall(next_coord.x, next_coord.y, this.map)) {
         this.obj.rotation.z = old_data.rotation; // Revenir à l'ancienne rotation
         this.direction = old_data.direction; // Revenir à l'ancienne direction
         next_coord = old_data.next_coord; // Revenir à l'ancienne coordonnée
@@ -60,7 +62,7 @@ export abstract class Character {
     }
 
     // Si Pac-Man n'est pas centré ou qu'il n'y a pas de mur, se déplacer
-    if (Map.get_c(next_coord.x, next_coord.y, this.map) !== Map.CellType.WALL || !isCentered)
+    if (!this.is_wall(next_coord.x, next_coord.y, this.map)|| !isCentered)
     {
       this.obj.position = this.obj.position.add(new BABYLON.Vector3(this.direction.x * new_speed, this.direction.y * new_speed, 0));
       // Ajuster la position de Pac-Man en fonction de la direction
@@ -103,8 +105,15 @@ export class Ghost extends Character {
       Math.random() < 0.6  // Right
     ]; // Retourne un tableau de booléens aléatoires pour simuler le mouvement des fantômes
   }
+
   Update(engine: Engine.GameEngine): void {
     this.Move(engine); // Appeler la méthode Move pour déplacer le fantôme
+  }
+
+  is_wall(x: number, y: number, map: Map.GameMap): boolean {
+    // Vérifier si la case est un mur
+    const cell = Map.get_c(x, y, map);
+    return cell === Map.CellType.WALL;
   }
 }
 
@@ -124,6 +133,12 @@ export class Player extends Character {
     this.invulnerable = false; // Initialiser l'état d'invulnérabilité à faux
     this.base_color = base_color; // Couleur de base du joueur
     this.SetColor(base_color); // Appliquer la couleur de base
+  }
+
+  is_wall(x: number, y: number, map: Map.GameMap): boolean {
+    // Vérifier si la case est un mur
+    const cell = Map.get_c(x, y, map);
+    return cell === Map.CellType.WALL || cell === Map.CellType.INVISIBLE_WALL;
   }
 
   SetColor(color: BABYLON.Color3) {
