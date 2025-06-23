@@ -22,6 +22,14 @@ i18n
         updateTexts();
     });
 
+export function getCurrentLanguage(): string {
+    return i18n.language.split('-')[0]; // Retourne la langue sans le code
+}
+
+export function getText(key: string): string {
+    return i18n.t(key);
+}
+
 export function updateTexts() {
     document.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n!;

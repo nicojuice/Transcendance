@@ -27,7 +27,7 @@ export class Room {
   nextPage: string;
   players: PlayerRoom[];
   withIA: boolean;
-  withCustom: any;
+  withCustom: boolean;
   winner: Winner;
   manualQuit: boolean;
 
