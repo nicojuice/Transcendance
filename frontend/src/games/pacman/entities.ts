@@ -177,6 +177,12 @@ export class Player extends Character {
         this.invulnerable = false; // Désactiver l'invulnérabilité
         this.SetColor(this.base_color); // Revenir à la couleur de base
       }
+      //clignoter le joueur si il reste 2 secondes d'invulnérabilité
+      else if (this.invulnerableTime <= 2000)
+      {
+        const blinkColor = (Math.floor(this.invulnerableTime / 100) % 2 === 0) ? new BABYLON.Color3(1, 0, 1) : this.base_color;
+        this.SetColor(blinkColor);
+      }
     }
     // Mettre à jour la position du joueur en fonction des entrées
     this.Move(engine);
