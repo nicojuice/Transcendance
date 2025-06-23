@@ -81,16 +81,20 @@ export async function startGameAndNavigate(GameName: string) {
 
   const room = new Room();
 
-  // Appel async
-  const res = await fetch(
-    `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(Username || "")}`
-  );
-  if (!res.ok) throw new Error("Avatar not found");
+  try {
+    const res = await fetch(
+      `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(Username || "")}`
+    );
+    if (!res.ok) throw new Error("Avatar not found");
 
-  const blob = await res.blob();
-  const imageUrl = URL.createObjectURL(blob);
+    const blob = await res.blob();
+    const imageUrl = URL.createObjectURL(blob);
 
-  room.addPlayer(Username || "Joueur 1", imageUrl);
+    room.addPlayer(Username || "Joueur 1", imageUrl);
+  } catch (err) {
+    console.error("Error fetching avatar:", err);
+    room.addPlayer(Username || "Joueur 1"); // Ajouter un joueur sans avatar
+  }
   
   if (numPlayers === 1) {
     room.withIA = true;
