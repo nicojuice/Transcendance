@@ -1,7 +1,4 @@
 import * as BABYLON from "@babylonjs/core";
-//import * as GUI from "@babylonjs/gui";
-// import "@babylonjs/loaders";
-import * as ROOM from "../room";
 import * as Map from "./map";
 import * as Utils from "./utils";
 import * as Spawn from "./spawn";
