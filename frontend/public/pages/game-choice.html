@@ -30,6 +30,7 @@
           />
           <button
             class="font-pixelify mt-4 param-button"
+            id="play-btn"
             onclick="event.stopPropagation(); flipCard('pong-card')"
           >
             JOUER
@@ -48,51 +49,45 @@
             &times;
           </button>
 
-          <h3 class="text-4xl text-white text-center mb-3">PONG</h3>
           <div class="flex flex-col space-y-4 toggle-switch-container">
-            <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
-            >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="local"
-              ></div>
-              <span class="text-white select-none">Local</span>
-            </label>
+            <div class="text-white text-center text-lg">
+              Sélectionner un mode
+            </div>
 
-            <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
+            <!-- Menu déroulant pour les modes -->
+            <select
+              id="pong-mode-selector"
+              class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1"
+              onchange="handleModeChange(this.value)"
             >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="tournament"
-              ></div>
-              <span class="text-white select-none">Tournoi</span>
-              <!-- À l’intérieur de la card-back -->
-              <div
-                id="tournament-settings"
-                class="hidden flex flex-col space-y-4 mt-4"
-              >
-                <label class="text-white font-semibold">
-                  Pseudo Joueur 1 :
-                  <input
-                    id="player1-nickname"
-                    type="text"
-                    placeholder="Ton pseudo"
-                    class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
-                  />
-                </label>
-                <div class="text-white">
-                  Joueurs invités : Invité1, Invité2, Invité3
-                </div>
-                <button id="start-tournament-btn" class="param-button mt-2">
-                  Lancer le tournoi
-                </button>
+              <option value="">-- Choisir un mode --</option>
+              <option value="ia">IA</option>
+              <option value="versus">Versus</option>
+              <option value="tournament">Tournoi</option>
+            </select>
+
+            <!-- Réglages tournoi (affichés uniquement si tournoi sélectionné) -->
+            <div
+              id="tournament-settings"
+              class="hidden flex flex-col space-y-4 mt-2"
+            >
+              <label class="text-white font-semibold">
+                Pseudo Joueur 1 :
+                <input
+                  id="player1-nickname"
+                  type="text"
+                  placeholder="Ton pseudo"
+                  class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
+                />
+              </label>
+              <div class="text-white">
+                Joueurs invités : Invité1, Invité2, Invité3
               </div>
-            </label>
-
+              <button id="start-tournament-btn" class="param-button mt-2">
+                Lancer le tournoi
+              </button>
+            </div>
+            <div class="my-2 border-t border-gray-600"></div>
             <label
               class="flex items-center space-x-3 cursor-pointer select-none"
             >
@@ -151,30 +146,46 @@
           >
             &times;
           </button>
-          <h3 class="text-4xl text-white text-center mb-3">PACMAN</h3>
-          <div class="flex flex-col space-y-4">
-            <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
-            >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="local"
-              ></div>
-              <span class="text-white select-none">Local</span>
-            </label>
+          <div class="flex flex-col space-y-4 toggle-switch-container">
+            <div class="text-white text-center text-lg">
+              Sélectionner un mode
+            </div>
 
-                        <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
+            <!-- Menu déroulant pour les modes -->
+            <select
+              id="pacman-mode-selector"
+              class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1"
+              onchange="handleModeChange(this.value)"
             >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="tournament"
-              ></div>
-              <span class="text-white select-none">Tournoi</span>
-            </label>
+              <option value="">-- Choisir un mode --</option>
+              <option value="ia">IA</option>
+              <option value="versus">Versus</option>
+              <option value="tournament">Tournoi</option>
+            </select>
 
+            <!-- Réglages tournoi (affichés uniquement si tournoi sélectionné) -->
+            <div
+              id="tournament-settings"
+              class="hidden flex flex-col space-y-4 mt-2"
+            >
+              <label class="text-white font-semibold">
+                Pseudo Joueur 1 :
+                <input
+                  id="player1-nickname"
+                  type="text"
+                  placeholder="Ton pseudo"
+                  class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
+                />
+              </label>
+              <div class="text-white">
+                Joueurs invités : Invité1, Invité2, Invité3
+              </div>
+              <button id="start-tournament-btn" class="param-button mt-2">
+                Lancer le tournoi
+              </button>
+            </div>
+
+            <div class="my-2 border-t border-gray-600"></div>
             <label
               class="flex items-center space-x-3 cursor-pointer select-none"
             >

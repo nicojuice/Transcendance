@@ -112,81 +112,53 @@ export class Room {
 //   navigate("game");
 // }
 
-// --- UI: Gestion des switches / tournoi ---
-function onTournamentToggle(card: HTMLElement, isChecked: boolean) {
-  const tournamentSettings = card.querySelector('#tournament-settings') as HTMLElement;
-  const togglesContainer = card.querySelector('.toggle-switch-container') as HTMLElement;
 
-  if (isChecked) {
-    tournamentSettings.classList.remove('hidden');
-    togglesContainer.classList.add('hidden');
-    card.classList.add('show-tournament-settings');
-  } else {
-    tournamentSettings.classList.add('hidden');
-    togglesContainer.classList.remove('hidden');
-    card.classList.remove('show-tournament-settings');
-  }
-}
 
-function disableOther(card: HTMLElement, except: string) {
-  const toggles = card.querySelectorAll<HTMLDivElement>('.toggle-switch');
-  toggles.forEach((toggle) => {
-    const option = toggle.dataset.option;
-    const input = toggle.previousElementSibling as HTMLInputElement | null;
-    if (!input || !option) return;
-
-    if (option !== except) {
-      input.checked = false;
-      toggle.classList.remove('active');
-    }
-  });
-}
-
-function setupToggleSwitches() {
+function setupModeSelectors() {
   const cards = document.querySelectorAll<HTMLElement>('.game-card');
 
   cards.forEach((card) => {
-    const toggles = card.querySelectorAll<HTMLDivElement>('.toggle-switch');
-    toggles.forEach((toggleDiv) => {
-      const input = toggleDiv.previousElementSibling as HTMLInputElement | null;
-      const option = toggleDiv.dataset.option;
+    const modeSelect = card.querySelector<HTMLSelectElement>('#pong-mode-selector');
+    const modeSelect2 = card.querySelector<HTMLSelectElement>('#pacman-mode-selector');
+    const tournamentSettings = card.querySelector<HTMLElement>('#tournament-settings');
 
-      if (!input || !option) return;
+    if (!modeSelect) return;
+    if (!modeSelect2) return;
 
-      toggleDiv.addEventListener('click', () => {
-        input.checked = !input.checked;
+    modeSelect.addEventListener('change', () => {
+      const selectedMode = modeSelect.value;
 
-        if (option === 'local' && input.checked) {
-          disableOther(card, 'local');
-          onTournamentToggle(card, false);
-        } else if (option === 'tournament' && input.checked) {
-          disableOther(card, 'tournament');
-          onTournamentToggle(card, true);
-        } else if (option === 'tournament' && !input.checked) {
-          onTournamentToggle(card, false);
-        }
-
-        if (input.checked) {
-          toggleDiv.classList.add('active');
-        } else {
-          toggleDiv.classList.remove('active');
-        }
-      });
+      if (selectedMode === 'tournament') {
+        tournamentSettings?.classList.remove('hidden');
+      } else {
+        tournamentSettings?.classList.add('hidden');
+      }
     });
 
-    if (card.id === 'pong-card') {
-      const startBtn = card.querySelector<HTMLButtonElement>('#start-tournament-btn');
-      startBtn?.addEventListener('click', () => {
-        const player1Input = card.querySelector<HTMLInputElement>('#player1-nickname');
-        const player1Name = player1Input?.value.trim() || "Invité";
-        const players = [player1Name, "Invité1", "Invité2", "Invité3"];
-        createRoomAndNavigate('pong', 'tournament', players, false);
-      });
-    }
+    modeSelect2.addEventListener('change', () => {
+      const selectedMode = modeSelect.value;
+
+      if (selectedMode === 'tournament') {
+        tournamentSettings?.classList.remove('hidden');
+      } else {
+        tournamentSettings?.classList.add('hidden');
+      }
+    });
+
+    // Bouton de lancement de tournoi
+    const tournamentBtn = card.querySelector<HTMLButtonElement>('#start-tournament-btn');
+    tournamentBtn?.addEventListener('click', () => {
+      const player1Input = card.querySelector<HTMLInputElement>('#player1-nickname');
+      const player1Name = player1Input?.value.trim() || "Invité";
+      const players = [player1Name, "Invité1", "Invité2", "Invité3"];
+      createRoomAndNavigate('pong', 'tournament', players, false);
+    });
   });
 }
 
-// --- Création de Room (mode tournoi uniquement) ---
+
+// ------------------------- ROOM CREATION -------------------------
+
 async function createRoomAndNavigate(game: string, mode: "local" | "tournament", players: string[], custom: boolean) {
   try {
     const res = await fetch(`http://localhost:8096/api/rooms/${mode}`, {
@@ -196,7 +168,6 @@ async function createRoomAndNavigate(game: string, mode: "local" | "tournament",
     });
 
     if (!res.ok) throw new Error("Erreur serveur: " + res.statusText);
-
     const data = await res.json();
     console.log("✅ Room créée :", data);
 
@@ -214,7 +185,7 @@ async function createRoomAndNavigate(game: string, mode: "local" | "tournament",
   }
 }
 
-// --- Start classique (local ou tournoi simple) ---
+// ------------------------- GAME START (LOCAL UNIQUEMENT) -------------------------
 export async function startGameAndNavigate(game: string) {
   const card = document.getElementById(`${game}-card`);
   if (!card) {
@@ -222,31 +193,28 @@ export async function startGameAndNavigate(game: string) {
     return;
   }
 
-  const toggles = card.querySelectorAll<HTMLDivElement>('.toggle-switch');
+  const modeSelector = card.querySelector<HTMLSelectElement>('#pong-mode-selector');
+  const modeSelector2 = card.querySelector<HTMLSelectElement>('#pacman-mode-selector');
+  const selectedMode = modeSelector?.value || '';
+  const selectedMode2 = modeSelector2?.value || '';
 
-  let mode: "local" | "tournament" | null = null;
-  let custom = false;
-
-  toggles.forEach((toggle) => {
-    const input = toggle.previousElementSibling as HTMLInputElement | null;
-    const option = toggle.dataset.option;
-
-    if (!input || !option) return;
-
-    if (option === "local" && input.checked) mode = "local";
-    else if (option === "tournament" && input.checked) mode = "tournament";
-    else if (option === "bonus") custom = input.checked;
-  });
-
-  if (game === "pong" && !mode) {
-    showToast("Veuillez sélectionner un mode : Local ou Tournoi.", "error");
+  if (selectedMode === 'ia') {
+    showToast("IA is coming", "error");
+    return;
+  }
+  if (selectedMode === 'tournament') {
+    showToast("Tournament is coming", "error");
     return;
   }
 
-  if (game === "pacman") mode = "local"; // Force local for pacman
-
-  const playersElement = document.getElementById("players") as HTMLSelectElement | null;
-  const numPlayers = playersElement ? Number(playersElement.value) : 2;
+  if (selectedMode2 === 'ia') {
+    showToast("IA is coming", "error");
+    return;
+  }
+  if (selectedMode2 === 'tournament') {
+    showToast("Tournament is coming", "error");
+    return;
+  }
 
   const username = localStorage.getItem("username") || "Invité";
   const room = new Room();
@@ -263,28 +231,12 @@ export async function startGameAndNavigate(game: string) {
     room.addPlayer(username);
   }
 
-  if (numPlayers === 1) {
-    room.withIA = true;
-    room.addPlayer("IA");
-  } else {
-    room.withIA = false;
-    room.addPlayer("Ghest");
-  }
+  room.withIA = false;
+  room.addPlayer("Ghest");
 
   room.gameName = game;
-  room.withCustom = custom;
   room.saveToLocalStorage();
-
   navigate("game");
 }
-
-// --- Initialisation ---
-window.addEventListener('load', () => {
-  setupToggleSwitches();
-});
-
-(window as any).startGameAndNavigate = startGameAndNavigate;
-
-
 
 (window as any).startGameAndNavigate = startGameAndNavigate;
