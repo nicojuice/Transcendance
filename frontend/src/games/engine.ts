@@ -20,6 +20,11 @@ export class GameEngine extends BABYLON.Engine {
     super(canvas, true, { antialias: true });
     this.canvas = canvas;
     this.room = room;
+    if (this.room.players.length < 2) {
+      console.warn("Not enough players in the room, adding default players.");
+      for (let i = this.room.players.length; i < 2; i++)
+        this.room.addPlayer(`Player ${i + 1}`);
+    }
     this.enableOfflineSupport = false;
     this.renderEvenInBackground = false;
     this.scene = new BABYLON.Scene(this);
@@ -66,9 +71,9 @@ export class GameEngine extends BABYLON.Engine {
 
   EndGame()
   {
-    if (this.room.score.p1 > this.room.score.p2) {
+    if (this.room.players[0].score > this.room.players[1].score) {
       this.room.winner = ROOM.Winner.PLAYER1;
-    } else if (this.room.score.p1 < this.room.score.p2) {
+    } else if (this.room.players[0].score < this.room.players[1].score) {
       if (this.room.withIA)
         this.room.winner = ROOM.Winner.IA; // If with IA, player 2 is the IA
       else
@@ -200,9 +205,12 @@ export class GameEngine extends BABYLON.Engine {
     
     // Ajouter le conteneur à l'UI
     this.ui.addControl(scoreContainer);
+
+    const img1 = this.room.players[0].avatar || "/assets/avatars/avatar1.png"; // Chemin par défaut si pas d'avatar
+    const img2 = this.room.players[1].avatar || "/assets/avatars/avatar2.png"; // Chemin par défaut si pas d'avatar
   
     // Image du profil de p1 (à gauche du score)
-    const p1Profile = new GUI.Image("p1Profile", "/assets/avatars/avatar1.png");  // Remplace par le chemin de l'image
+    const p1Profile = new GUI.Image("p1Profile", img1);  // Remplace par le chemin de l'image
     p1Profile.width = "50px";  // Taille de l'image
     p1Profile.height = "50px";  // Taille de l'image
     p1Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
@@ -221,7 +229,7 @@ export class GameEngine extends BABYLON.Engine {
     scoreContainer.addControl(scoreText);
   
     // Image du profil de p2 (à droite du score)
-    const p2Profile = new GUI.Image("p2Profile", "/assets/avatars/avatar2.png");  // Remplace par le chemin de l'image
+    const p2Profile = new GUI.Image("p2Profile", img2);  // Remplace par le chemin de l'image
     p2Profile.width = "50px";  // Taille de l'image
     p2Profile.height = "50px";  // Taille de l'image
     p2Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
@@ -231,7 +239,7 @@ export class GameEngine extends BABYLON.Engine {
   
     this.scene.onBeforeRenderObservable.add(() => {
       // Mettre à jour le texte du score
-      scoreText.text = `${this.room.score.p1} - ${this.room.score.p2}`;
+      scoreText.text = `${this.room.players[0].score} - ${this.room.players[1].score}`;
   
       // Ajuster la largeur du conteneur en fonction de la longueur du texte
       scoreContainer.width = `${scoreText.text.length * 20 + 100}px`; // Ajuster la largeur du container

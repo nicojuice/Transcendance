@@ -93,8 +93,8 @@ export function main(engine: Engine.GameEngine): void {
   void balls;
   // Déplacement de Pac-Man avec les touches fléchées
   scene.onBeforeRenderObservable.add(() => {
-    engine.room.score.p1 = player1.score;
-    engine.room.score.p2 = player2.score;
+    engine.room.players[0].score = player1.score;
+    engine.room.players[1].score  = player2.score;
     if (engine.paused)
       return; // Ne pas mettre à jour si le jeu est en pause
     //const delta = engine.getDeltaTime() / 16.666;

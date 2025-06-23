@@ -97,7 +97,7 @@ export abstract class Paddle {
     this.mesh.position.z = 0;
   }
 
-  abstract updatePosition(deltaTime: number, engine: Engine.GameEngine, ball: Ball): void;
+  abstract updatePosition(engine: Engine.GameEngine, ball: Ball): void;
 }
 
 export class Player extends Paddle {
@@ -109,7 +109,8 @@ export class Player extends Paddle {
     this.down_key = down_key;
   }
 
-  public updatePosition(deltaTime: number, engine: Engine.GameEngine, _ball: Ball): void {
+  public updatePosition(engine: Engine.GameEngine, _ball: Ball): void {
+    const deltaTime = engine.getDeltaTime();
     if (engine.inputMap[this.up_key] && this.mesh.position.z < 8) {
       this.mesh.position.z += Paddle.SPEED * (deltaTime / 16.666);
     }
@@ -227,8 +228,9 @@ export class IA extends Paddle {
     this.elapsedTime = 0;
   }
 
-  public updatePosition(deltaTime: number, engine: Engine.GameEngine, ball: Ball): void {
+  public updatePosition(engine: Engine.GameEngine, ball: Ball): void {
     void engine;
+    const deltaTime = engine.getDeltaTime();
     this.elapsedTime += deltaTime;
     // Update IA paddle position based on predicted ball trajectory
     if (this.elapsedTime > 1000) {

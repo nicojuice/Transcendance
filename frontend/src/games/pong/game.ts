@@ -55,16 +55,16 @@ export function main(engine: Engine.GameEngine): void {
   scene.onBeforeRenderObservable.add(() => {
     if (engine.paused) return;
     const delta = engine.getDeltaTime();
-    player1.updatePosition(delta, engine, ball);
-    player2.updatePosition(delta, engine, ball);
+    player1.updatePosition(engine, ball);
+    player2.updatePosition(engine, ball);
     ball.updatePosition(delta);
     ball.handleBallCollisions(player1, player2);
 
     if (Math.abs(ball.mesh.position.x) > 16) {
-      if (ball.mesh.position.x < 0) engine.room.score.p2++;
-      else engine.room.score.p1++;
+      if (ball.mesh.position.x < 0) engine.room.players[1].score++;
+      else engine.room.players[0].score++;
       ball.reset();
-      if (Math.abs(engine.room.score.p1 - engine.room.score.p2) >= 2)
+      if (Math.abs(engine.room.players[0].score - engine.room.players[1].score) >= 2)
         engine.EndGame();
     }
   });
