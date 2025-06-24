@@ -30,6 +30,7 @@ export class Room {
   withCustom: boolean;
   winner: Winner;
   manualQuit: boolean;
+  mode: any;
 
   constructor() {
     this.gameName = "";
@@ -65,54 +66,6 @@ export class Room {
     localStorage.setItem("currentRoom", JSON.stringify(this));
   }
 };
-
-// export async function startGameAndNavigate(GameName: string) {
-//   const playersElement = document.getElementById("players") as HTMLSelectElement | null;
-//   const customElement = document.getElementById("custom") as HTMLSelectElement | null;
-//   console.log(customElement, "  avec ou pas custom");
-
-//   if (!playersElement || !customElement) {
-//     throw new Error("Impossible de trouver les éléments 'players' ou 'custom'");
-//   }
-  
-//   const numPlayers = Number(playersElement.value);
-//   const isCustom = customElement.value === "yes";
-//   const Username = localStorage.getItem("username");
-//   console.log(Username, " <-- le nom de l user");
-
-//   const room = new Room();
-
-//   try {
-//     const res = await fetch(
-//       `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(Username || "")}`
-//     );
-//     if (!res.ok) throw new Error("Avatar not found");
-
-//     const blob = await res.blob();
-//     const imageUrl = URL.createObjectURL(blob);
-
-//     room.addPlayer(Username || "Joueur 1", imageUrl);
-//   } catch (err) {
-//     console.error("Error fetching avatar:", err);
-//     room.addPlayer(Username || "Joueur 1"); // Ajouter un joueur sans avatar
-//   }
-  
-//   if (numPlayers === 1) {
-//     room.withIA = true;
-//     room.addPlayer("IA");
-//   } else {
-//     room.withIA = false;
-//     room.addPlayer("Ghest");
-//   }
-
-//   room.gameName = GameName;
-//   room.withCustom = isCustom;
-//   room.saveToLocalStorage();
-
-//   navigate("game");
-// }
-
-
 
 function setupModeSelectors() {
   const cards = document.querySelectorAll<HTMLElement>('.game-card');
@@ -151,7 +104,7 @@ function setupModeSelectors() {
       const player1Input = card.querySelector<HTMLInputElement>('#player1-nickname');
       const player1Name = player1Input?.value.trim() || "Invité";
       const players = [player1Name, "Invité1", "Invité2", "Invité3"];
-      createRoomAndNavigate('pong', 'tournament', players, false);
+      createRoomAndNavigate('pong', players, false, 1);
     });
   });
 }
@@ -159,30 +112,26 @@ function setupModeSelectors() {
 
 // ------------------------- ROOM CREATION -------------------------
 
-export async function createRoomAndNavigate(game: string, mode: "local" | "tournament", players: string[], custom: boolean) {
-  try {
-    const res = await fetch(`http://localhost:8096/api/rooms/${mode}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ players: players.length, custom }),
-    });
-
-    if (!res.ok) throw new Error("Erreur serveur: " + res.statusText);
-    const data = await res.json();
-    console.log("✅ Room créée :", data);
-
-    const room = new Room();
-    room.gameName = game;
-    room.withCustom = custom;
-    players.forEach(name => room.addPlayer(name));
-    room.nextPage = "game";
-    room.saveToLocalStorage();
-
-    navigate("game");
-  } catch (err) {
-    console.error("Erreur lors de la création de la partie:", err);
-    showToast("Erreur lors de la création de la partie", "error");
+export async function createRoomAndNavigate(game: string, playerNames: string[], custom: boolean, mode: any)
+{
+  console.log(playerNames[0] , 'player \n');
+  console.log(playerNames[1] , 'player \n');
+  console.log(playerNames[2] , 'player \n');
+  console.log(playerNames[3] , 'player \n');
+  console.log(game, ' le jeu\n')
+  console.log(custom, ' custom?')
+  console.log(mode, 'le mode\n')
+  if(mode == 1)
+  {
+    startGameAndNavigate(game);
+    mode++;
   }
+  if(mode == 2)
+  {
+    startGameAndNavigate(game);
+    mode++;
+  }
+
 }
 
 // ------------------------- GAME START (LOCAL UNIQUEMENT) -------------------------
@@ -195,14 +144,14 @@ export async function startGameAndNavigate(game: string) {
   
   const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
 
-  if (selectedMode === 'ia' && game == "pacman") {
+  /*if (selectedMode === 'ia' && game == "pacman") {
     showToast("IA is coming", "error");
     return;
-  }
-  if (selectedMode === 'tournament') {
-    showToast("Tournament is coming", "error");
-    return;
-  }
+  }*/
+  // if (selectedMode === 'tournament') {
+  //   showToast("Tournament is coming", "error");
+  //   return;
+  // }
 
   const username = localStorage.getItem("username") || "Invité";
   const room = new Room();
