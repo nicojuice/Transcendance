@@ -5,6 +5,7 @@ export enum CellType {
     BIG_BALL = '@',   // Grosse boule
     PLAYER = 'P',  // Joueur (Pacman)
     GHOST = 'G', // Monstre (Fantôme)
+    POWER_UP = 'X', // Power-up
     EMPTY = ' '      // Espace vide
 }
 
@@ -45,6 +46,9 @@ function convertMapToEnum(map: string): GameMap {
                     break;
                 case 'G':
                     row.push(CellType.GHOST);
+                    break;
+                case 'X':
+                    row.push(CellType.POWER_UP);
                     break;
                 case ' ':
                     row.push(CellType.EMPTY);
@@ -93,7 +97,17 @@ export function get_c(x: number, y: number, map: GameMap): CellType
   return line[x];
 }
 
-
+export function count_cells(map: GameMap, c: CellType): number {
+  let count = 0;
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === c) {
+        count++;
+      }
+    }
+  }
+  return count;
+}
 
 let pacman_map_string = `\
 #######################
@@ -105,7 +119,7 @@ let pacman_map_string = `\
 #*****#*#######*#*****#
 #*###*#****#****#*#####
 #*###*####*#*####*#####
-#*###*#         #*#####
+#*###*#    X    #*#####
 #*###*# ###H### #*#####
 #*****  #GG GG#  *****#
 #####*# ####### #*###*#
@@ -119,7 +133,7 @@ let pacman_map_string = `\
 #*****#****#****#*****#
 #*########*#*########*#
 #*########*#*########*#
-#*********************#
+#**********X**********#
 #######################`;
 
 export const pacman_map: GameMap = convertMapToEnum(pacman_map_string);

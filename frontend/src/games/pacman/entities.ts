@@ -2,6 +2,7 @@ import * as BABYLON from "@babylonjs/core";
 import * as Map from "./map";
 import * as Utils from "./utils";
 import * as Engine from "../engine";
+import { getText } from "../../i18n";
 
 export abstract class Character {
   obj: BABYLON.Mesh; // L'objet du personnage
@@ -88,6 +89,7 @@ export abstract class Character {
 
 export class Ghost extends Character {
   id: number; // Identifiant du joueur
+  public static readonly SPEED: number = 0.08;
   constructor(id: number, obj: BABYLON.Mesh, map: Map.GameMap, speed: number) {
     super(obj, map, speed); // Appel du constructeur parent (Character)
     this.id = id; // Initialiser l'identifiant du joueur
@@ -125,6 +127,7 @@ export class Player extends Character {
   invulnerable: boolean; // Indique si le joueur est invulnérable
   invulnerableTime: number = 0; // Temps d'invulnérabilité
   base_color: BABYLON.Color3; // Couleur du joueur
+  public static readonly SPEED: number = 0.12; // Vitesse de déplacement du joueur
   constructor(id: number, obj: BABYLON.Mesh, base_color: BABYLON.Color3, map: Map.GameMap, speed: number, inputKey: string[]) {
     super(obj, map, speed); // Appel du constructeur parent (Character)
     this.id = id; // Initialiser l'identifiant du joueur
@@ -187,5 +190,169 @@ export class Player extends Character {
     // Mettre à jour la position du joueur en fonction des entrées
     this.Move(engine);
     this.obj.rotation.z = Utils.getRotation(this.direction); // Mettre à jour la rotation du joueur en fonction de la direction
+  }
+}
+
+export enum PowerUpType {
+  PlayerSpeed,
+  GhostSpeed,
+  PlayerInvulnerable,
+  InvertedControls,
+  GhostsFreeze,
+  PlayerScore,
+}
+
+export function getRandomPowerUpType(): PowerUpType
+{
+  const types = Object.values(PowerUpType).filter(value => typeof value === "number");
+  const randomIndex = Math.floor(Math.random() * types.length);
+  return types[randomIndex] as PowerUpType;
+}
+
+export class PowerUpBox
+{
+  public mesh: BABYLON.Mesh;
+  public type: PowerUpType;
+
+  constructor(scene: BABYLON.Scene, map: Map.GameMap, type: PowerUpType) {
+    this.type = type;
+    const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
+    boxMat.emissiveColor = new BABYLON.Color3(0.6, 0.6, 0.6);
+    boxMat.disableLighting = true;
+    //boxMat.alpha = 0.75;
+    boxMat.diffuseTexture = new BABYLON.Texture(`/assets/games/pacman/bonus.png`, scene);
+    //glow effect
+    this.mesh = BABYLON.MeshBuilder.CreateBox("powerUpBox", { size: 1.9, faceUV: [
+      new BABYLON.Vector4(1, 0, 1, 1), // face 0 (arrière)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 1 (avant)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 2 (droite)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 3 (gauche)
+
+      // face 4 (haut) avec UV tournés de 90° (swap U et V)
+      new BABYLON.Vector4(0, 0, 1, 1), // correspond à une rotation 90°
+
+      new BABYLON.Vector4(0, 0, 1, 1), // face 5 (bas)
+    ]}, scene);
+    this.mesh.scaling.y = 0.5; // Réduire la taille en X pour que la box soit plus plate
+    const spawn_count = Map.count_cells(map, Map.CellType.POWER_UP);
+    const coord = Map.get_coord(map, Map.CellType.POWER_UP, Math.floor(Math.random() * spawn_count));
+    this.mesh.position = Utils.coordToPosition(coord, map);
+    this.mesh.rotation.y = Math.PI/2;
+    this.mesh.rotation.z = Math.PI/2;
+    //this.mesh.rotation.z = -Math.PI/6;
+    this.mesh.material = boxMat;
+  }
+  public HandleCollision(player: Player): boolean
+  {
+    const boxSize = 3; // Taille de la box
+    const boxHalfSize = boxSize / 2;
+    const playerPos = player.obj.position;
+    return Utils.distance(playerPos, this.mesh.position) < boxHalfSize + 0.5; // Vérifier si le joueur est proche de la box
+  }
+
+  public remove(): void {
+    this.mesh.dispose(); // Supprimer la box de la scène
+  }
+}
+
+export class PowerUp
+{
+  public type: PowerUpType;
+  public timeout: number;
+  public player: Player;
+  public characters: Character[];
+
+  constructor(type: PowerUpType, player: Player, characters: Character[], timeout: number = 10) {
+    this.type = type;
+    this.player = player;
+    this.characters = characters;
+    this.timeout = timeout * 1000;
+  }
+
+  public applyEffect(): void {
+    switch (this.type) {
+      case PowerUpType.PlayerSpeed:
+        this.player.speed *= 1.5; // Augmenter la vitesse du joueur
+        break;
+      case PowerUpType.GhostSpeed:
+        this.characters.forEach(ghost => {
+          if (ghost instanceof Ghost) {
+            ghost.speed *= 1.5; // Augmenter la vitesse des fantômes
+          }
+        });
+        break;
+      case PowerUpType.PlayerInvulnerable:
+        this.player.SetInvulnerable(); // Activer l'invulnérabilité du joueur
+        this.player.invulnerableTime = 30 * 1000; // 10 secondes d'invulnérabilité
+        break;
+      case PowerUpType.InvertedControls:
+        // Inverser les contrôles du joueur
+        const originalInput = this.player.inputKey.slice(); // Sauvegarder les contrôles originaux
+        this.player.inputKey[0] = this.player.inputKey[1]; // Haut devient Bas
+        this.player.inputKey[1] = originalInput[0]; // Bas devient Haut
+        this.player.inputKey[2] = this.player.inputKey[3]; // Gauche devient Droite
+        this.player.inputKey[3] = originalInput[2]; // Droite devient Gauche
+        break;
+      case PowerUpType.GhostsFreeze:
+        this.characters.forEach(ghost => {
+          if (ghost instanceof Ghost) {
+            ghost.speed = 0; // Geler les fantômes
+          }
+        });
+        break;
+      case PowerUpType.PlayerScore:
+        this.player.score += 30; // Ajouter des points au score du joueur
+        break;
+    }
+  }
+
+  public removeEffect(): void {
+    switch (this.type) {
+      case PowerUpType.PlayerSpeed:
+        this.player.speed /= 1.5; // Rétablir la vitesse du joueur
+        break;
+      case PowerUpType.GhostSpeed:
+        this.characters.forEach(ghost => {
+          if (ghost instanceof Ghost) {
+            ghost.speed /= 1.5; // Rétablir la vitesse des fantômes
+          }
+        });
+        break;
+      case PowerUpType.PlayerInvulnerable:
+        //Pas d'effet à supprimer pour l'invulnérabilité, elle expire automatiquement
+        break;
+      case PowerUpType.InvertedControls:
+        // Rétablir les contrôles du joueur
+        const originalInput = this.player.inputKey.slice(); // Sauvegarder les contrôles originaux
+        this.player.inputKey[0] = originalInput[1]; // Haut redevient Bas
+        this.player.inputKey[1] = originalInput[0]; // Bas redevient Haut
+        this.player.inputKey[2] = originalInput[3]; // Gauche redevient Droite
+        this.player.inputKey[3] = originalInput[2]; // Droite redevient Gauche
+        break;
+      case PowerUpType.GhostsFreeze:
+        this.characters.forEach(ghost => {
+          if (ghost instanceof Ghost) {
+            ghost.speed = Ghost.SPEED; // Rétablir la vitesse des fantômes
+          }
+        });
+        break;
+      case PowerUpType.PlayerScore:
+        // Pas d'effet à supprimer pour le score
+        break;
+    }
+  }
+
+  public msg(): string {
+   return getText("game.pacman."+PowerUpType[this.type]);
+  }
+
+  public isExpired(): boolean {
+    return this.timeout <= 0; // Vérifier si le power-up a expiré
+  }
+  public update(deltaTime: number): void {
+    this.timeout -= deltaTime; // Décrémenter le temps restant
+    if (this.timeout <= 0) {
+      this.removeEffect(); // Supprimer l'effet si le temps est écoulé
+    }
   }
 }

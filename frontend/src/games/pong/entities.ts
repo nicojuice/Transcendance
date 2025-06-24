@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import * as Engine from "../engine";
+import { getText } from "../../i18n";
 
 export class Ball {
   public mesh: BABYLON.Mesh;
@@ -269,11 +270,11 @@ export class IA extends Paddle {
 }
 
 export enum PowerUpType {
-  PaddleEnlarge = 1,       // Bonus : Agrandit la raquette
-  PaddleShrink = 2,        // Malus : Réduit la raquette
-  InvertedControls = 3,    // Malus : Contrôles inversés
-  BallSpeedUp = 4,         // Bonus : Accélère la balle
-  //MultiBall = 5            // Bonus : Ajoute plusieurs balles
+  PaddleEnlarge,       // Bonus : Agrandit la raquette
+  PaddleShrink,        // Malus : Réduit la raquette
+  InvertedControls,    // Malus : Contrôles inversés
+  BallSpeedUp,         // Bonus : Accélère la balle
+  //MultiBall          // Bonus : Ajoute plusieurs balles
 }
 
 export function getRandomPowerUpType(): PowerUpType
@@ -340,7 +341,7 @@ export class PowerUpBox
 export class PowerUp
 {
   public type: PowerUpType;
-  public timeout: number; // Durée de l'effet en secondes
+  public timeout: number;
   public player: Paddle;
   public ball: Ball;
 
@@ -399,6 +400,10 @@ export class PowerUp
         this.ball.speed /= 1.5;
         break;
     }
+  }
+  
+  public msg(): string {
+    return getText("game.pong."+PowerUpType[this.type]);
   }
 
   public isExpired(): boolean {

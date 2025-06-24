@@ -2,12 +2,16 @@ import * as BABYLON from "@babylonjs/core";
 import * as Engine from "../engine";
 import * as Entities from "./entities";
 import { buildTerrain } from "./spawn";
+import * as GUI from "@babylonjs/gui";
 
 
 // === Main game function ===
 export function main(engine: Engine.GameEngine): void {
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+
+  const popupContainer = engine.ui.getControlByName("popupContainer") as GUI.Rectangle;
+  popupContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
   // Create camera
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
@@ -65,6 +69,7 @@ export function main(engine: Engine.GameEngine): void {
     if (powerUpBox && powerUpBox.HandleCollision(ball)) {
       let powerUp= new Entities.PowerUp(powerUpBox.type, ball.direction.x > 0? player1:player2, ball, 10);
       powerUp.applyEffect();
+      engine.ShowPopup(powerUp.msg(), 2000);
       powerUps.push(powerUp);
       powerUpBox.remove();
       powerUpBox = null;

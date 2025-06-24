@@ -54,6 +54,21 @@
     "pause": "PAUSE",
     "btnPause": "Pause",
     "resume": "Resume",
-    "quit": "Quit"
+    "quit": "Quit",
+    "pong":{
+      "PaddleEnlarge":"Paddle enlarged!",
+      "PaddleShrink":"Paddle reduced!",
+      "InvertedControls":"Controls inverted!",
+      "BallSpeedUp":"Ball speed increased!",
+      "MultiBall":"Multiple balls added!"
+    },
+    "pacman":{
+      "PlayerSpeed":"Speed increased!",
+      "GhostSpeed":"Ghosts' speed increased!",
+      "PlayerInvulnerable":"Invincibility activated!",
+      "InvertedControls":"Controls inverted!",
+      "GhostsFreeze":"Ghosts frozen!",
+      "PlayerScore":"Bonus points!"
+    }
   }
 }
