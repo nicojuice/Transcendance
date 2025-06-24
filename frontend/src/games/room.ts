@@ -1,5 +1,5 @@
-import { navigate } from "../nav";
-import { showToast } from "../showToast";
+//import { navigate } from "../nav";
+//import { showToast } from "../showToast";
 
 export enum Winner {
   PLAYER1 = "PLAYER1",
@@ -62,10 +62,27 @@ export class Room {
     }
   }
 
+  clone(): Room
+  {
+    const clone_room = new Room();
+    clone_room.gameName = this.gameName;
+    clone_room.nextPage = this.nextPage;
+    clone_room.players = this.players.slice();
+    clone_room.withIA = this.withIA;
+    clone_room.withCustom = this.withCustom;
+    clone_room.winner = this.winner;
+    clone_room.manualQuit = this.manualQuit;
+    return clone_room;
+  }
+
   saveToLocalStorage() {
     localStorage.setItem("currentRoom", JSON.stringify(this));
   }
 };
+
+/*
+
+/// A retirer ? !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function setupModeSelectors() {
   const cards = document.querySelectorAll<HTMLElement>('.game-card');
@@ -123,66 +140,15 @@ export async function createRoomAndNavigate(game: string, playerNames: string[],
   console.log(mode, 'le mode\n')
   if(mode == 1)
   {
-    startGameAndNavigate(game);
+    //startGameAndNavigate(game);
     mode++;
   }
   if(mode == 2)
   {
-    startGameAndNavigate(game);
+    //startGameAndNavigate(game);
     mode++;
   }
 
 }
 
-// ------------------------- GAME START (LOCAL UNIQUEMENT) -------------------------
-export async function startGameAndNavigate(game: string) {
-  const card = document.getElementById(`${game}-card`);
-  if (!card) {
-    console.error(`Impossible de trouver le game-card : ${game}-card`);
-    return;
-  }
-  
-  const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
-  const bonus = card.querySelector<HTMLInputElement>('#'+game+'-bonus')?.checked || false;
-
-  /*if (selectedMode === 'ia' && game == "pacman") {
-    showToast("IA is coming", "error");
-    return;
-  }*/
-  // if (selectedMode === 'tournament') {
-  //   showToast("Tournament is coming", "error");
-  //   return;
-  // }
-
-  const username = localStorage.getItem("username") || "Invité";
-  const room = new Room();
-  room.gameName = game;
-  room.withCustom = bonus;
-  try {
-    const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
-    if (!res.ok) throw new Error("Avatar not found");
-
-    const blob = await res.blob();
-    const imageUrl = URL.createObjectURL(blob);
-    room.addPlayer(username, imageUrl);
-  } catch (err) {
-    console.error("Erreur avatar:", err);
-    room.addPlayer(username);
-  }
-  if (selectedMode === 'ia')
-  {
-    room.withIA = true;
-    room.addPlayer("IA");
-  }
-  else
-  {
-    room.withIA = false;
-    room.addPlayer("Ghest");
-  }
-  room.saveToLocalStorage();
-  navigate("game");
-}
-
-(window as any).setupModeSelectors = setupModeSelectors;
-(window as any).createRoomAndNavigate = createRoomAndNavigate;
-(window as any).startGameAndNavigate = startGameAndNavigate;
+(window as any).setupModeSelectors = setupModeSelectors;*/

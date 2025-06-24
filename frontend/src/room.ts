@@ -1,27 +1,7 @@
 import * as ROOM from "./games/room";
 import * as GameSys from "./games/gamesys";
 
-/*function handleStartClick2(gameId: string): void {
-  const card = document.getElementById(`${gameId}-card`);
-  if (!card) return;
-
-  const modeSelector = card.querySelector<HTMLSelectElement>(`#${gameId}-mode-selector`);
-  if (!modeSelector) return;
-
-  const selectedMode = modeSelector.value;
-
-  const cardBack = card.querySelector<HTMLElement>('.card-back');
-  const tournamentForm = document.getElementById(`${gameId}-tournament-form`);
-
-  if (selectedMode === 'tournament') {
-    cardBack?.classList.add('hidden');
-    tournamentForm?.classList.remove('hidden');
-  } else {
-    startGameAndNavigate(gameId);
-  }
-}
-
-function launchTournamentGame2(gameId: string): void {
+function launchTournamentGame(gameId: string): void {
   const inputs = document.querySelectorAll<HTMLInputElement>(`#${gameId}-tournament-form input`);
   const playerNames: string[] = Array.from(inputs).map(input => input.value.trim());
 
@@ -30,8 +10,16 @@ function launchTournamentGame2(gameId: string): void {
     return;
   }
 
-  createRoomAndNavigate(gameId, playerNames, false, 1);
-}*/
+  const card = document.getElementById(`${gameId}-card`);
+  if (!card) return;
+
+  const room = new ROOM.Room();
+  room.gameName = gameId;
+  const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
+  room.withCustom = bonus;
+  const gamesys = new GameSys.GameManager(GameSys.GameMode.Tournament, room, playerNames);
+  gamesys.Start();
+}
 
 async function handleStartClick(gameId: string): Promise<void> {
   const card = document.getElementById(`${gameId}-card`);
@@ -57,8 +45,11 @@ async function handleStartClick(gameId: string): Promise<void> {
     }
     const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
     room.withIA = (selectedMode === 'ia');
-
-    const gamesys = new GameSys.GameManager(GameSys.GameMode.Versus, room);
+    const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
+    room.withCustom = bonus;
+    let players: string[] = [];
+    players.push(localStorage.getItem("username") || "Invité");
+    const gamesys = new GameSys.GameManager(GameSys.GameMode.Versus, room, players);
     gamesys.Start();
   }
 }
