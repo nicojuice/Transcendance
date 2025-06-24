@@ -2,12 +2,16 @@ import * as BABYLON from "@babylonjs/core";
 import * as Engine from "../engine";
 import * as Entities from "./entities";
 import { buildTerrain } from "./spawn";
+import * as GUI from "@babylonjs/gui";
 
 
 // === Main game function ===
 export function main(engine: Engine.GameEngine): void {
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+
+  const popupContainer = engine.ui.getControlByName("popupContainer") as GUI.Rectangle;
+  popupContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
 
   // Create camera
   const camera = new BABYLON.ArcRotateCamera("cam", Math.PI, Math.PI / 3, 35, BABYLON.Vector3.Zero(), scene);
@@ -52,6 +56,9 @@ export function main(engine: Engine.GameEngine): void {
 
   const ball = new Entities.Ball(scene);
 
+
+  let powerUpBox: Entities.PowerUpBox | null = null;
+  let powerUps: Entities.PowerUp[] = [];
   scene.onBeforeRenderObservable.add(() => {
     if (engine.paused) return;
     const delta = engine.getDeltaTime();
@@ -59,10 +66,26 @@ export function main(engine: Engine.GameEngine): void {
     player2.updatePosition(engine, ball);
     ball.updatePosition(delta);
     ball.handleBallCollisions(player1, player2);
-
+    if (powerUpBox && powerUpBox.HandleCollision(ball)) {
+      let powerUp= new Entities.PowerUp(powerUpBox.type, ball.direction.x > 0? player1:player2, ball, 10);
+      powerUp.applyEffect();
+      engine.ShowPopup(powerUp.msg(), 2000);
+      powerUps.push(powerUp);
+      powerUpBox.remove();
+      powerUpBox = null;
+    }
+    if (powerUps.length > 0) {
+      powerUps.forEach((pu) => pu.update(delta));
+      powerUps = powerUps.filter((pu) => !pu.isExpired());
+    } else if (!powerUpBox && engine.room.withCustom) {
+      powerUpBox = new Entities.PowerUpBox(scene, Entities.getRandomPowerUpType());
+    }
     if (Math.abs(ball.mesh.position.x) > 16) {
       if (ball.mesh.position.x < 0) engine.room.players[1].score++;
       else engine.room.players[0].score++;
+      //reset power-ups
+      powerUps.forEach((pu) => {pu.removeEffect();});
+      powerUps = [];
       ball.reset();
       if (Math.abs(engine.room.players[0].score - engine.room.players[1].score) >= 2)
         engine.EndGame();

@@ -54,7 +54,22 @@
     "pause": "PAUSA",
     "btnPause": "Pausar",
     "resume": "Reanudar",
-    "quit": "Salir"
+    "quit": "Salir",
+    "pong":{
+      "PaddleEnlarge":"¡Raqueta agrandada!",
+      "PaddleShrink":"¡Raqueta reducida!",
+      "InvertedControls":"¡Controles invertidos!",
+      "BallSpeedUp":"¡Velocidad de la pelota aumentada!",
+      "MultiBall":"¡Se añadieron múltiples pelotas!"
+    },
+    "pacman":{
+      "PlayerSpeed":"¡Velocidad aumentada!",
+      "GhostSpeed":"¡Velocidad de los fantasmas aumentada!",
+      "PlayerInvulnerable":"¡Invulnerabilidad activada!",
+      "InvertedControls":"¡Controles invertidos!",
+      "GhostsFreeze":"¡Fantasmas congelados!",
+      "PlayerScore":"¡Puntos extra!"
+    }
   },
   "gameSelection": {
     "play": "JUGAR",

@@ -143,6 +143,7 @@ export async function startGameAndNavigate(game: string) {
   }
   
   const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
+  const bonus = card.querySelector<HTMLInputElement>('#'+game+'-bonus')?.checked || false;
 
   /*if (selectedMode === 'ia' && game == "pacman") {
     showToast("IA is coming", "error");
@@ -156,6 +157,7 @@ export async function startGameAndNavigate(game: string) {
   const username = localStorage.getItem("username") || "Invité";
   const room = new Room();
   room.gameName = game;
+  room.withCustom = bonus;
   try {
     const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
     if (!res.ok) throw new Error("Avatar not found");
