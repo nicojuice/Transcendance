@@ -102,7 +102,7 @@ export class Room {
 //     room.addPlayer("IA");
 //   } else {
 //     room.withIA = false;
-//     room.addPlayer("Ghest");
+//     room.addPlayer("Guest");
 //   }
 
 //   room.gameName = GameName;
@@ -111,8 +111,6 @@ export class Room {
 
 //   navigate("game");
 // }
-
-
 
 function setupModeSelectors() {
   const cards = document.querySelectorAll<HTMLElement>('.game-card');
@@ -195,6 +193,11 @@ export async function startGameAndNavigate(game: string) {
   
   const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
 
+  if (!selectedMode) {
+    showToast("Veuillez sélectionner un mode de jeu.", "error");
+    return;
+  }
+  
   if (selectedMode === 'ia' && game == "pacman") {
     showToast("IA is coming", "error");
     return;
@@ -226,7 +229,7 @@ export async function startGameAndNavigate(game: string) {
   else
   {
     room.withIA = false;
-    room.addPlayer("Ghest");
+    room.addPlayer("Guest");
   }
   room.saveToLocalStorage();
   navigate("game");
