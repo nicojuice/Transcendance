@@ -55,5 +55,27 @@
     "btnPause": "Pausar",
     "resume": "Reanudar",
     "quit": "Salir"
+  },
+  "gameSelection": {
+    "play": "JUGAR",
+    "selectMode": "Selecciona un modo",
+    "chooseMode": "-- Elige un modo --",
+    "ia": "IA",
+    "versus": "Versus",
+    "tournament": "Torneo",
+    "playerNickname": "Apodo del jugador 1:",
+    "yourNickname": "Tu apodo",
+    "invitedPlayers": "Jugadores invitados: Invitado1, Invitado2, Invitado3",
+    "activateBonus": "Activar bonificaciones",
+    "letsGo": "¡VAMOS!",
+    "launchGame": "Iniciar el juego",
+    "fillNicknames": "Introduce los apodos",
+    "player1": "Jugador 1",
+    "player2": "Jugador 2",
+    "player3": "Jugador 3",
+    "player4": "Jugador 4",
+    "back": "Volver",
+    "close": "Cerrar",
+    "closeTournamentForm": "Cerrar el formulario del torneo"
   }
 }

@@ -55,6 +55,28 @@
     "btnPause": "Pause",
     "resume": "Reprendre",
     "quit": "Quitter"
+  },
+  "gameSelection": {
+    "play": "JOUER",
+    "selectMode": "Sélectionner un mode",
+    "chooseMode": "-- Choisir un mode --",
+    "ia": "IA",
+    "versus": "Versus",
+    "tournament": "Tournoi",
+    "playerNickname": "Pseudo Joueur 1 :",
+    "yourNickname": "Ton pseudo",
+    "invitedPlayers": "Joueurs invités : Invité1, Invité2, Invité3",
+    "activateBonus": "Activer les bonus",
+    "letsGo": "C'EST PARTI",
+    "launchGame": "Lancer le jeu",
+    "fillNicknames": "Renseignez les pseudos",
+    "player1": "Joueur 1",
+    "player2": "Joueur 2",
+    "player3": "Joueur 3",
+    "player4": "Joueur 4",
+    "back": "Retour",
+    "close": "Fermer",
+    "closeTournamentForm": "Fermer le formulaire tournoi"
   }
-
 }
+

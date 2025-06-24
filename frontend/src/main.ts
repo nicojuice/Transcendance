@@ -16,5 +16,6 @@ import './google';
 import './authCallback';
 import './i18n';
 import './loadPlayerData';
+import './selectGame';
 
 console.log('Frontend chargé avec Vite + TypeScript ✅');

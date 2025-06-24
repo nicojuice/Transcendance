@@ -55,5 +55,27 @@
     "btnPause": "Pause",
     "resume": "Resume",
     "quit": "Quit"
+  },
+  "gameSelection": {
+    "play": "PLAY",
+    "selectMode": "Select a mode",
+    "chooseMode": "-- Choose a mode --",
+    "ia": "AI",
+    "versus": "Versus",
+    "tournament": "Tournament",
+    "playerNickname": "Player 1 nickname:",
+    "yourNickname": "Your nickname",
+    "invitedPlayers": "Invited players: Guest1, Guest2, Guest3",
+    "activateBonus": "Enable bonuses",
+    "letsGo": "LET'S GO",
+    "launchGame": "Start the game",
+    "fillNicknames": "Enter the nicknames",
+    "player1": "Player 1",
+    "player2": "Player 2",
+    "player3": "Player 3",
+    "player4": "Player 4",
+    "back": "Back",
+    "close": "Close",
+    "closeTournamentForm": "Close tournament form"
   }
 }

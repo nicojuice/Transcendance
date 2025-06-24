@@ -159,7 +159,7 @@ function setupModeSelectors() {
 
 // ------------------------- ROOM CREATION -------------------------
 
-async function createRoomAndNavigate(game: string, mode: "local" | "tournament", players: string[], custom: boolean) {
+export async function createRoomAndNavigate(game: string, mode: "local" | "tournament", players: string[], custom: boolean) {
   try {
     const res = await fetch(`http://localhost:8096/api/rooms/${mode}`, {
       method: "POST",
@@ -233,4 +233,5 @@ export async function startGameAndNavigate(game: string) {
 }
 
 (window as any).setupModeSelectors = setupModeSelectors;
+(window as any).createRoomAndNavigate = createRoomAndNavigate;
 (window as any).startGameAndNavigate = startGameAndNavigate;

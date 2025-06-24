@@ -7,204 +7,163 @@
   <option value="es">Español</option>
 </select>
 
+      <button
+        class="absolute top-0 left-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
+        onclick="navigate('profile')"
+        aria-label="Retour"
+      >
+        ←
+      </button>
 <!-- ... select etc. inchangé ... -->
 
 <div class="min-h-screen flex items-center font-pixelify justify-center p-6">
   <div class="card-container relative w-80 h-96">
-    <!-- PONG Card -->
-    <div
-      id="pong-card"
-      class="game-card border border-white top-card card-tilt-left neon-border z-10 bg-black"
-      onclick="selectGame('pong')"
-    >
-      <div class="card-inner">
-        <!-- Face avant -->
-        <div
-          class="font-pixelify card-front flex flex-col items-center justify-center h-full"
-        >
-          <h2 class="text-4xl text-white text-center mt-6 mb-3">PONG</h2>
-          <img
-            src="assets/pong.gif"
-            alt="Pong Animation"
-            class="w-64 h-64 object-contain"
-          />
-          <button
-            class="font-pixelify mt-4 param-button"
-            id="play-btn"
-            onclick="event.stopPropagation(); flipCard('pong-card')"
-          >
-            JOUER
-          </button>
+
+<!-- PONG Card -->
+ <div id="pong-card" 
+ class=" game-card border border-white top-card card-tilt-left neon-border z-10 bg-black card-selected"
+ onclick="selectGame('pong')">
+  <div class="card-inner ">
+
+    <!-- Face avant -->
+    <div class="card-front font-pixelify flex flex-col items-center justify-center h-full relative">
+      <!-- Bouton retour -->
+
+
+      <h2 class="text-4xl text-white text-center mt-6 mb-3">PONG</h2>
+      <img src="assets/pong.gif" alt="Pong Animation" class="w-64 h-64 object-contain" />
+      <button class="font-pixelify mt-4 param-button" data-i18n="gameSelection.play" onclick="event.stopPropagation(); flipCard('pong-card')">JOUER</button>
+    </div>
+
+    <!-- Face arrière -->
+    <div class="card-back flex flex-col items-center justify-center h-full p-6 relative">
+      <!-- Fermeture -->
+      <button class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6" onclick="event.stopPropagation(); closeCard('pong-card')" aria-label="Fermer">&times;</button>
+
+      <div class="flex flex-col space-y-4 toggle-switch-container">
+        <div class="text-white text-center text-lg" data-i18n="gameSelection.selectMode">Sélectionner un mode</div>
+
+        <select id="pong-mode-selector" class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1">
+          <option value="" data-i18n="gameSelection.chooseMode">-- Choisir un mode --</option>
+          <option value="ia" data-i18n="gameSelection.ia">IA</option>
+          <option value="versus" data-i18n="gameSelection.versus">Versus</option>
+          <option value="tournament" data-i18n="gameSelection.tournament">Tournoi</option>
+        </select>
+
+        <div id="tournament-settings" class="hidden flex flex-col space-y-4 mt-2">
+          <label class="text-white font-semibold">
+            Pseudo Joueur 1 :
+            <input id="player1-nickname" data-i18n="gameSelection.playerNickname" type="text" placeholder="Ton pseudo" class="mt-1 px-2 py-1 rounded bg-gray-900 text-white" />
+          </label>
+          <div class="text-white" data-i18n="gameSelection.invitedPlayers">Joueurs invités : Invité1, Invité2, Invité3</div>
         </div>
 
-        <!-- Face arrière -->
-        <div
-          class="card-back flex flex-col items-center justify-center h-full p-6 relative"
-        >
-          <button
-            class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
-            onclick="event.stopPropagation(); closeCard('pong-card')"
-            aria-label="Close settings"
-          >
-            &times;
-          </button>
+        <div class="my-2 border-t border-gray-600"></div>
+        <label class="flex items-center space-x-3 cursor-pointer select-none">
+          <input type="checkbox" class="hidden toggle-checkbox" />
+          <div class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300" data-option="bonus"></div>
+          <span class="text-white select-none" data-i18n="gameSelection.activateBonus">Activer les bonus</span>
+        </label>
 
-          <div class="flex flex-col space-y-4 toggle-switch-container">
-            <div class="text-white text-center text-lg">
-              Sélectionner un mode
-            </div>
-
-            <!-- Menu déroulant pour les modes -->
-            <select
-              id="pong-mode-selector"
-              class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1"
-              onchange="handleModeChange(this.value)"
-            >
-              <option value="">-- Choisir un mode --</option>
-              <option value="ia">IA</option>
-              <option value="versus">Versus</option>
-              <option value="tournament">Tournoi</option>
-            </select>
-
-            <!-- Réglages tournoi (affichés uniquement si tournoi sélectionné) -->
-            <div
-              id="tournament-settings"
-              class="hidden flex flex-col space-y-4 mt-2"
-            >
-              <label class="text-white font-semibold">
-                Pseudo Joueur 1 :
-                <input
-                  id="player1-nickname"
-                  type="text"
-                  placeholder="Ton pseudo"
-                  class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
-                />
-              </label>
-              <div class="text-white">
-                Joueurs invités : Invité1, Invité2, Invité3
-              </div>
-              <button id="start-tournament-btn" class="param-button mt-2">
-                Lancer le tournoi
-              </button>
-            </div>
-            <div class="my-2 border-t border-gray-600"></div>
-            <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
-            >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="bonus"
-              ></div>
-              <span class="text-white select-none">Activer les bonus</span>
-            </label>
-
-            <button
-              class="mt-4 param-button"
-              onclick="startGameAndNavigate('pong')"
-            >
-              C'EST PARTI
-            </button>
-          </div>
-        </div>
+        <button class="mt-4 param-button" data-i18n="gameSelection.letsGo" onclick="handleStartClick('pong')">C'EST PARTI</button>
       </div>
     </div>
 
-    <!-- PACMAN Card -->
-    <div
-      id="pacman-card"
-      onclick="selectGame('other')"
-      class="game-card border border-white bottom-card card-tilt-right neon-border z-5 bg-black"
-    >
-      <div class="card-inner">
-        <!-- Face avant -->
-        <div
-          class="card-front flex flex-col items-center justify-center h-full"
-        >
-          <h2 class="text-4xl text-white text-center mt-6 mb-3">PACMAN</h2>
-          <img
-            src="assets/pacman.gif"
-            alt="Pacman Animation"
-            class="w-64 h-64 object-contain"
-          />
-          <button
-            class="mt-4 param-button"
-            onclick="event.stopPropagation(); flipCard('pacman-card')"
-          >
-            JOUER
-          </button>
+    <!-- Face tournoi -->
+    <div id="pong-tournament-form" class="card-tournament hidden flex flex-col items-center justify-center h-full p-6 relative">
+      <!-- Fermeture tournoi -->
+      <button
+        class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
+        onclick="closeTournamentForm('pong')"
+        aria-label="Fermer le formulaire tournoi"
+      >
+        &times;
+      </button>
+
+      <h3 class="text-white text-xl mb-4" data-i18n="gameSelection.fillNicknames">Renseignez les pseudos</h3>
+      <form onsubmit="event.preventDefault(); launchTournamentGame('pong')" class="flex flex-col space-y-3 w-full">
+        <input type="text" placeholder="Joueur 1" class="input-style" data-i18n-placeholder="gameSelection.player1"/>
+        <input type="text" placeholder="Joueur 2" class="input-style" data-i18n-placeholder="gameSelection.player2"/>
+        <input type="text" placeholder="Joueur 3" class="input-style" data-i18n-placeholder="gameSelection.player3"/>
+        <input type="text" placeholder="Joueur 4" class="input-style" data-i18n-placeholder="gameSelection.player4"/>
+        <button type="submit" class="mt-4 param-button" data-i18n="gameSelection.launchGame">Lancer le jeu</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- PACMAN Card -->
+<div id="pacman-card" class="game-card border border-white bottom-card card-tilt-right neon-border z-5 bg-black card-deselected" onclick="selectGame('other')">
+  <div class="card-inner">
+
+    <!-- Face avant -->
+    <div class=" card-front font-pixelify flex flex-col items-center justify-center h-full relative">
+
+      <h2 class="text-4xl text-white text-center mt-6 mb-3">PACMAN</h2>
+      <img src="assets/pacman.gif" alt="Pacman Animation" class="w-64 h-64 object-contain" />
+      <button class="mt-4 param-button" data-i18n="gameSelection.play" onclick="event.stopPropagation(); flipCard('pacman-card')">JOUER</button>
+    </div>
+
+    <!-- Face arrière -->
+    <div class="card-back flex flex-col items-center justify-center h-full p-6 relative">
+      <!-- Fermeture -->
+      <button class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6" onclick="event.stopPropagation(); closeCard('pacman-card')" aria-label="Fermer">&times;</button>
+
+      <div class="flex flex-col space-y-4 toggle-switch-container">
+        <div class="text-white text-center text-lg" data-i18n="gameSelection.selectMode">Sélectionner un mode</div>
+
+        <select id="pacman-mode-selector" class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1">
+          <option value="" data-i18n="gameSelection.chooseMode">-- Choisir un mode --</option>
+          <option value="ia" data-i18n="gameSelection.ia">IA</option>
+          <option value="versus" data-i18n="gameSelection.versus">Versus</option>
+          <option value="tournament" data-i18n="gameSelection.tournament">Tournoi</option>
+        </select>
+
+        <div id="tournament-settings" class="hidden flex flex-col space-y-4 mt-2">
+          <label class="text-white font-semibold">
+            Pseudo Joueur 1 :
+            <input id="player1-nickname" type="text" placeholder="Ton pseudo" class="mt-1 px-2 py-1 rounded bg-gray-900 text-white" />
+          </label>
+          <div class="text-white">Joueurs invités : Invité1, Invité2, Invité3</div>
         </div>
 
-        <!-- Face arrière -->
-        <div
-          class="card-back flex flex-col items-center justify-center h-full p-6"
-        >
-          <button
-            class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
-            onclick="event.stopPropagation(); closeCard('pacman-card')"
-            aria-label="Close settings"
-          >
-            &times;
-          </button>
-          <div class="flex flex-col space-y-4 toggle-switch-container">
-            <div class="text-white text-center text-lg">
-              Sélectionner un mode
-            </div>
+        <div class="my-2 border-t border-gray-600"></div>
+        <label class="flex items-center space-x-3 cursor-pointer select-none">
+          <input type="checkbox" class="hidden toggle-checkbox" />
+          <div class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300" data-option="bonus"></div>
+          <span class="text-white select-none" data-i18n="gameSelection.activateBonus">Activer les bonus</span>
+        </label>
 
-            <!-- Menu déroulant pour les modes -->
-            <select
-              id="pacman-mode-selector"
-              class="bg-gray-900 text-white border border-gray-600 rounded px-3 py-1"
-              onchange="handleModeChange(this.value)"
-            >
-              <option value="">-- Choisir un mode --</option>
-              <option value="ia">IA</option>
-              <option value="versus">Versus</option>
-              <option value="tournament">Tournoi</option>
-            </select>
+        <button class="mt-4 param-button" data-i18n="gameSelection.letsGo" onclick="handleStartClick('pacman')">C'EST PARTI</button>
+      </div>
+    </div>
 
-            <!-- Réglages tournoi (affichés uniquement si tournoi sélectionné) -->
-            <div
-              id="tournament-settings"
-              class="hidden flex flex-col space-y-4 mt-2"
-            >
-              <label class="text-white font-semibold">
-                Pseudo Joueur 1 :
-                <input
-                  id="player1-nickname"
-                  type="text"
-                  placeholder="Ton pseudo"
-                  class="mt-1 px-2 py-1 rounded bg-gray-900 text-white"
-                />
-              </label>
-              <div class="text-white">
-                Joueurs invités : Invité1, Invité2, Invité3
-              </div>
-              <button id="start-tournament-btn" class="param-button mt-2">
-                Lancer le tournoi
-              </button>
-            </div>
+    <!-- Face tournoi -->
+    <div id="pacman-tournament-form" class="card-tournament hidden flex flex-col items-center justify-center h-full p-6 relative">
+      <!-- Fermeture tournoi -->
+      <button
+        class="absolute top-0 right-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon mr-6"
+        onclick="closeTournamentForm('pacman')"
+        aria-label="Fermer le formulaire tournoi"
+      >
+        &times;
+      </button>
 
-            <div class="my-2 border-t border-gray-600"></div>
-            <label
-              class="flex items-center space-x-3 cursor-pointer select-none"
-            >
-              <input type="checkbox" class="hidden toggle-checkbox" />
-              <div
-                class="toggle-switch w-10 h-6 bg-gray-700 rounded-full relative transition-colors duration-300"
-                data-option="bonus"
-              ></div>
-              <span class="text-white select-none">Activer les bonus</span>
-            </label>
+      <h3 class="text-white text-xl mb-4" data-i18n="gameSelection.fillNicknames">Renseignez les pseudos</h3>
+      <form onsubmit="event.preventDefault(); launchTournamentGame('pacman')" class="flex flex-col space-y-3 w-full">
+        <input type="text" placeholder="Joueur 1" class="input-style" data-i18n-placeholder="gameSelection.player1"/>
+        <input type="text" placeholder="Joueur 2" class="input-style" data-i18n-placeholder="gameSelection.player2"/>
+        <input type="text" placeholder="Joueur 3" class="input-style" data-i18n-placeholder="gameSelection.player3"/>
+        <input type="text" placeholder="Joueur 4" class="input-style" data-i18n-placeholder="gameSelection.player4"/>
+        <button type="submit" class="mt-4 param-button" data-i18n="gameSelection.launchGame">Lancer le jeu</button>
+      </form>
+    </div>
 
-            <button
-              class="mt-4 param-button"
-              onclick="startGameAndNavigate('pacman')"
-            >
-              C'EST PARTI
-            </button>
-          </div>
-        </div>
+  </div>
+</div>
+
       </div>
     </div>
   </div>
