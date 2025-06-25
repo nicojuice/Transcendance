@@ -22,8 +22,6 @@ export async function navigate(page : string) {
         if (elem)
             elem.innerHTML = html;
         
-        console.log("navigation by navigate()");
-        
         // Initialiser i18n après le chargement du nouveau contenu
         setTimeout(() => {
             updateTexts();
@@ -73,8 +71,7 @@ export async function user_exist(username: string): Promise<boolean> {
 async function default_navigate() {
     const username = localStorage.getItem("username");
     if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true)) {
-        console.log("navigation by default()");
-        await navigate("profile");
+        await navigate("win");
     } else {
         localStorage.removeItem("isConnected");
         localStorage.removeItem("username");

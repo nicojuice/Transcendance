@@ -25,7 +25,6 @@ export async function loadPlayerStats(): Promise<void> {
 
     // Stocke les stats dans le localStorage
     localStorage.setItem('playerStats', JSON.stringify(data));
-    console.log("Stats enregistrées en localStorage:", data);
 
   } catch (error) {
     console.error('Erreur lors de la récupération des stats:', error);

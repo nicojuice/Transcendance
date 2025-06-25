@@ -1,0 +1,49 @@
+<select
+  id="language-switcher"
+  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+  <option value="es">Español</option>
+</select>
+
+<div class="min-h-screen flex flex-col items-center justify-center font-pixelify p-6 space-y-8">
+  <!-- Cartes Victoire / Défaite -->
+  <div class="flex flex-col md:flex-row md:space-x-10 space-y-6 md:space-y-0">
+    
+
+    <!-- Carte Défaite (avec effet) -->
+    <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg opacity-60 grayscale"
+         style="width: 340px; height: 480px;">
+      <h2 class="text-4xl text-red-500 font-bold mb-10">DEFAITE</h2>
+      <img
+        id="user-avatar"
+        src="assets/avatars/avatar2.png"
+        alt="Avatar utilisateur"
+        class="w-44 h-44 rounded-full border-2 border-red-500 object-cover mb-10"
+      />
+      <div class="text-white text-xl font-semibold" id="display-username-win mt-10">username2</div>
+    </div>
+
+        <!-- Carte Victoire -->
+    <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg"
+         style="width: 340px; height: 480px;">
+      <h2 class="text-4xl text-neon font-bold mb-10">VICTOIRE</h2>
+      <img
+        src="assets/avatars/avatar6.png"
+        alt="Avatar utilisateur"
+        class="w-44 h-44 rounded-full border-2 border-neon object-cover"
+      />
+      <div class="text-white text-xl font-semibold" mt-10">username1</div>
+    </div>
+    
+  </div>
+
+  <!-- Bouton Retour -->
+  <button
+    onclick="navigate('profile')"
+    class="px-6 py-3 border border-neon rounded text-neon hover:bg-neon hover:text-black transition text-lg"
+  >
+    RETOUR
+  </button>
+</div>

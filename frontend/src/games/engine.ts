@@ -70,23 +70,39 @@ export class GameEngine extends BABYLON.Engine {
     this.OnResize.dispatch();
   }
 
-  EndGame()
-  {
-    if (this.room.players[0].score > this.room.players[1].score) {
-      this.room.winner = ROOM.Winner.PLAYER1;
-    } else if (this.room.players[0].score < this.room.players[1].score) {
-      if (this.room.withIA)
-        this.room.winner = ROOM.Winner.IA; // If with IA, player 2 is the IA
-      else
-        this.room.winner = ROOM.Winner.PLAYER2;
-    } else {
-      this.room.winner = ROOM.Winner.DRAW;
-    }
-    this.room.manualQuit = false; // Reset manual quit state
-    console.log("Game ended. Winner:", this.room.winner);
+  // EndGame()
+  // {
+  //   if (this.room.players[0].score > this.room.players[1].score) {
+  //     this.room.winner = ROOM.Winner.PLAYER1;
+  //   } else if (this.room.players[0].score < this.room.players[1].score) {
+  //     if (this.room.withIA)
+  //       this.room.winner = ROOM.Winner.IA; // If with IA, player 2 is the IA
+  //     else
+  //       this.room.winner = ROOM.Winner.PLAYER2;
+  //   } else {
+  //     this.room.winner = ROOM.Winner.DRAW;
+  //   }
+  //   this.room.manualQuit = false; // Reset manual quit state
+  //   console.log("Game ended. Winner:", this.room.winner);
+  //   this.room.saveToLocalStorage();
+  //   setTimeout(() => navigate(this.room.nextPage), 0);
+  // }
+
+EndGame() {
+  if (this.room.players[0].score > this.room.players[1].score) {
+    this.room.winner = ROOM.Winner.PLAYER1;
     this.room.saveToLocalStorage();
-    setTimeout(() => navigate(this.room.nextPage), 0);
-  }
+    setTimeout(() => navigate("win"), 0);
+  } else if (this.room.players[0].score < this.room.players[1].score) {
+    if (this.room.withIA)
+      this.room.winner = ROOM.Winner.IA;
+    else
+      this.room.winner = ROOM.Winner.PLAYER2;
+    this.room.saveToLocalStorage();
+    setTimeout(() => navigate("loose"), 0);
+  } 
+  this.room.manualQuit = false;
+}
 
   SetupPauseMenu(): void {
       // Pause Menu

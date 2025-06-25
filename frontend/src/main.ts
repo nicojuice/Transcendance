@@ -17,5 +17,5 @@ import './authCallback';
 import './i18n';
 import './loadPlayerData';
 import './selectGame';
+import './win-losses'
 
-console.log('Frontend chargé avec Vite + TypeScript ✅');
