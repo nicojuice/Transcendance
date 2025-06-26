@@ -71,7 +71,7 @@ export async function user_exist(username: string): Promise<boolean> {
 async function default_navigate() {
     const username = localStorage.getItem("username");
     if (localStorage.getItem('isConnected') === 'true' && (username && await user_exist(username) === true)) {
-        await navigate("win");
+        await navigate("profile");
     } else {
         localStorage.removeItem("isConnected");
         localStorage.removeItem("username");
