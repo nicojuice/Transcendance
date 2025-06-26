@@ -1,22 +1,177 @@
-<h1>// auth-callback.html</h1>
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion réussie</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .user-info {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+        .btn {
+            background: #4285f4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            background: #357ae8;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>Connexion réussie !</h1>
+        
+        <div id="loading">
+            <div class="loading"></div>
+            <p>Récupération des informations...</p>
+        </div>
+        
+        <div id="user-info" class="user-info" style="display: none;">
+            <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+            <h3 id="user-name"></h3>
+            <p id="user-email"></p>
+            <button class="btn" onclick="continueToApp()">Continuer vers l'application</button>
+        </div>
+        
+        <div id="error" style="display: none; color: red;">
+            <p>❌ Erreur lors de la récupération des informations</p>
+            <button class="btn" onclick="retry()">Réessayer</button>
+        </div>
+    </div>
 
-  fetch("/api/auth/google/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code }),
-  })
-    .then((res) => res.text()) // ← voir ce que le serveur renvoie
-    .then((text) => {
-      console.log("[Réponse brute]", text);
-
-      try {
-        const data = JSON.parse(text);
-        console.log("[JSON parsé]", data);
-      } catch (err) {
-        console.error("❌ JSON invalide :", err);
-      }
-    });
-</script>
+    <script>
+        // Récupération des données depuis l'URL actuelle (si c'est une page de callback)
+        async function handleAuthCallback() {
+            try {
+                // Si vous êtes sur la page de callback avec les données JSON
+                const currentUrl = window.location.href;
+                
+                // Option 1: Si les données sont dans l'URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('user')) {
+                    displayUserInfo({
+                        name: decodeURIComponent(urlParams.get('user')),
+                        email: urlParams.get('email') || '',
+                        picture: urlParams.get('picture') || ''
+                    });
+                    return;
+                }
+                
+                // Option 2: Si on est sur la page de callback JSON, récupérer les données
+                if (currentUrl.includes('/api/auth/google/callback')) {
+                    // Les données sont affichées en JSON sur la page, on peut les parser
+                    const bodyText = document.body.textContent || document.body.innerText;
+                    if (bodyText.includes('"success":true')) {
+                        const data = JSON.parse(bodyText);
+                        if (data.success && data.user) {
+                            displayUserInfo(data.user);
+                            // Sauvegarder le token si nécessaire
+                            if (data.token) {
+                                // localStorage.setItem('access_token', data.token); // Pour plus tard
+                                console.log('Token reçu:', data.token.substring(0, 20) + '...');
+                            }
+                            return;
+                        }
+                    }
+                }
+                
+                // Si aucune donnée trouvée
+                throw new Error('Aucune donnée utilisateur trouvée');
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError();
+            }
+        }
+        
+        function displayUserInfo(user) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('user-info').style.display = 'block';
+            
+            document.getElementById('user-name').textContent = user.name || 'Utilisateur';
+            document.getElementById('user-email').textContent = user.email || '';
+            
+            if (user.picture) {
+                document.getElementById('user-avatar').src = user.picture;
+            } else {
+                document.getElementById('user-avatar').style.display = 'none';
+            }
+        }
+        
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+        
+        function continueToApp() {
+            // Rediriger vers votre application principale
+            window.location.href = '/dashboard'; // ou votre page principale
+        }
+        
+        function retry() {
+            window.location.reload();
+        }
+        
+        // Démarrer le processus au chargement de la page
+        window.onload = handleAuthCallback;
+    </script>
+</body>
+</html>
