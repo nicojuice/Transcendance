@@ -54,7 +54,22 @@
     "pause": "PAUSE",
     "btnPause": "Pause",
     "resume": "Reprendre",
-    "quit": "Quitter"
+    "quit": "Quitter",
+    "pong":{
+      "PaddleEnlarge":"Agrandissement de la raquette !",
+      "PaddleShrink":"Réduction de la raquette !",
+      "InvertedControls":"Contrôles inversés !",
+      "BallSpeedUp":"Vitesse de la balle augmentée !",
+      "MultiBall":"Plusieurs balles ajoutées !"
+    },
+    "pacman":{
+      "PlayerSpeed":"Vitesse augmentée !",
+      "GhostSpeed":"Vitesse des fantômes augmentée !",
+      "PlayerInvulnerable":"Invulnérabilité activée !",
+      "InvertedControls":"Contrôles inversés !",
+      "GhostsFreeze":"Fantômes gelés !",
+      "PlayerScore":"Points bonus !"
+    }
   },
   "gameSelection": {
     "play": "JOUER",

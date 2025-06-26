@@ -13,6 +13,10 @@ export class GameEngine extends BABYLON.Engine {
   room: ROOM.Room; // Reference to the current room
   ui: GUI.AdvancedDynamicTexture; // UI texture
 
+  private popupContainer: GUI.Rectangle | null = null; // Container for the popup message
+  private popupText: GUI.TextBlock | null = null; // Text block for the popup message
+  private popupTimeout?: number;
+
   
 
   OnDispose: EventManager;
@@ -44,10 +48,15 @@ export class GameEngine extends BABYLON.Engine {
     this.ui.idealHeight = 720; // Set the ideal height for the UI
     this.SetupPauseMenu();
     this.SetupScoreUI();
+    this.SetupPopup();
   }
 
   //Destructor
   dispose() {
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout); // Clear the popup timeout if it exists
+      this.popupTimeout = undefined; // Reset the timeout variable
+    }
     this.OnDispose.dispatch();
     this.scene.actionManager.dispose();
     this.scene.onAfterRenderObservable.clear();
@@ -266,6 +275,49 @@ EndGame() {
       p2Profile.left = `${containerWidth / 2 - 25}px`; // Ajuster la position de l'image de p2
   
     });
+  }
+
+  SetupPopup(): void {
+    // Créer une boîte invisible pour le message popup
+    this.popupContainer = new GUI.Rectangle("popupContainer");
+    this.popupContainer.width = "40%";
+    this.popupContainer.height = "80px";
+    this.popupContainer.cornerRadius = 10;
+    this.popupContainer.color = "white";
+    this.popupContainer.thickness = 2;
+    this.popupContainer.background = "rgba(0, 0, 0, 0.7)";
+    this.popupContainer.isVisible = false;
+    this.popupContainer.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    this.popupContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    this.ui.addControl(this.popupContainer);
+
+    // Ajout du texte
+    this.popupText = new GUI.TextBlock("popupText");
+    this.popupText.fontFamily = "Pixelify Sans, sans-serif";
+    this.popupText.text = "";
+    this.popupText.fontSize = 28;
+    this.popupText.color = "white";
+    this.popupText.textWrapping = true;
+    this.popupText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    this.popupText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    this.popupContainer.addControl(this.popupText);
+  }
+
+  ShowPopup(message: string, timeout: number = 10000): void {
+    if (this.popupContainer && this.popupText) {
+      this.popupText.text = message;
+      this.popupContainer.isVisible = true;
+
+      // Nettoyer le précédent timeout si existant
+      if (this.popupTimeout) {
+        clearTimeout(this.popupTimeout);
+      }
+
+      this.popupTimeout = window.setTimeout(() => {
+        if (this.popupContainer)
+          this.popupContainer.isVisible = false;
+      }, timeout); // 10 secondes
+    }
   }
 
 }

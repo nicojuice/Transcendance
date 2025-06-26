@@ -1,18 +1,24 @@
 import * as BABYLON from "@babylonjs/core";
 import * as Engine from "../engine";
+import { getText } from "../../i18n";
 
 export class Ball {
   public mesh: BABYLON.Mesh;
-  public velocity: BABYLON.Vector3;
+  public direction: BABYLON.Vector3;
+  public speed: number;
 
   constructor(scene: BABYLON.Scene) {
     const ballMat = new BABYLON.StandardMaterial("ballMat", scene);
     ballMat.emissiveColor = new BABYLON.Color3(1.0, 0.0, 0.6);
     ballMat.diffuseColor = ballMat.emissiveColor;
+
     this.mesh = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
     this.mesh.position.y = 0.5;
     this.mesh.material = ballMat;
-    this.velocity = new BABYLON.Vector3(0, 0, 0);
+
+    this.direction = BABYLON.Vector3.Zero();
+    this.speed = 0;
+
     this.randomizeVelocity();
   }
 
@@ -22,7 +28,19 @@ export class Ball {
   }
 
   public randomizeVelocity(): void {
-    this.velocity.set(0.15 * (Math.random() < 0.5 ? 1 : -1), 0, 0.12 * (Math.random() < 0.5 ? 1 : -1));
+    const dir = new BABYLON.Vector3(
+      Math.random() < 0.5 ? 1 : -1,
+      0,
+      Math.random() < 0.5 ? 1 : -1
+    );
+    dir.normalize();
+
+    this.direction = dir;
+    this.speed = 0.19; // ancienne norme approximative de (0.15, 0.12)
+  }
+
+  public get velocity(): BABYLON.Vector3 {
+    return this.direction.scale(this.speed);
   }
 
   public updatePosition(deltaTime: number): void {
@@ -33,16 +51,15 @@ export class Ball {
     const halfFieldZ = 9.5;
     const ballRadius = 0.5;
     const paddleRadius = 0.25;
-    const paddleLength = 3 + (paddleRadius * 2);
-    const paddleHalfLength = paddleLength / 2;
-  
+
     if (this.mesh.position.z >= halfFieldZ || this.mesh.position.z <= -halfFieldZ) {
-      this.velocity.z *= -1;
+      this.direction.z *= -1;
       this.mesh.position.z = BABYLON.Scalar.Clamp(this.mesh.position.z, -halfFieldZ, halfFieldZ);
     }
-  
+
     const checkCollision = (ballEdgeX: number, paddle: BABYLON.Mesh, isLeft: boolean) => {
       const sign = isLeft ? 1 : -1;
+      const paddleHalfLength = ((paddle.scaling.z*Paddle.LENGTH) + (paddleRadius * 2)) / 2;
       return (
         ballEdgeX * sign <= paddle.position.x * sign + paddleRadius &&
         ballEdgeX * sign >= paddle.position.x * sign - paddleRadius &&
@@ -50,17 +67,21 @@ export class Ball {
         this.mesh.position.z <= paddle.position.z + paddleHalfLength
       );
     };
-  
-    if (checkCollision(this.mesh.position.x - ballRadius, player1.mesh, true) && this.velocity.x < 0) {
-      this.velocity.x *= -1;
-      this.velocity.z += (this.mesh.position.z - player1.mesh.position.z) * 0.03;
+
+    if (checkCollision(this.mesh.position.x - ballRadius, player1.mesh, true) && this.direction.x < 0) {
+      this.direction.x *= -1;
+      this.direction.z += (this.mesh.position.z - player1.mesh.position.z) * 0.03;
+      this.direction.normalize();
       this.mesh.position.x = player1.mesh.position.x + paddleRadius + ballRadius;
+      this.speed += 0.01;
     }
-  
-    if (checkCollision(this.mesh.position.x + ballRadius, player2.mesh, false) && this.velocity.x > 0) {
-      this.velocity.x *= -1;
-      this.velocity.z += (this.mesh.position.z - player2.mesh.position.z) * 0.03;
+
+    if (checkCollision(this.mesh.position.x + ballRadius, player2.mesh, false) && this.direction.x > 0) {
+      this.direction.x *= -1;
+      this.direction.z += (this.mesh.position.z - player2.mesh.position.z) * 0.03;
+      this.direction.normalize();
       this.mesh.position.x = player2.mesh.position.x - paddleRadius - ballRadius;
+      this.speed += 0.01;
     }
   }
 }
@@ -74,6 +95,7 @@ export abstract class Paddle {
   public mesh: BABYLON.Mesh;
   public side: Side;
   public static readonly SPEED: number = 0.3;
+  public static readonly LENGTH: number = 3; // Longueur de la raquette
 
   constructor(scene: BABYLON.Scene, side: Side) {
     this.side = side;
@@ -81,7 +103,7 @@ export abstract class Paddle {
     const paddleMat = new BABYLON.StandardMaterial("paddleMat", scene);
     paddleMat.emissiveColor = new BABYLON.Color3(0.0, 1.0, 0.3);
     paddleMat.diffuseColor = paddleMat.emissiveColor;
-    const paddle1 = BABYLON.MeshBuilder.CreateCapsule("paddle1", { radius: 0.25, height: 3 }, scene);
+    const paddle1 = BABYLON.MeshBuilder.CreateCapsule("paddle1", { radius: 0.25, height: Paddle.LENGTH }, scene);
     const subpaddleMat = new BABYLON.StandardMaterial("subpaddleMat", scene);
     subpaddleMat.diffuseColor = new BABYLON.Color3(0, 55.3/255.0, 38.4/255.0);
     subpaddleMat.emissiveColor = subpaddleMat.diffuseColor;
@@ -247,3 +269,150 @@ export class IA extends Paddle {
   }
 }
 
+export enum PowerUpType {
+  PaddleEnlarge,       // Bonus : Agrandit la raquette
+  PaddleShrink,        // Malus : Réduit la raquette
+  InvertedControls,    // Malus : Contrôles inversés
+  BallSpeedUp,         // Bonus : Accélère la balle
+  //MultiBall          // Bonus : Ajoute plusieurs balles
+}
+
+export function getRandomPowerUpType(): PowerUpType
+{
+  const types = Object.values(PowerUpType).filter(value => typeof value === "number");
+  const randomIndex = Math.floor(Math.random() * types.length);
+  return types[randomIndex] as PowerUpType;
+}
+
+
+export class PowerUpBox
+{
+  public mesh: BABYLON.Mesh;
+  public type: PowerUpType;
+
+  constructor(scene: BABYLON.Scene, type: PowerUpType) {
+    this.type = type;
+    const boxMat = new BABYLON.StandardMaterial("boxMat", scene);
+    boxMat.emissiveColor = new BABYLON.Color3(0.6, 0.6, 0.6);
+    boxMat.disableLighting = true;
+    //boxMat.alpha = 0.75;
+    boxMat.diffuseTexture = new BABYLON.Texture(`/assets/games/pong/b${Number(type)}.png`, scene);
+    //glow effect
+    this.mesh = BABYLON.MeshBuilder.CreateBox("powerUpBox", { size: 3, faceUV: [
+      new BABYLON.Vector4(1, 0, 1, 1), // face 0 (arrière)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 1 (avant)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 2 (droite)
+      new BABYLON.Vector4(1, 0, 1, 1), // face 3 (gauche)
+
+      // face 4 (haut) avec UV tournés de 90° (swap U et V)
+      new BABYLON.Vector4(0, 0, 1, 1), // correspond à une rotation 90°
+
+      new BABYLON.Vector4(0, 0, 1, 1), // face 5 (bas)
+    ]}, scene);
+    this.mesh.scaling.y = 0.25; // Réduire la taille en X pour que la box soit plus plate
+    this.mesh.position.y = 0.5;
+    this.mesh.position.x = Math.random() * 24 - 12; // Position aléatoire sur l'axe X
+    this.mesh.position.z = Math.random() * 14 - 7; // Position al
+    this.mesh.rotation.y = Math.PI/2;
+    //this.mesh.rotation.z = -Math.PI/6;
+    this.mesh.material = boxMat;
+  }
+
+  public HandleCollision(ball: Ball): boolean {
+    const ballRadius = 0.5;
+    const boxSize = 3; // Taille de la box
+    const boxHalfSize = boxSize / 2;
+
+    // Vérifier si la balle entre en collision avec la box
+    if (
+      Math.abs(ball.mesh.position.x - this.mesh.position.x) < (ballRadius + boxHalfSize) &&
+      Math.abs(ball.mesh.position.z - this.mesh.position.z) < (ballRadius + boxHalfSize)
+    ) {
+      return true; // Indiquer que la collision a été gérée
+    }
+    return false; // Pas de collision
+  }
+
+  public remove(): void {
+    this.mesh.dispose(); // Supprimer la box de la scène
+  }
+}
+
+export class PowerUp
+{
+  public type: PowerUpType;
+  public timeout: number;
+  public player: Paddle;
+  public ball: Ball;
+
+  constructor(type: PowerUpType, player: Paddle,ball: Ball, timeout: number = 10) {
+    this.type = type;
+    this.player = player;
+    this.ball = ball;
+    this.timeout = timeout * 1000; // Convertir en millisecondes
+  }
+
+  public applyEffect(): void {
+    switch (this.type) {
+      case PowerUpType.PaddleEnlarge:
+        this.player.mesh.scaling.y *= 1.5; // Agrandir la raquette
+        break;
+      case PowerUpType.PaddleShrink:
+        this.player.mesh.scaling.y *= 0.5; // Réduire la raquette
+        break;
+      case PowerUpType.InvertedControls:
+        //Check si c'est un joueur
+        if (this.player instanceof Player) {
+          // Inverser les contrôles
+          const player = this.player as Player;
+          const tempUpKey = player.up_key;
+          player.up_key = player.down_key;
+          player.down_key = tempUpKey;
+        }
+        break;
+      case PowerUpType.BallSpeedUp:
+        this.ball.speed *= 1.5; // Augmenter la vitesse de la balle
+        break;
+      // case PowerUpType.MultiBall:
+      //   // Ajouter plusieurs balles (à implémenter)
+      //   break;
+    }
+  }
+
+  public removeEffect(): void {
+    switch (this.type) {
+      case PowerUpType.PaddleEnlarge:
+        this.player.mesh.scaling.y /= 1.5; // Rétablir la taille de la raquette
+        break;
+      case PowerUpType.PaddleShrink:
+        this.player.mesh.scaling.y /= 0.5; // Rétablir la taille de la raquette
+        break;
+      case PowerUpType.InvertedControls:
+        // Rétablir les contrôles normaux
+        if (this.player instanceof Player) {
+          const player = this.player as Player;
+          const tempUpKey = player.up_key;
+          player.up_key = player.down_key;
+          player.down_key = tempUpKey;
+        }
+        break;
+      case PowerUpType.BallSpeedUp:
+        this.ball.speed /= 1.5;
+        break;
+    }
+  }
+  
+  public msg(): string {
+    return getText("game.pong."+PowerUpType[this.type]);
+  }
+
+  public isExpired(): boolean {
+    return this.timeout <= 0; // Vérifier si le power-up a expiré
+  }
+  public update(deltaTime: number): void {
+    this.timeout -= deltaTime; // Décrémenter le temps restant
+    if (this.timeout <= 0) {
+      this.removeEffect(); // Supprimer l'effet si le temps est écoulé
+    }
+  }
+}

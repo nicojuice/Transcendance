@@ -72,12 +72,12 @@ export function main(engine: Engine.GameEngine): void {
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha = -Math.PI / 2;
   camera.radius = 60;
 
-  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, 0.12, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
   player1.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0));
   player1.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player1);
 
-  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, 0.12, ['w', 's', 'a', 'd']);
+  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['w', 's', 'a', 'd']);
   player2.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 1));
   player2.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player2);
@@ -89,18 +89,35 @@ export function main(engine: Engine.GameEngine): void {
 
 
   let balls = Spawn.spawn_terrain(scene, Map.pacman_map);
-  void balls;
+  let powerUpBox: Entities.PowerUpBox | null = null;
+  let powerUps: Entities.PowerUp[] = [];
   // Déplacement de Pac-Man avec les touches fléchées
   scene.onBeforeRenderObservable.add(() => {
     engine.room.players[0].score = player1.score;
     engine.room.players[1].score  = player2.score;
     if (engine.paused)
       return; // Ne pas mettre à jour si le jeu est en pause
-    //const delta = engine.getDeltaTime() / 16.666;
+    if (powerUps.length > 0)
+    {
+      powerUps.forEach((pu) => pu.update(engine.getDeltaTime()));
+      powerUps = powerUps.filter((pu) => !pu.isExpired());
+    } else if (!powerUpBox && engine.room.withCustom) {
+      powerUpBox = new Entities.PowerUpBox(scene, Map.pacman_map, Entities.getRandomPowerUpType());
+    }
     characters.forEach(character => {
       character.Update(engine);
       //check if character is Player
       if (character instanceof Entities.Player) {
+        // Vérifier les collisions avec les power-up
+        if (powerUpBox && powerUpBox.HandleCollision(character))
+        {
+          let powerUp= new Entities.PowerUp(powerUpBox.type, character, characters, 10);
+          powerUp.applyEffect();
+          engine.ShowPopup(powerUp.msg(), 2000);
+          powerUps.push(powerUp);
+          powerUpBox.remove();
+          powerUpBox = null;
+        }
         // Vérifier les collisions avec les billes
         let toRemoveBalls: number[] = [];
         balls.miniBalls.forEach((ball, index) => {
