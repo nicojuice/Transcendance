@@ -26,3 +26,10 @@ sqlite3 /data/data.db "
 		FOREIGN KEY(friend_id) REFERENCES users(id),
 		PRIMARY KEY(user_id, friend_id)
 	);"
+sqlite3 /data/data.db "
+	CREATE TABLE IF NOT EXISTS tournament (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		match1   TEXT NOT NULL,
+		match2   TEXT NOT NULL,
+		match3   TEXT
+	);"

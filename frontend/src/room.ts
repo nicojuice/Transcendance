@@ -1,12 +1,13 @@
 import * as ROOM from "./games/room";
 import * as GameSys from "./games/gamesys";
+import { showToast } from "./showToast";
 
 function launchTournamentGame(gameId: string): void {
   const inputs = document.querySelectorAll<HTMLInputElement>(`#${gameId}-tournament-form input`);
   const playerNames: string[] = Array.from(inputs).map(input => input.value.trim());
 
   if (playerNames.some(name => name === "")) {
-    alert("Merci de renseigner tous les pseudos !");
+    showToast("Merci de renseigner tous les pseudos !", "error");
     return;
   }
 

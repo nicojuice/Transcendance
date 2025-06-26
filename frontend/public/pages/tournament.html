@@ -1,0 +1,63 @@
+<!-- /pages/tournament.html -->
+<div id="tournament-container" class="min-h-screen p-8 flex flex-col items-center justify-center font-pixelify text-white bg-black">
+  <h1 class="text-4xl mb-6">🏆 Résumé du Tournoi</h1>
+
+  <!-- Demi-finales -->
+  <div class="mb-6 w-full max-w-md">
+    <h2 class="text-2xl mb-2">Demi-finales</h2>
+    <p id="match1" class="mb-2">Chargement...</p>
+    <p id="match2">Chargement...</p>
+  </div>
+
+  <!-- Finale -->
+  <div class="mb-6 w-full max-w-md">
+    <h2 class="text-2xl mb-2">Finale</h2>
+    <p id="final-match" class="mb-4">Chargement...</p>
+    <button id="launch-final-btn" class="param-button">Lancer la finale</button>
+  </div>
+
+  <button onclick="navigate('profile')" class="text-neon text-xl mt-6 hover:underline">
+    ← Retour au profil
+  </button>
+</div>
+
+<script>
+  // On attend que le DOM soit prêt
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1) Lire match1 et match2
+    const raw1 = localStorage.getItem("match1");
+    const raw2 = localStorage.getItem("match2");
+    let m1 = ["", ""], m2 = ["", ""];
+
+    if (raw1) {
+      try { m1 = JSON.parse(raw1); } catch {}
+    }
+    if (raw2) {
+      try { m2 = JSON.parse(raw2); } catch {}
+    }
+
+    // 2) Mettre à jour les <p>
+    const el1 = document.getElementById("match1");
+    const el2 = document.getElementById("match2");
+    if (el1) {
+      el1.textContent =
+        m1.length === 2 && m1[0] && m1[1]
+          ? `${m1[0]} vs ${m1[1]}`
+          : "Match 1 non défini";
+    }
+    if (el2) {
+      el2.textContent =
+        m2.length === 2 && m2[0] && m2[1]
+          ? `${m2[0]} vs ${m2[1]}`
+          : "Match 2 non défini";
+    }
+
+    // 3) Message pour la finale
+    const finalEl = document.getElementById("final-match");
+    if (finalEl) {
+      finalEl.textContent = "En attente des résultats des demi-finales";
+    }
+  });
+</script>
+
+
