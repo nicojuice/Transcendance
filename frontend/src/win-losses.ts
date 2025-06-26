@@ -2,10 +2,6 @@ export async function fetchProfileWL(): Promise<void> {
   const token = localStorage.getItem("token");
   const storedUsername = localStorage.getItem("username");
 
-  console.log("fetchProfile - Token:", token ? "présent" : "absent");
-  console.log("fetchProfile - Username stocké:", storedUsername);
-  console.trace("fetchProfileWL appelé");
-
   try {
     const response = await fetch(
       "http://localhost:8090/api/user-management/profile-info",
@@ -27,7 +23,6 @@ export async function fetchProfileWL(): Promise<void> {
     }
 
     const data = await response.json();
-    console.log("Données récupérées :", data);
     if (!data || typeof data !== "object") {
       throw new Error("Données de profil invalides");
     }
@@ -40,11 +35,6 @@ export async function fetchProfileWL(): Promise<void> {
     if (displayUsername) {
       displayUsername.textContent = usernameToDisplay;
     }
-
-    console.log("Contenu modifié :", {
-        displayUsername: displayUsername?.textContent,
-        usernameLose: displayUsernameLose?.textContent,
-    });
 
     if (displayUsernameLose) {
       displayUsernameLose.textContent = usernameToDisplay;

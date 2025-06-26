@@ -4,6 +4,9 @@ import * as ROOM from "./room";
 import * as GUI from "@babylonjs/gui";
 import { navigate } from "../nav";
 import { getText } from "../i18n";
+import { updateGameStats } from "../loadPlayerData";
+import { loadPlayerStats } from "../loadPlayerData";
+import { renderPlayerStatsFromLocalStorage } from "../loadPlayerData";
 
 export class GameEngine extends BABYLON.Engine {
   canvas: HTMLCanvasElement;
@@ -97,10 +100,17 @@ export class GameEngine extends BABYLON.Engine {
   //   setTimeout(() => navigate(this.room.nextPage), 0);
   // }
 
-EndGame() {
+async EndGame() {
+  const currentUser = this.room.players.length > 0 ? this.room.players[0].name : null;
+
   if (this.room.players[0].score > this.room.players[1].score) {
     this.room.winner = ROOM.Winner.PLAYER1;
     this.room.saveToLocalStorage();
+    if (currentUser) {
+      await updateGameStats(currentUser, true);
+      await loadPlayerStats(); // recharge dans localStorage
+      renderPlayerStatsFromLocalStorage(); // met à jour l’affichage
+    }
     setTimeout(() => navigate("win"), 0);
   } else if (this.room.players[0].score < this.room.players[1].score) {
     if (this.room.withIA)
@@ -108,10 +118,17 @@ EndGame() {
     else
       this.room.winner = ROOM.Winner.PLAYER2;
     this.room.saveToLocalStorage();
+    if (currentUser) {
+      await updateGameStats(currentUser, false);
+      await loadPlayerStats();
+      renderPlayerStatsFromLocalStorage();
+    }
     setTimeout(() => navigate("loose"), 0);
-  } 
+  }
   this.room.manualQuit = false;
 }
+
+
 
   SetupPauseMenu(): void {
       // Pause Menu
