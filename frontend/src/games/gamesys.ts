@@ -1,5 +1,6 @@
 import * as ROOM from "./room"
 import { navigate } from "../nav";
+import { showToast } from "../showToast";
 
 export enum GameMode
 {
@@ -77,8 +78,11 @@ export class GameManager
 
     const data = await res.json();
     console.log("Tournoi créé en base, ID =", data.id);
+    localStorage.setItem("tournamentId", data.id.toString());
   } catch (err) {
     console.error("Échec enregistrement tournoi :", err);
+    showToast("Impossibl de creer le tournoi", "error");
+    return;
   }
         
         

@@ -68,4 +68,55 @@ module.exports = async function (fastify, options) {
 
     reply.code(201).send({ id: insertedId, match1: [player1, player2], match2: [player3, player4] });
   });
+
+
+
+// Schéma pour GET récupération par ID
+  const getTournamentSchema = {
+    params: {
+      type: 'object',
+      required: ['id'],
+      properties: {
+        id: { type: 'integer' }
+      }
+    },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          match1: { type: 'array', items: { type: 'string' } },
+          match2: { type: 'array', items: { type: 'string' } },
+          match3: { type: ['array', 'null'], items: { type: 'string' } }
+        }
+      }
+    }
+  };
+
+  // Route GET : récupérer un tournoi par ID
+  fastify.get('/backend/games/tournament/:id', { schema: getTournamentSchema }, async (request, reply) => {
+    const id = request.params.id;
+    try {
+      const row = await new Promise((resolve, reject) => {
+        db.get('SELECT * FROM tournament WHERE id = ?', [id], (err, row) => {
+          if (err) return reject(err);
+          resolve(row);
+        });
+      });
+
+      if (!row) {
+        return reply.code(404).send({ message: 'Tournoi non trouvé' });
+      }
+
+      // Parse JSON fields
+      const match1 = JSON.parse(row.match1);
+      const match2 = JSON.parse(row.match2);
+      const match3 = row.match3 ? JSON.parse(row.match3) : null;
+
+      reply.send({ id: row.id, match1, match2, match3 });
+    } catch (err) {
+      fastify.log.error('Erreur DB GET tournoi:', err);
+      reply.code(500).send({ message: 'Erreur serveur' });
+    }
+  });
 };
