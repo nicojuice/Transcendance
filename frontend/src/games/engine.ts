@@ -100,34 +100,73 @@ export class GameEngine extends BABYLON.Engine {
   //   setTimeout(() => navigate(this.room.nextPage), 0);
   // }
 
-async EndGame() {
-  const currentUser = this.room.players.length > 0 ? this.room.players[0].name : null;
+// async EndGame() {
+//   const currentUser = this.room.players.length > 0 ? this.room.players[0].name : null;
 
-  if (this.room.players[0].score > this.room.players[1].score) {
-    this.room.winner = ROOM.Winner.PLAYER1;
-    this.room.saveToLocalStorage();
-    if (currentUser) {
-      await updateGameStats(currentUser, true);
-      await loadPlayerStats(); // recharge dans localStorage
-      renderPlayerStatsFromLocalStorage(); // met à jour l’affichage
+//   if (this.room.players[0].score > this.room.players[1].score) {
+//     this.room.winner = ROOM.Winner.PLAYER1;
+//     this.room.saveToLocalStorage();
+//     if (currentUser) {
+//       await updateGameStats(currentUser, true);
+//       await loadPlayerStats(); // recharge dans localStorage
+//       renderPlayerStatsFromLocalStorage(); // met à jour l’affichage
+//     }
+//     setTimeout(() => navigate("win"), 0);
+//   } else if (this.room.players[0].score < this.room.players[1].score) {
+//     if (this.room.withIA)
+//       this.room.winner = ROOM.Winner.IA;
+//     else
+//       this.room.winner = ROOM.Winner.PLAYER2;
+//     this.room.saveToLocalStorage();
+//     if (currentUser) {
+//       await updateGameStats(currentUser, false);
+//       await loadPlayerStats();
+//       renderPlayerStatsFromLocalStorage();
+//     }
+//     setTimeout(() => navigate("loose"), 0);
+//   }
+//   this.room.manualQuit = false;
+// }
+
+async EndGame() {
+    // Récupérer le nom du joueur courant (player1)
+    const currentUser = this.room.players.length > 0 ? this.room.players[0].name : null;
+
+    // Déterminer le nom du gagnant ou null en cas d'égalité
+    let winnerName: string | null = null;
+    const [p1, p2] = this.room.players;
+    if (p1.score > p2.score) {
+      winnerName = p1.name;
+    } else if (p1.score < p2.score) {
+      winnerName = p2.name;
     }
-    setTimeout(() => navigate("win"), 0);
-  } else if (this.room.players[0].score < this.room.players[1].score) {
-    if (this.room.withIA)
-      this.room.winner = ROOM.Winner.IA;
-    else
-      this.room.winner = ROOM.Winner.PLAYER2;
+
+    // Sauvegarder le gagnant dans la room (on stocke la string)
+    // @ts-ignore: override Winner enum type to store string
+    this.room.winner = winnerName || "";
+    this.room.manualQuit = false;
     this.room.saveToLocalStorage();
+
+    // Mettre à jour les statistiques du joueur courant si présent
     if (currentUser) {
-      await updateGameStats(currentUser, false);
+      const isWin = winnerName === currentUser;
+      await updateGameStats(currentUser, isWin);
       await loadPlayerStats();
       renderPlayerStatsFromLocalStorage();
     }
-    setTimeout(() => navigate("loose"), 0);
-  }
-  this.room.manualQuit = false;
-}
 
+    // Redirection finale
+    if (winnerName === currentUser) {
+      // Victoire
+      setTimeout(() => navigate("win"), 0);
+    } else if (winnerName && winnerName !== currentUser) {
+      // Défaite
+      setTimeout(() => navigate("loose"), 0);
+    } else {
+      // Égalité
+      setTimeout(() => navigate(this.room.nextPage), 0);
+    }
+  }
 
 
   SetupPauseMenu(): void {

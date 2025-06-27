@@ -15,10 +15,15 @@ function launchTournamentGame(gameId: string): void {
   if (!card) return;
 
   const room = new ROOM.Room();
+  room.isTournament = true;
   room.gameName = gameId;
   const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
   room.withCustom = bonus;
   const gamesys = new GameSys.GameManager(GameSys.GameMode.Tournament, room, playerNames);
+  console.log("before start : ")
+  console.log("room : ", room)
+  console.log("bonus : ", bonus)
+  console.log("gamesys : ", gamesys)
   gamesys.Start();
 }
 
@@ -51,7 +56,7 @@ async function handleStartClick(gameId: string): Promise<void> {
     let players: string[] = [];
     players.push(localStorage.getItem("username") || "Invité");
     const gamesys = new GameSys.GameManager(GameSys.GameMode.Versus, room, players);
-    gamesys.Start();
+    gamesys.Start(); // xxxxx
   }
 }
 

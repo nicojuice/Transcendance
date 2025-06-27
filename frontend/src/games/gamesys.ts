@@ -28,27 +28,60 @@ export class GameManager
             this.StartTournament();
     }
 
-    async StartVersus()
-    {
-        const username = this.players[0];
-        try {
-            const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
-            if (!res.ok) throw new Error("Avatar not found");
+    async StartVersus() {
+  // Joueur 1 (toujours le premier de this.players)
+  const username = this.players[0];
+  try {
+    const res = await fetch(
+      `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`
+    );
+    if (!res.ok) throw new Error("Avatar not found");
+    const blob = await res.blob();
+    const imageUrl = URL.createObjectURL(blob);
+    this.templatetRoom.addPlayer(username, imageUrl);
+  } catch {
+    this.templatetRoom.addPlayer(username);
+  }
 
-            const blob = await res.blob();
-            const imageUrl = URL.createObjectURL(blob);
-            this.templatetRoom.addPlayer(username, imageUrl);
-        } catch (err) {
-            console.error("Erreur avatar:", err);
-            this.templatetRoom.addPlayer(username);
-        }
-        if (this.templatetRoom.withIA)
-            this.templatetRoom.addPlayer("IA");
-        else
-            this.templatetRoom.addPlayer("Ghest");
-        this.templatetRoom.saveToLocalStorage();
-        navigate("game");
-    }
+  // Joueur 2
+  let secondName: string;
+  if (this.templatetRoom.withIA) {
+    secondName = "IA";
+  } else if (this.templatetRoom.isTournament) {
+    // En mode tournoi, on prend le deuxième pseudo passé dans this.players
+    secondName = this.players[1] || "Invité";
+  } else {
+    secondName = "Ghest";
+  }
+  this.templatetRoom.addPlayer(secondName);
+
+  // Sauvegarde et navigation
+  this.templatetRoom.saveToLocalStorage();
+  navigate("game");
+}
+    // async StartVersus()
+    // {
+    //     const username = this.players[0];
+    //     try {
+    //         const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
+    //         if (!res.ok) throw new Error("Avatar not found");
+
+    //         const blob = await res.blob();
+    //         const imageUrl = URL.createObjectURL(blob);
+    //         this.templatetRoom.addPlayer(username, imageUrl);
+    //     } catch (err) {
+    //         console.error("Erreur avatar:", err);
+    //         this.templatetRoom.addPlayer(username);
+    //     }
+    //     if (this.templatetRoom.withIA)
+    //         this.templatetRoom.addPlayer("IA");
+    //     else if (this.templatetRoom.isTournament == true)
+    //         this.templatetRoom.addPlayer(this->players[1][1]);
+    //     else
+    //         this.templatetRoom.addPlayer("Ghest");
+    //     this.templatetRoom.saveToLocalStorage();
+    //     navigate("game");
+    // }
 
     async StartTournament() {
         console.log("hello p1");
@@ -84,30 +117,12 @@ export class GameManager
     showToast("Impossibl de creer le tournoi", "error");
     return;
   }
-        
-        
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         const currentUser = localStorage.getItem("username");
         const bracketRooms: ROOM.Room[] = [];
         for (const [p1, p2] of pairs) {
+            console.log("this.templatetRoom :", this.templatetRoom)
             const room = this.templatetRoom.clone();
+            // room.isTournament = true;
             const addWithAvatar = async (name: string) => {
                 if (name === currentUser) {
                     try {
@@ -128,7 +143,6 @@ export class GameManager
                 };
                 await addWithAvatar(p1);
                 await addWithAvatar(p2);
-
                 bracketRooms.push(room);
             }
 

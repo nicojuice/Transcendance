@@ -175,18 +175,18 @@ services:
     networks:
       - Transcendance
 
-  rooms-local-service:
-    build:
-      context: ./backend/games/rooms/local
-      dockerfile: Dockerfile
-    ports:
-      - "8096:8096"
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - sql:/data
-    networks:
-      - Transcendance
+  # rooms-local-service:
+  #   build:
+  #     context: ./backend/games/rooms/local
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8096:8096"
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - sql:/data
+  #   networks:
+  #     - Transcendance
     
   google-auth-service:
     build:

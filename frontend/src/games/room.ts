@@ -31,6 +31,7 @@ export class Room {
   winner: Winner;
   manualQuit: boolean;
   mode: any;
+  isTournament: boolean;
 
   constructor() {
     this.gameName = "";
@@ -40,6 +41,7 @@ export class Room {
     this.withCustom = false;
     this.winner = Winner.NONE;
     this.manualQuit = false;
+    this.isTournament = false;
   }
 
   addPlayer(playerName: string, avatar: string = "") {
@@ -57,6 +59,7 @@ export class Room {
       this.withIA = parsedRoom.withIA || false;
       this.withCustom = parsedRoom.withCustom || false;
       this.players = parsedRoom.players || [];
+      this.isTournament = parsedRoom.isTournament || false;
     } else {
       console.warn("Aucune room trouvée dans localStorage, création d'une par défaut.");
     }
@@ -72,6 +75,7 @@ export class Room {
     clone_room.withCustom = this.withCustom;
     clone_room.winner = this.winner;
     clone_room.manualQuit = this.manualQuit;
+    clone_room.isTournament = this.isTournament;
     return clone_room;
   }
 
@@ -213,6 +217,7 @@ export async function startGameAndNavigate(game: string) {
     return;
   }
   if (selectedMode === 'tournament') {
+
     showToast("Tournament is coming", "error");
     return;
   }

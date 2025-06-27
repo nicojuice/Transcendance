@@ -31,5 +31,6 @@ sqlite3 /data/data.db "
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		match1   TEXT NOT NULL,
 		match2   TEXT NOT NULL,
-		match3   TEXT
+		match3   TEXT,
+		matchid INTEGER
 	);"

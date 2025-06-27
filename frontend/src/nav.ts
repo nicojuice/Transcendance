@@ -97,9 +97,78 @@ import { showToast } from './showToast'
 import { EventManager } from './eventManager';
 import { initializeLanguageSwitcher } from './i18n';
 import { updateTexts } from './i18n'
+import * as ROOM from "./games/room";
+
 import './i18n';
 
 export const onNavigate = new EventManager();
+
+// export async function advanceTournamentMatchId(): Promise<number> {
+//   const rawId = localStorage.getItem("tournamentId");
+//   if (!rawId) throw new Error("Aucun tournoi en cours.");
+//   const id = parseInt(rawId, 10);
+
+//   const res = await fetch(
+//     `http://localhost:8001/api/backend/games/tournament/${id}/next`,
+//     { method: 'PATCH' }
+//   );
+//   if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+//   const data = await res.json();
+//   // data.matchid contient le nouvel ID de match
+//   return data.matchid;
+// }
+export async function advanceTournamentMatchId(): Promise<number> {
+  const rawId = localStorage.getItem("tournamentId");
+  if (!rawId) {
+    throw new Error("Aucun tournoi en cours.");
+  }
+  const id = parseInt(rawId, 10);
+
+  // Charger la room pour récupérer le gagnant du match
+  const room = new ROOM.Room();
+  room.loadFromLocalStorage();
+  const winner = room.winner;
+
+  const response = await fetch(
+    `http://localhost:8001/api/backend/games/tournament/${id}/next`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ winner })
+    }
+  );
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  // Retourne le nouvel ID de match
+  return data.matchid;
+}
+
+export async function navigateOrTournament() {
+  // 1) Charger la room depuis localStorage
+  const room = new ROOM.Room();
+  room.loadFromLocalStorage();
+  console.log("la room apres la partie", room);
+
+  // 2) Vérifier le flag
+  if (room.isTournament) {
+    try {
+      // Incrémente matchId sur le serveur
+      const nextMatchId = await advanceTournamentMatchId();
+      console.log("MatchId avancé à", nextMatchId);
+    } catch (err) {
+      console.error("Erreur advanceTournamentMatchId:", err);
+    }
+    // Puis redirige vers la page tournoi
+    navigate("tournament");
+  } else {
+    // C'était un versus (ou rien)
+    navigate("profile");
+  }
+}
 
 export async function navigate(page : string) {
     try {
@@ -232,5 +301,6 @@ window.addEventListener("load", async () => {
   await default_navigate();
 });
 
+(window as any).navigateOrTournament = navigateOrTournament;
 (window as any).navigate = navigate;
 (window as any).default_navigate = default_navigate;

@@ -131,19 +131,23 @@ async function initTournamentPage() {
   // 2) Appeler le back pour récupérer les matches
   let tournament;
   try {
-    //const res = await fetch(`/api/backend/games/tournament/${tournamentId}`);
     const res = await fetch(`http://localhost:8001/api/backend/games/tournament/${tournamentId}`);
-
-    console.log(res);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     tournament = await res.json();
+    console.log("la sql tournoi --->", res);
   } catch (err) {
     console.error("Erreur fetch tournoi:", err);
     showToast("Impossible de charger le tournoi.", "error");
     return;
   }
 
-  const { match1, match2, match3 } = tournament;
+  console.log(
+  "Match 1 players:",
+  tournament.match1[0],
+  "vs",
+  tournament.match1[1]
+  );
+  const { match1, match2, match3, matchid} = tournament;
 
   // 3) Mettre à jour le DOM
   const el1 = document.getElementById("match1");
@@ -160,12 +164,23 @@ async function initTournamentPage() {
   // 4) Bouton Finale
   const btn = document.getElementById("launch-final-btn") as HTMLButtonElement;
   if (btn) {
-    if (match3) {
+    if (match1) {
       btn.disabled = false;
       btn.onclick = () => {
         const room = new ROOM.Room();
+        room.isTournament = true;
         room.gameName = "pong";
-        new GameManager(GameMode.Versus, room, match3).Start();
+        if (matchid === 1)
+        {
+          console.log("hello match 1")
+          new GameManager(GameMode.Versus, room, match1).Start();
+        }
+        if (matchid === 2)
+          new GameManager(GameMode.Versus, room, match2).Start();
+        if (matchid === 3)
+          new GameManager(GameMode.Versus, room, match3).Start();
+
+
       };
     } else {
       btn.disabled = true;
