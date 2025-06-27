@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const querystring = require('querystring');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const { syncGoogleUserToDB, ensureGoogleColumns } = require('./google-user-sync');
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -13,6 +14,20 @@ async function routes(fastify, options) {
     console.error('❌ Variables d\'environnement manquantes');
     throw new Error('Google OAuth credentials not configured');
   }
+
+  // S'assurer que les colonnes Google existent dans la DB
+  try {
+    await ensureGoogleColumns();
+    console.log('✅ Colonnes Google vérifiées dans la DB');
+  } catch (err) {
+    console.error('❌ Erreur initialisation DB:', err);
+  }
+
+  console.log('🔧 OAuth Config:', {
+    client_id: GOOGLE_CLIENT_ID ? 'SET' : 'MISSING',
+    client_secret: GOOGLE_CLIENT_SECRET ? 'SET' : 'MISSING',
+    redirect_uri: REDIRECT_URI
+  });
 
   // Step 1: Redirection vers Google OAuth
   fastify.get('/auth/google', async (request, reply) => {
@@ -30,92 +45,23 @@ async function routes(fastify, options) {
     reply.redirect(url);
   });
 
-  // Step 2: Callback de Google
- // Dans votre google-auth.js, remplacez le callback GET par ceci :
+  // Step 2: Callback GET - Redirect vers votre frontend avec les données
+  fastify.get('/auth/google/callback', async (request, reply) => {
+    const { code, error } = request.query;
 
-fastify.get('/auth/google/callback', async (request, reply) => {
-  const { code, error } = request.query;
-
-  if (error) {
-    console.error('❌ Erreur OAuth:', error);
-    return reply.redirect(`http://localhost:8081/api/backend/login`);
-  }
-
-  if (!code) {
-    return reply.redirect('http://localhost:8081/api/backend/login');
-  }
-
-  try {
-    console.log('🔄 Échange du code contre un token...');
-
-    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: querystring.stringify({
-        code,
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
-        grant_type: 'authorization_code',
-      }),
-    });
-
-    const tokenData = await tokenRes.json();
-
-    if (!tokenRes.ok) {
-      console.error('❌ Erreur token response:', tokenData);
-      return reply.redirect(`http://localhost:8081/api/backend/login`);
+    if (error) {
+      console.error('❌ Erreur OAuth:', error);
+      return reply.redirect(`https://localhost:8443/log?error=${encodeURIComponent(error)}`);
     }
-
-    if (!tokenData.access_token) {
-      console.error('❌ Pas de access_token:', tokenData);
-      return reply.redirect('http://localhost:8081/api/backend/login');
-    }
-
-    console.log('✅ Token obtenu, récupération des infos utilisateur...');
-
-    const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`,
-      },
-    });
-
-    const userData = await userRes.json();
-
-    if (!userRes.ok) {
-      console.error('❌ Erreur user data:', userData);
-      return reply.redirect('http://localhost:8081/api/backend/login');
-    }
-
-    console.log('✅ Utilisateur connecté:', userData.email);
-
-    // Génération du JWT ici !
-    const JWT_SECRET = process.env.JWT_SECRET;
-    const customToken = jwt.sign(
-      { email: userData.email, name: userData.name },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    // Redirection avec le token dans l'URL
-    return reply.redirect(`http://localhost:8095/auth-success?user=${encodeURIComponent(userData.name)}&token=${customToken}`);
-
-  } catch (err) {
-    console.error('❌ Erreur OAuth2:', err);
-    return reply.redirect('http://localhost:8081/api/backend/login');
-  }
-});
-
-
-  // Step 3: Endpoint POST pour échanger le code (pour les apps mobiles/SPA)
- fastify.post('/auth/google/token', async (request, reply) => {
-    const { code } = request.body;
 
     if (!code) {
-      return reply.status(400).send({ success: false, message: 'No code provided' });
+      console.log('❌ No code provided');
+      return reply.redirect('https://localhost:8443/log?error=no_code');
     }
 
     try {
+      console.log('🔄 Échange du code contre un token...');
+
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -130,36 +76,237 @@ fastify.get('/auth/google/callback', async (request, reply) => {
 
       const tokenData = await tokenRes.json();
 
-      if (!tokenRes.ok || !tokenData.access_token) {
-        return reply.status(401).send({ success: false, message: 'Token exchange failed', error: tokenData });
+      if (!tokenRes.ok) {
+        console.error('❌ Erreur token response:', tokenData);
+        return reply.redirect(`https://localhost:8443/log?error=token_exchange_failed`);
       }
+
+      if (!tokenData.access_token) {
+        console.error('❌ Pas de access_token:', tokenData);
+        return reply.redirect('https://localhost:8443/log?error=no_access_token');
+      }
+
+      console.log('✅ Token obtenu, récupération des infos utilisateur...');
+
+      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+        },
+      });
+
+      const userData = await userRes.json();
+
+      if (!userRes.ok) {
+        console.error('❌ Erreur user data:', userData);
+        return reply.redirect('https://localhost:8443/log?error=user_data_failed');
+      }
+
+      console.log('✅ Utilisateur connecté:', userData.email);
+
+      // Génération du JWT
+      const JWT_SECRET = process.env.JWT_SECRET;
+      if (!JWT_SECRET) {
+        console.error('❌ JWT_SECRET not configured');
+        return reply.redirect('https://localhost:8443/log?error=server_config');
+      }
+
+      // ✨ NOUVEAU: Synchroniser l'utilisateur avec la DB
+      try {
+        const dbUser = await syncGoogleUserToDB(userData);
+        console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
+
+        const customToken = jwt.sign(
+          { 
+            id: dbUser.id, // ✨ ID de la DB
+            username: dbUser.username, // ✨ Username de la DB
+            email: dbUser.email, 
+            name: userData.name,
+            google_id: userData.id,
+            picture: userData.picture,
+            isNewUser: dbUser.isNewUser
+          },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+
+        // Redirection avec le token dans l'URL (vers votre frontend HTTPS)
+        const redirectUrl = `https://localhost:8443/auth-success?user=${encodeURIComponent(dbUser.username)}&token=${customToken}`;
+        console.log('🔄 Redirecting to:', redirectUrl);
+        return reply.redirect(redirectUrl);
+
+      } catch (dbError) {
+        console.error('❌ Erreur synchronisation DB:', dbError);
+        // Fallback: créer le JWT sans sync DB
+        const customToken = jwt.sign(
+          { 
+            email: userData.email, 
+            name: userData.name,
+            google_id: userData.id,
+            picture: userData.picture
+          },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+        
+        const redirectUrl = `https://localhost:8443/auth-success?user=${encodeURIComponent(userData.name)}&token=${customToken}`;
+        return reply.redirect(redirectUrl);
+      }
+
+    } catch (err) {
+      console.error('❌ Erreur OAuth2:', err);
+      return reply.redirect('https://localhost:8443/log?error=server_error');
+    }
+  });
+
+  // Step 3: Endpoint POST pour échanger le code (pour les SPA qui gèrent le callback côté client)
+  fastify.post('/auth/google/token', async (request, reply) => {
+    const { code } = request.body;
+
+    console.log('📤 POST /auth/google/token received code:', code ? 'present' : 'missing');
+
+    if (!code) {
+      return reply.status(400).send({ 
+        success: false, 
+        message: 'No code provided' 
+      });
+    }
+
+    try {
+      console.log('🔄 Exchanging code for token...');
+      
+      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: querystring.stringify({
+          code,
+          client_id: GOOGLE_CLIENT_ID,
+          client_secret: GOOGLE_CLIENT_SECRET,
+          redirect_uri: REDIRECT_URI,
+          grant_type: 'authorization_code',
+        }),
+      });
+
+      const tokenData = await tokenRes.json();
+      console.log('📥 Token response status:', tokenRes.status);
+
+      if (!tokenRes.ok || !tokenData.access_token) {
+        console.error('❌ Token exchange failed:', tokenData);
+        return reply.status(401).send({ 
+          success: false, 
+          message: 'Token exchange failed', 
+          error: tokenData 
+        });
+      }
+
+      console.log('✅ Token obtained, getting user info...');
 
       const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
 
       const userData = await userRes.json();
+      console.log('📥 User data response status:', userRes.status);
 
       if (!userRes.ok) {
-        return reply.status(401).send({ success: false, message: 'Failed to get user data' });
+        console.error('❌ Failed to get user data:', userData);
+        return reply.status(401).send({ 
+          success: false, 
+          message: 'Failed to get user data',
+          error: userData
+        });
       }
 
-      const JWT_SECRET = process.env.JWT_SECRET;
-      const customToken = jwt.sign(
-        { email: userData.email, name: userData.name },
-        JWT_SECRET,
-        { expiresIn: '1h' }
-      );
+      console.log('✅ User authenticated:', userData.email);
 
-      return reply.send({
-        success: true,
-        user: userData,
-        token: customToken,
-      });
+      // ✨ NOUVEAU: Synchroniser l'utilisateur avec la DB
+      try {
+        const dbUser = await syncGoogleUserToDB(userData);
+        console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
+
+        const JWT_SECRET = process.env.JWT_SECRET;
+        if (!JWT_SECRET) {
+          console.error('❌ JWT_SECRET not configured');
+          return reply.status(500).send({ 
+            success: false, 
+            message: 'Server configuration error' 
+          });
+        }
+
+        const customToken = jwt.sign(
+          { 
+            id: dbUser.id, 
+            username: dbUser.username, 
+            email: dbUser.email, 
+            name: userData.name,
+            google_id: userData.id,
+            picture: userData.picture,
+            isNewUser: dbUser.isNewUser
+          },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+
+        return reply.send({
+          success: true,
+          user: {
+            id: dbUser.id, // ✨ ID de la DB
+            username: dbUser.username, // ✨ Username de la DB
+            email: dbUser.email,
+            name: userData.name,
+            picture: userData.picture,
+            google_id: userData.id,
+            isNewUser: dbUser.isNewUser
+          },
+          token: customToken,
+        });
+
+      } catch (dbError) {
+        console.error('❌ Erreur synchronisation DB:', dbError);
+        return reply.status(500).send({ 
+          success: false, 
+          message: 'Database synchronization failed',
+          error: dbError.message
+        });
+      }
 
     } catch (err) {
       console.error('❌ Erreur OAuth2:', err);
-      return reply.status(500).send({ success: false, message: 'Internal Server Error' });
+      return reply.status(500).send({ 
+        success: false, 
+        message: 'Internal Server Error',
+        error: err.message
+      });
+    }
+  });
+
+  // Route pour vérifier un token JWT
+  fastify.get('/auth/verify', async (request, reply) => {
+    const authHeader = request.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return reply.status(401).send({ valid: false, message: 'No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    try {
+      const JWT_SECRET = process.env.JWT_SECRET;
+      const decoded = jwt.verify(token, JWT_SECRET);
+      
+      return reply.send({ 
+        valid: true, 
+        user: {
+          id: decoded.id, // ✨ ID de la DB
+          username: decoded.username, // ✨ Username de la DB
+          email: decoded.email,
+          name: decoded.name,
+          google_id: decoded.google_id,
+          picture: decoded.picture
+        }
+      });
+    } catch (err) {
+      console.error('❌ Token verification failed:', err.message);
+      return reply.status(401).send({ valid: false, message: 'Invalid token' });
     }
   });
 }

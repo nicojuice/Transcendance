@@ -13,7 +13,7 @@ fastify.register(fastifyCors, {
 fastify.register(ApiRoutes, { prefix: '/api' })
 
 fastify.register(fastifyJwt, {
-  secret: 'supersecret' // 🔐 à stocker dans .env ou variable Docker
+  secret: process.env.JWT_SECRET
 });
 
 fastify.decorate('authenticate', async function (request, reply) {

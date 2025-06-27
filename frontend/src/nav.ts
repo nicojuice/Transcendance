@@ -22,7 +22,6 @@ export async function navigate(page : string) {
         if (elem)
             elem.innerHTML = html;
         
-        // Initialiser i18n après le chargement du nouveau contenu
         setTimeout(() => {
             updateTexts();
             initializeLanguageSwitcher();
@@ -58,81 +57,124 @@ export async function user_exist(username: string): Promise<boolean> {
   }
 }
 
-// async function default_navigate() {
-//   const username = localStorage.getItem("username");
-//   const isConnected = localStorage.getItem("isConnected");
-
-//   if (isConnected === "true" && username && await user_exist(username)) {
-//     await navigate("profile");
-//   } else {
-//     localStorage.removeItem("isConnected");
-//     localStorage.removeItem("username");
-//     localStorage.removeItem("email");
-//     localStorage.removeItem("token");
-//     await navigate("log");
-//   }
-// }
-
 async function default_navigate() {
   const username = localStorage.getItem("username");
   const isConnected = localStorage.getItem("isConnected");
   const isGoogleConnected = localStorage.getItem("isGoogleConnected");
 
   if (isConnected === "true" && username && await user_exist(username)) {
-    // Si c'est une connexion Google valide, on va direct à profile (même logique pour classique)
     await navigate("profile");
   } else if (isGoogleConnected === "true" && username && await user_exist(username)) {
-    // Exception pour Google : on va aussi direct à profile
     await navigate("profile");
   } else {
-    // Sinon on nettoie et on va à la page log classique
     localStorage.removeItem("isConnected");
     localStorage.removeItem("isGoogleConnected");
     localStorage.removeItem("username");
     localStorage.removeItem("email");
-    localStorage.removeItem("token");
+    localStorage.removeItem("code");
     await navigate("log");
   }
 }
 
-async function handleGoogleAuthCallback() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
-  
-  console.log("🔍 URL params:", window.location.search);
-  console.log("🔍 token received:", token);
+async function handleAuthSuccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const user = urlParams.get("user");
+    const token = urlParams.get("token");
+    
+    console.log("🔍 Auth success params:", { user, token: token ? "present" : "missing" });
 
-  if (!token) {
-    console.log("❌ No token found in URL");
-    return;
-  }
-
-  try {
-    console.log("📤 Sending token request...");
-    const response = await fetch("http://localhost:8095/api/auth/google/callback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-
-    console.log("📥 Response status:", response.status);
-    const data = await response.json();
-    console.log("📥 Response data:", data);
-
-    if (data.success) {
-      console.log("✅ Auth successful");
-      // ... rest of your token
-    } else {
-      console.error("❌ Auth failed:", data.error);
+    if (user && token) {
+        console.log("✅ Storing Google auth data");
+        localStorage.setItem("username", decodeURIComponent(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("isConnected", "true");
+        localStorage.setItem("isGoogleConnected", "true");
+        
+        // Clean URL and navigate to profile
+        window.history.replaceState({}, document.title, window.location.pathname);
+        showToast(`Bienvenue ${decodeURIComponent(user)} !`, 'success');
+        await navigate("profile");
+        return true;
     }
-  } catch (err) {
-    console.error("❌ Network error:", err);
-  }
+    return false;
 }
 
-window.addEventListener("load", async () => {
-  await handleGoogleAuthCallback();
-  await default_navigate();
+export async function handleGoogleAuthCode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+    const error = urlParams.get("error");
+    console.log("🚀 handleGoogleAuthCode called");
+
+    if (error) {
+        console.error("❌ OAuth error:", error);
+        showToast('Erreur d\'authentification', 'error');
+        await navigate("log");
+        return;
+    }
+
+    if (!code) {
+        return false;
+    }
+
+    console.log("🔍 Processing OAuth code:", code.substring(0, 20) + "...");
+
+    try {
+        console.log("📤 Exchanging code for token...");
+        const response = await fetch("http://localhost:8095/api/auth/google/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+        });
+
+        console.log("📥 Token exchange response status:", response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("📥 Token exchange data:", { success: data.success, user: data.user?.name });
+
+        if (data.success && data.token && data.user) {
+            console.log("✅ OAuth successful, storing data");
+            localStorage.setItem("username", data.user.name);
+            localStorage.setItem("email", data.user.email);
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("isConnected", "true");
+            localStorage.setItem("isGoogleConnected", "true");
+            
+            window.history.replaceState({}, document.title, window.location.pathname);
+            showToast(`Bienvenue ${data.user.name} !`, 'success');
+            console.log(localStorage)
+            setTimeout(() => {
+              navigate("profile");
+            }, 500);
+            return true;
+        } else {
+            console.error("❌ Auth failed:", data);
+            showToast('Échec de l\'authentification', 'error');
+            await navigate("log");
+        }
+    } catch (err) {
+        console.error("❌ Network error during token exchange:", err);
+        showToast('Erreur de connexion', 'error');
+        await navigate("log");
+    }
+    
+    return false;
+}
+
+
+window.addEventListener("DOMContentLoaded", async () => {
+    console.log("🚀 App loading...");
+    
+    if (await handleAuthSuccess()) {
+        return;
+    }
+    if (await handleGoogleAuthCode()) {
+        return;
+    }
+    await default_navigate();
 });
 
 (window as any).navigate = navigate;

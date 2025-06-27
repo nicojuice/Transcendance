@@ -23,6 +23,8 @@ async function connect(e: Event): Promise<void> {
     if (response.ok) {
       localStorage.setItem("username", username);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("authMethod", "standard"); 
+      localStorage.setItem("isConnected", "true");
       if ((await is2FA(e)) === false) await navigate("2FA");
       else await send2FACode(username, e);
     } else {
@@ -73,6 +75,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // Bouton de connexion Google
 function loginWithGoogle() {
+  localStorage.setItem("authMethod", "google"); 
   window.location.href = "/api/google-auth";
 }
 

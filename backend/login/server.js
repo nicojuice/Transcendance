@@ -20,7 +20,7 @@ fastify.register(require('fastify-metrics'), {
 
 // JWT (clé secrète à mettre dans une variable d'environnement en prod)
 fastify.register(fastifyJwt, {
-  secret: 'supersecret'
+  secret: process.env.JWT_SECRET
 });
 
 // Décorateur pour protéger les routes (à utiliser dans d'autres services)
