@@ -25,7 +25,6 @@ export async function loadPlayerStats(): Promise<void> {
 
     // Stocke les stats dans le localStorage
     localStorage.setItem('playerStats', JSON.stringify(data));
-    console.log("Stats enregistrées en localStorage:", data);
 
   } catch (error) {
     console.error('Erreur lors de la récupération des stats:', error);
@@ -37,26 +36,52 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPlayerStats();
 });
 
-export function renderPlayerStatsFromLocalStorage(): void {
-  const rawStats = localStorage.getItem('playerStats');
-  if (!rawStats) {
-    console.warn("Aucune stats trouvée en localStorage");
-    return;
+export function renderPlayerStatsFromLocalStorage() {
+  const statsStr = localStorage.getItem('playerStats');
+  if (!statsStr) return; // Rien à afficher
+
+  const stats = JSON.parse(statsStr);
+
+  // Supposons stats a { wins: number, losses: number }
+  const winsCount = document.getElementById('wins-count');
+  const lossesCount = document.getElementById('losses-count');
+  const winRate = document.getElementById('win-rate');
+
+  if (winsCount) winsCount.textContent = stats.wins.toString();
+  if (lossesCount) lossesCount.textContent = stats.losses.toString();
+
+  if (winRate) {
+    const totalGames = stats.wins + stats.losses;
+    const rate = totalGames === 0 ? 0 : Math.round((stats.wins / totalGames) * 100);
+    winRate.textContent = rate + "%";
   }
-
-  const stats: PlayerStats = JSON.parse(rawStats);
-
-  const winsEl  = document.getElementById('wins-count');
-  const totalEl = document.getElementById('losses-count');
-  const rateEl  = document.getElementById('win-rate');
-
-  if (winsEl)  winsEl.textContent  = stats.wins.toString();
-  if (totalEl) totalEl.textContent = stats.losses.toString();
-  if (rateEl)  rateEl.textContent  = `${stats.win_rate}%`;
 }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadPlayerStats();
   renderPlayerStatsFromLocalStorage();
 });
 
+export async function updateGameStats(username: string, isWin: boolean) {
+  console.log('helllo sdsdsd\n');
+  try {
+    const response = await fetch("http://localhost:8098/api/user-management/games_data", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, isWin }),
+    });
+
+    if (!response.ok) {
+      console.error("Erreur lors de la mise à jour des stats");
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Statistiques mises à jour :", data);
+  } catch (err) {
+    console.error("Erreur réseau stats:", err);
+  }
+}

@@ -1,5 +1,5 @@
-//import { navigate } from "../nav";
-//import { showToast } from "../showToast";
+import { navigate } from "../nav";
+import { showToast } from "../showToast";
 
 export enum Winner {
   PLAYER1 = "PLAYER1",
@@ -80,9 +80,51 @@ export class Room {
   }
 };
 
-/*
+// export async function startGameAndNavigate(GameName: string) {
+//   const playersElement = document.getElementById("players") as HTMLSelectElement | null;
+//   const customElement = document.getElementById("custom") as HTMLSelectElement | null;
+//   console.log(customElement, "  avec ou pas custom");
 
-/// A retirer ? !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//   if (!playersElement || !customElement) {
+//     throw new Error("Impossible de trouver les éléments 'players' ou 'custom'");
+//   }
+  
+//   const numPlayers = Number(playersElement.value);
+//   const isCustom = customElement.value === "yes";
+//   const Username = localStorage.getItem("username");
+//   console.log(Username, " <-- le nom de l user");
+
+//   const room = new Room();
+
+//   try {
+//     const res = await fetch(
+//       `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(Username || "")}`
+//     );
+//     if (!res.ok) throw new Error("Avatar not found");
+
+//     const blob = await res.blob();
+//     const imageUrl = URL.createObjectURL(blob);
+
+//     room.addPlayer(Username || "Joueur 1", imageUrl);
+//   } catch (err) {
+//     console.error("Error fetching avatar:", err);
+//     room.addPlayer(Username || "Joueur 1"); // Ajouter un joueur sans avatar
+//   }
+  
+//   if (numPlayers === 1) {
+//     room.withIA = true;
+//     room.addPlayer("IA");
+//   } else {
+//     room.withIA = false;
+//     room.addPlayer("Guest");
+//   }
+
+//   room.gameName = GameName;
+//   room.withCustom = isCustom;
+//   room.saveToLocalStorage();
+
+//   navigate("game");
+// }
 
 function setupModeSelectors() {
   const cards = document.querySelectorAll<HTMLElement>('.game-card');
@@ -151,4 +193,58 @@ export async function createRoomAndNavigate(game: string, playerNames: string[],
 
 }
 
-(window as any).setupModeSelectors = setupModeSelectors;*/
+// ------------------------- GAME START (LOCAL UNIQUEMENT) -------------------------
+export async function startGameAndNavigate(game: string) {
+  const card = document.getElementById(`${game}-card`);
+  if (!card) {
+    console.error(`Impossible de trouver le game-card : ${game}-card`);
+    return;
+  }
+  
+  const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
+
+  if (!selectedMode) {
+    showToast("Veuillez sélectionner un mode de jeu.", "error");
+    return;
+  }
+  
+  if (selectedMode === 'ia' && game == "pacman") {
+    showToast("IA is coming", "error");
+    return;
+  }
+  if (selectedMode === 'tournament') {
+    showToast("Tournament is coming", "error");
+    return;
+  }
+
+  const username = localStorage.getItem("username") || "Invité";
+  const room = new Room();
+  room.gameName = game;
+  try {
+    const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
+    if (!res.ok) throw new Error("Avatar not found");
+
+    const blob = await res.blob();
+    const imageUrl = URL.createObjectURL(blob);
+    room.addPlayer(username, imageUrl);
+  } catch (err) {
+    console.error("Erreur avatar:", err);
+    room.addPlayer(username);
+  }
+  if (selectedMode === 'ia')
+  {
+    room.withIA = true;
+    room.addPlayer("IA");
+  }
+  else
+  {
+    room.withIA = false;
+    room.addPlayer("Guest");
+  }
+  room.saveToLocalStorage();
+  navigate("game");
+}
+
+(window as any).setupModeSelectors = setupModeSelectors;
+(window as any).createRoomAndNavigate = createRoomAndNavigate;
+(window as any).startGameAndNavigate = startGameAndNavigate;

@@ -263,20 +263,28 @@
                 </div>
               </div>
 
+              <input
+                id="custom-avatar-upload"
+                type="file"
+                accept="image/*"
+                onchange="uploadCustomAvatar(event)"
+                class="hidden"
+              />
+
+              <!-- Label qui déclenche l'ouverture du fichier -->
               <label
                 for="custom-avatar-upload"
                 class="text-white text-center border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition mt-8"
                 data-i18n="profile.import"
               >
                 Importer
-                <input
-                  id="custom-avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  onchange="uploadCustomAvatar(event)"
-                  class="hidden"
-                />
               </label>
+
+              <!-- Image pour prévisualisation -->
+              <img
+                id="avatar-preview"
+                class=""
+              />
             </div>
           </div>
         </div>
@@ -392,16 +400,26 @@
           <!-- <button onclick="openModalWithUserData()" class="px-4 py-2 bg-blue-600 text-white rounded">Modifier profil</button> -->
 
           <div
-            class="mt-8 mb-10 flex flex-row p-4 rounded items-center justify-center"
+            class="flex flex-col mt-8 mb-8 p-4 rounded items-center justify-center"
           >
             <button
-              class="border border-neon text-black px-8 rounded py-4 animate-flashy-neon"
+              class="border border-neon mb-8 text-black px-8 rounded py-4 animate-flashy-neon"
               onclick="navigate('game-choice')"
               data-i18n="profile.play"
             >
-              JOUER
+              VOIR LES JEUX
+            </button>
+
+            <button
+              onclick="openFriendsModal()"
+              class="mt-4 border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
+              data-i18n="profile.friends"
+            >
+              MES AMIS
             </button>
           </div>
+
+          <div class="flex flex-row mt-2 items-center ml-10"></div>
 
           <div
             class="flex justify-center items-center text-white text-xl space-x-8"
@@ -435,7 +453,7 @@
             </div>
           </div>
 
-          <div class="flex flex-row mt-2 items-center ml-10">
+          <!-- <div class="flex flex-row mt-2 items-center ml-10">
             <button
               onclick="openFriendsModal()"
               class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
@@ -443,17 +461,7 @@
             >
               Amis
             </button>
-
-            <div class="p-4 rounded items-center">
-              <button
-                onclick="seeMatchHistory()"
-                class="border border-white px-4 py-2 rounded hover:bg-white hover:text-black transition"
-                data-i18n="profile.matchHistory"
-              >
-                Historique des matchs
-              </button>
-            </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

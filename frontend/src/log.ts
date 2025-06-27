@@ -109,7 +109,7 @@ window.addEventListener("load", function () {
             window.location.pathname
           );
           // Rediriger vers le dashboard
-          window.location.href = "/dashboard";
+          window.location.href = "profile";
         } else {
           console.error("Erreur auth:", data.error);
           showToast("Erreur lors de l'authentification", "error");

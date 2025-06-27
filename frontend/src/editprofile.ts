@@ -192,8 +192,8 @@ export async function fetchProfile(): Promise<void> {
   const token = localStorage.getItem("token");
   const storedUsername = localStorage.getItem("username");
 
-  //console.log("fetchProfile - Token:", token ? "présent" : "absent");
-  //console.log("fetchProfile - Username stocké:", storedUsername);
+  // console.log("fetchProfile - Token:", token ? "présent" : "absent");
+  // console.log("fetchProfile - Username stocké:", storedUsername);
 
   if (!token) {
     console.warn("Utilisateur non authentifié - pas de token");

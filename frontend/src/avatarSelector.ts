@@ -70,16 +70,20 @@ function uploadCustomAvatar(event: Event): void {
 
   const reader = new FileReader();
   reader.onload = function () {
-    const avatarPreview = document.getElementById(
-      "avatar-preview"
-    ) as HTMLImageElement | null;
+    console.log("reader loaded file:", reader.result);
+
+    const avatarPreview = document.getElementById("avatar-preview") as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === "string") {
       avatarPreview.src = reader.result;
+      console.log("Avatar preview updated.");
       sendImgToDB(file, null);
+    } else {
+      console.warn("Avatar preview not found or invalid reader result");
     }
   };
   reader.readAsDataURL(file);
 }
+
 
 let selectedAvatar: string = "";
 
@@ -122,6 +126,58 @@ async function confirmAvatarSelection(): Promise<void> {
   sendImgToDB(await filenameToFileObject(selectedAvatar as string), null);
 }
 
+
+async function fetchUserAvatar(username: string): Promise<string> {
+  try {
+    const response = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
+    if (!response.ok) {
+      return "/assets/default-avatar.png";
+    }
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (err) {
+    console.error("Erreur fetch avatar:", err);
+    return "/assets/default-avatar.png";
+  }
+}
+
+
+async function updateAvatarForCurrentUser() {
+  const username = localStorage.getItem("username");
+  if (!username) return;
+
+  const avatarUrl = await fetchUserAvatar(username);
+
+  // Met à jour l’image dans le DOM (exemple #user-avatar)
+  const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+  if (avatarImg) {
+    avatarImg.src = avatarUrl;
+  }
+
+  // Aussi mettre à jour preview si tu veux
+  const previewImg = document.getElementById("avatar-preview") as HTMLImageElement | null;
+  if (previewImg) {
+    previewImg.src = avatarUrl;
+  }
+}
+
+// Appelle ça au chargement de ta page (ou après login)
+updateAvatarForCurrentUser();
+
+function safeUpdateAvatar() {
+  const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+  if (avatarImg) {
+    updateAvatarForCurrentUser();
+  } else {
+    // Réessaie dans 100ms
+    setTimeout(safeUpdateAvatar, 100);
+  }
+}
+
+safeUpdateAvatar();
+
+
+(window as any).fetchUserAvatar = fetchUserAvatar;
 (window as any).selectAvatar = selectAvatar;
 (window as any).confirmAvatarSelection = confirmAvatarSelection;
 (window as any).toggleAvatarDropdown = toggleAvatarDropdown;
