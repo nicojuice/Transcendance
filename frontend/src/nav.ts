@@ -147,26 +147,60 @@ export async function advanceTournamentMatchId(): Promise<number> {
   return data.matchid;
 }
 
-export async function navigateOrTournament() {
-  // 1) Charger la room depuis localStorage
+// export async function navigateOrTournament() {
+//   // 1) Charger la room depuis localStorage
+//   const room = new ROOM.Room();
+//   room.loadFromLocalStorage();
+//   console.log("la room apres la partie", room);
+
+//   // 2) Vérifier le flag
+//   if (room.isTournament) {
+//     let nextMatchId: number;
+//     try {
+//       // Incrémente matchId sur le serveur
+//       nextMatchId = await advanceTournamentMatchId();
+//       console.log("MatchId avancé à", nextMatchId);
+//     } catch (err) {
+//       console.error("Erreur advanceTournamentMatchId:", err);
+//     }
+//     if(nextMatchId > 3)
+//     {
+//       navigate("tournament-result");
+//       return;
+//     }
+//     // Puis redirige vers la page tournoi
+//     navigate("tournament");
+//   } else {
+//     // C'était un versus (ou rien)
+//     navigate("profile");
+//   }
+// }
+
+export async function navigateOrTournament(): Promise<void> {
+  // Charger la room depuis le localStorage
   const room = new ROOM.Room();
   room.loadFromLocalStorage();
-  console.log("la room apres la partie", room);
 
-  // 2) Vérifier le flag
-  if (room.isTournament) {
-    try {
-      // Incrémente matchId sur le serveur
-      const nextMatchId = await advanceTournamentMatchId();
-      console.log("MatchId avancé à", nextMatchId);
-    } catch (err) {
-      console.error("Erreur advanceTournamentMatchId:", err);
+  // Si ce n’est pas un tournoi, on retourne direct au profil
+  if (!room.isTournament) {
+    return navigate("profile");
+  }
+
+  // Sinon, on avance le match sur le serveur et on redirige
+  try {
+    const nextMatchId = await advanceTournamentMatchId();
+    console.log("MatchId avancé à", nextMatchId);
+
+    if (nextMatchId > 3) {
+      // Plus de demi-finales ni de finale → tournoi terminé
+      navigate("tournament-result");
+    } else {
+      // On recharge la page tournoi pour le prochain match
+      navigate("tournament");
     }
-    // Puis redirige vers la page tournoi
-    navigate("tournament");
-  } else {
-    // C'était un versus (ou rien)
-    navigate("profile");
+  } catch (err) {
+    console.error("Erreur advanceTournamentMatchId :", err);
+    showToast("Impossible de passer au match suivant.", "error");
   }
 }
 
@@ -202,7 +236,7 @@ export async function navigate(page : string) {
         }
         
         moveBall();
-        
+              
     } catch (error) {
         console.error("Erreur de chargement :", error);
         const elem = document.getElementById('screen-content');
