@@ -8,13 +8,13 @@ async function getToken(): Promise<string | null> {
   return localStorage.getItem('token');
 }
 
-export async function loadPlayerStats(): Promise<void> {
+export async function loadPlayerStats(): Promise<PlayerStats | null> {
   const username = localStorage.getItem('username');
   const token = await getToken();
 
   if (!username || !token) {
     console.error('Aucun username ou token trouvé en localStorage');
-    return;
+    return null;
   }
 
   try {
@@ -33,17 +33,15 @@ export async function loadPlayerStats(): Promise<void> {
 
     const data: PlayerStats = await response.json();
     localStorage.setItem('playerStats', JSON.stringify(data));
+    return data;
 
   } catch (error) {
     console.error('Erreur lors de la récupération des stats:', error);
+    return null;
   }
 }
 
-export function renderPlayerStatsFromLocalStorage() {
-  const statsStr = localStorage.getItem('playerStats');
-  if (!statsStr) return;
-
-  const stats = JSON.parse(statsStr);
+export function renderPlayerStats(stats: PlayerStats) {
   const winsCount = document.getElementById('wins-count');
   const lossesCount = document.getElementById('losses-count');
   const winRate = document.getElementById('win-rate');
@@ -58,9 +56,29 @@ export function renderPlayerStatsFromLocalStorage() {
   }
 }
 
+export function onProfilePageShow() {
+  loadAndRenderStats();
+}
+
+async function loadAndRenderStats() {
+  const stats = await loadPlayerStats();
+  if (stats) {
+    renderPlayerStats(stats);
+  } else {
+    const stored = localStorage.getItem('playerStats');
+    if (stored) renderPlayerStats(JSON.parse(stored));
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadPlayerStats();
-  renderPlayerStatsFromLocalStorage();
+  const stats = await loadPlayerStats();
+  if (stats) {
+    renderPlayerStats(stats);
+  } else {
+    const stored = localStorage.getItem('playerStats');
+    if (stored) renderPlayerStats(JSON.parse(stored));
+  }
 });
 
 export async function updateGameStats(username: string, isWin: boolean) {

@@ -323,3 +323,8 @@
   border: 1px solid #4b5563;
   width: 100%;
 }
+
+.custom-number-font {
+  font-family: 'Courier New', Courier, monospace; 
+  font-size: 1.125rem;
+}

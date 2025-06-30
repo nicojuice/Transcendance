@@ -6,7 +6,7 @@ import { navigate } from "../nav";
 import { getText } from "../i18n";
 import { updateGameStats } from "../loadPlayerData";
 import { loadPlayerStats } from "../loadPlayerData";
-import { renderPlayerStatsFromLocalStorage } from "../loadPlayerData";
+import { renderPlayerStats } from "../loadPlayerData";
 
 export class GameEngine extends BABYLON.Engine {
   canvas: HTMLCanvasElement;
@@ -109,7 +109,12 @@ async EndGame() {
     if (currentUser) {
       await updateGameStats(currentUser, true);
       await loadPlayerStats(); // recharge dans localStorage
-      renderPlayerStatsFromLocalStorage(); // met à jour l’affichage
+
+      const statsStr = localStorage.getItem('playerStats');
+      if (statsStr) {
+        const stats = JSON.parse(statsStr);
+        renderPlayerStats(stats);
+      }
     }
     setTimeout(() => navigate("win"), 0);
   } else if (this.room.players[0].score < this.room.players[1].score) {
@@ -121,7 +126,11 @@ async EndGame() {
     if (currentUser) {
       await updateGameStats(currentUser, false);
       await loadPlayerStats();
-      renderPlayerStatsFromLocalStorage();
+      const statsStr = localStorage.getItem('playerStats');
+      if (statsStr) {
+        const stats = JSON.parse(statsStr);
+        renderPlayerStats(stats);
+      }
     }
     setTimeout(() => navigate("loose"), 0);
   }

@@ -5,7 +5,8 @@ import { updateConnectionStatus } from './status'
 import { showToast } from './showToast'
 import { EventManager } from './eventManager';
 import { initializeLanguageSwitcher } from './i18n';
-import { updateTexts } from './i18n'
+import { updateTexts } from './i18n';
+import { onProfilePageShow } from './loadPlayerData';
 import './i18n';
 
 export const onNavigate = new EventManager();
@@ -28,6 +29,7 @@ export async function navigate(page: string) {
 
     setTimeout(() => {
       updateTexts();
+      onProfilePageShow();
       initializeLanguageSwitcher();
     }, 50);
 

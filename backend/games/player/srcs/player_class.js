@@ -23,4 +23,3 @@ async function playerRoutes(fastify, options) {
 }
 
 module.exports = playerRoutes;
-module.exports.Player = Player;

@@ -28,8 +28,13 @@ export class GameManager
     async StartVersus()
     {
         const username = this.players[0];
+        const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`);
+            const res = await fetch(`http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (!res.ok) throw new Error("Avatar not found");
 
             const blob = await res.blob();
