@@ -23,7 +23,7 @@ i18n
     });
 
 export function getCurrentLanguage(): string {
-    return i18n.language.split('-')[0]; // Retourne la langue sans le code
+    return i18n.language.split('-')[0];
 }
 
 export function getText(key: string): string {
@@ -48,17 +48,13 @@ export function updateTexts() {
 export function initializeLanguageSwitcher() {
     const switcher = document.getElementById('language-switcher') as HTMLSelectElement | null;
     if (switcher) {
-        // Récupérer la langue actuellement active dans i18n
         const currentLang = i18n.language.split('-')[0];
-        
-        // Mettre à jour la valeur du sélecteur pour correspondre à la langue active
+    
         switcher.value = ['en', 'fr', 'es'].includes(currentLang) ? currentLang : 'fr';
         
-        // Supprimer les anciens event listeners pour éviter les doublons
         const newSwitcher = switcher.cloneNode(true) as HTMLSelectElement;
         switcher.parentNode?.replaceChild(newSwitcher, switcher);
         
-        // Remettre la bonne valeur après le clonage
         newSwitcher.value = ['en', 'fr', 'es'].includes(currentLang) ? currentLang : 'fr';
         
         newSwitcher.addEventListener('change', (e) => {
@@ -70,7 +66,6 @@ export function initializeLanguageSwitcher() {
 
 i18n.on('languageChanged', updateTexts);
 
-// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     initializeLanguageSwitcher();
 });

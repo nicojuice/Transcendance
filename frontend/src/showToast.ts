@@ -6,7 +6,7 @@ export function showToast(message: string, type: 'success' | 'error' = 'success'
 
   const baseClasses = [
     'fixed',
-    'top-[-100px]',               // point de départ
+    'top-[-100px]',
     'left-1/2',
     'transform',
     '-translate-x-1/2',
@@ -22,7 +22,7 @@ export function showToast(message: string, type: 'success' | 'error' = 'success'
     'ease-out',
     'opacity-0',
     'scale-95',
-    'border', // ajout de la bordure
+    'border',
   ];
 
   const typeClasses =

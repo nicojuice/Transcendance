@@ -14,13 +14,13 @@ export async function fetchProfileWL(): Promise<void> {
       }
     );
 
-    // if (!response.ok) {
-    //   if (response.status === 401) {
-    //     console.error("Token invalide ou expiré");
-    //     return;
-    //   }
-    //   throw new Error(`HTTP ${response.status}`);
-    // }
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.error("Token invalide ou expiré");
+        return;
+      }
+      throw new Error(`HTTP ${response.status}`);
+    }
 
     const data = await response.json();
     if (!data || typeof data !== "object") {

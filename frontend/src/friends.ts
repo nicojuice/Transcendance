@@ -2,8 +2,13 @@ import { navigate } from "./nav";
 import { showToast } from "./showToast";
 import "./i18n";
 
+async function getToken(): Promise<string | null> {
+  return localStorage.getItem("token");
+}
+
 async function addFriend(add: string): Promise<void> {
   const username = localStorage.getItem("username");
+  const token = await getToken();
 
   if (!add || add.trim() === "") {
     showToast("Veuillez entrer un nom d'utilisateur", "error");
@@ -20,7 +25,10 @@ async function addFriend(add: string): Promise<void> {
   try {
     const response = await fetch("http://localhost:8088/api/add-friends", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ username, friend: add }),
     });
 
@@ -44,15 +52,23 @@ async function addFriend(add: string): Promise<void> {
 
 export async function getFriends(): Promise<void> {
   const username = localStorage.getItem("username");
-  if (!username) {
+  const token = await getToken();
+
+  if (!username || !token) {
     await navigate("log");
     return;
   }
 
   try {
     const response = await fetch(
-      `http://localhost:8088/api/get-friends?username=${encodeURIComponent(username)}`
+      `http://localhost:8088/api/get-friends?username=${encodeURIComponent(username)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+
     if (!response.ok) throw new Error(`Erreur API : ${response.status}`);
 
     const data = await response.json();
@@ -82,38 +98,21 @@ export async function getFriends(): Promise<void> {
         flex items-center justify-between gap-4 transition-all
       `;
 
-      // Avatar + statut
       const avatarDiv = document.createElement("div");
       avatarDiv.textContent = friend.charAt(0).toUpperCase();
       avatarDiv.className =
         "w-9 h-9 rounded-full flex items-center justify-center font-bold";
 
       if (friendStatus === 1) {
-        avatarDiv.classList.add(
-          "text-neon",
-          "border",
-          "border-neon",
-          "bg-zinc-800"
-        );
+        avatarDiv.classList.add("text-neon", "border", "border-neon", "bg-zinc-800");
       } else if (friendStatus === 0) {
-        avatarDiv.classList.add(
-          "text-gray-400",
-          "border",
-          "border-gray-500",
-          "bg-zinc-700"
-        );
+        avatarDiv.classList.add("text-gray-400", "border", "border-gray-500", "bg-zinc-700");
       } else {
-        avatarDiv.classList.add(
-          "text-white/40",
-          "border",
-          "border-white/10",
-          "bg-zinc-700"
-        );
+        avatarDiv.classList.add("text-white/40", "border", "border-white/10", "bg-zinc-700");
       }
 
       const statusDot = document.createElement("span");
-      statusDot.className =
-        "w-3 h-3 rounded-full flex-shrink-0 absolute bottom-0 right-0 border-2";
+      statusDot.className = "w-3 h-3 rounded-full flex-shrink-0 absolute bottom-0 right-0 border-2";
       if (friendStatus === 1) {
         statusDot.classList.add("bg-neon", "border-white/80");
       } else if (friendStatus === 0) {
@@ -129,14 +128,12 @@ export async function getFriends(): Promise<void> {
 
       const nameSpan = document.createElement("span");
       nameSpan.className = "text-sm font-semibold";
-      if (friendStatus === 1) {
-        nameSpan.classList.add("text-white");
-      } else if (friendStatus === 0) {
-        nameSpan.classList.add("text-gray-400");
-      } else {
-        nameSpan.classList.add("text-white/40");
-      }
       nameSpan.textContent = friend;
+      nameSpan.classList.add(
+        friendStatus === 1 ? "text-white" :
+        friendStatus === 0 ? "text-gray-400" :
+        "text-white/40"
+      );
 
       const left = document.createElement("div");
       left.className = "flex items-center gap-3";
@@ -159,7 +156,12 @@ export async function getFriends(): Promise<void> {
         try {
           const res = await fetch(
             `http://localhost:8088/api/remove-friend/${username}/${friend}`,
-            { method: "DELETE" }
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
 
           if (res.ok) {
@@ -186,9 +188,15 @@ export async function getFriends(): Promise<void> {
 }
 
 async function getFriendStatus(friendUsername: string): Promise<number | null> {
+  const token = await getToken();
   try {
     const response = await fetch(
-      `http://localhost:8094/api/status?username=${encodeURIComponent(friendUsername)}`
+      `http://localhost:8094/api/status?username=${encodeURIComponent(friendUsername)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     if (!response.ok) {
       console.warn(
@@ -219,7 +227,6 @@ async function openFriendsModal() {
   popup.style.cursor = "move";
 
   popup.onmousedown = (e) => {
-    // Empêche le drag quand on clique sur un bouton (ex: bouton "fermer")
     if ((e.target as HTMLElement).closest("button")) return;
 
     isDragging = true;
@@ -232,7 +239,6 @@ async function openFriendsModal() {
       let newLeft = e.clientX - offsetX;
       let newTop = e.clientY - offsetY;
 
-      // Rester dans l’écran
       const maxLeft = window.innerWidth - popup.offsetWidth;
       const maxTop = window.innerHeight - popup.offsetHeight;
 

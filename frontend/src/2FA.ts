@@ -2,15 +2,21 @@ import { navigate } from "./nav";
 import { showToast } from "./showToast";
 import './i18n';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+  };
+}
 
 export async function send2FACode(username: string, e: Event): Promise<void> {
   e.preventDefault();
 
-  // send 2FA code
   await navigate("2FAcode");
   const response = await fetch("http://localhost:8100/api/send-2fa-code", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ username }),
   });
   if (!response.ok) {
@@ -48,7 +54,7 @@ async function check2FACode(e: Event): Promise<void> {
   const code = (document.getElementById("2FA-code") as HTMLInputElement).value;
   const response = await fetch("http://localhost:8100/api/verify-2fa", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ username, code }),
   });
   if (!response.ok) {
@@ -72,6 +78,7 @@ export async function is2FA(e: Event): Promise<Boolean | null> {
     `http://localhost:8100/api/is-2fa-active/${encodeURIComponent(username)}`,
     {
       method: "GET",
+      headers: getAuthHeaders(),
     }
   );
   if (!response.ok) {
@@ -79,10 +86,6 @@ export async function is2FA(e: Event): Promise<Boolean | null> {
     return false;
   }
   const boolean = (await response.json()).enabled;
-  //if (boolean === false)
-  //alert("false");
-  //else if (boolean === true)
-  //alert("true");
   return boolean;
 }
 
@@ -98,15 +101,27 @@ async function active2FA(e: Event): Promise<void> {
 
   const response = await fetch("http://localhost:8100/api/active-2fa", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ username }),
   });
   if (!response.ok) {
     showToast("Erreur serveur", "error");
     return;
   }
-  showToast("2FA actived!", "success");
-  navigate("profile");
+
+  const sendCodeResponse = await fetch("http://localhost:8100/api/send-2fa-code", {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ username }),
+  });
+
+  if (!sendCodeResponse.ok) {
+    showToast("Erreur envoi code 2FA", "error");
+    return;
+  }
+
+  showToast("2FA activé. Code envoyé par email.", "success");
+  await navigate("2FAcode");
 }
 
 (window as any).is2FA = is2FA;

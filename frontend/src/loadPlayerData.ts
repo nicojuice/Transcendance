@@ -1,29 +1,37 @@
-
 interface PlayerStats {
   wins: number;
   losses: number;
   win_rate: number;
 }
 
+async function getToken(): Promise<string | null> {
+  return localStorage.getItem('token');
+}
+
 export async function loadPlayerStats(): Promise<void> {
-  // Récupère le username depuis le localStorage
   const username = localStorage.getItem('username');
-  if (!username) {
-    console.error('Aucun username trouvé en localStorage');
+  const token = await getToken();
+
+  if (!username || !token) {
+    console.error('Aucun username ou token trouvé en localStorage');
     return;
   }
 
   try {
     const response = await fetch(
-      `http://localhost:8098/api/user-management/games_data/${encodeURIComponent(username)}`
+      `http://localhost:8098/api/user-management/games_data/${encodeURIComponent(username)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+
     if (!response.ok) {
       throw new Error(`Erreur ${response.status} lors de la récupération des stats`);
     }
 
     const data: PlayerStats = await response.json();
-
-    // Stocke les stats dans le localStorage
     localStorage.setItem('playerStats', JSON.stringify(data));
 
   } catch (error) {
@@ -31,18 +39,11 @@ export async function loadPlayerStats(): Promise<void> {
   }
 }
 
-// Appel automatique une fois le DOM chargé
-document.addEventListener('DOMContentLoaded', () => {
-  loadPlayerStats();
-});
-
 export function renderPlayerStatsFromLocalStorage() {
   const statsStr = localStorage.getItem('playerStats');
-  if (!statsStr) return; // Rien à afficher
+  if (!statsStr) return;
 
   const stats = JSON.parse(statsStr);
-
-  // Supposons stats a { wins: number, losses: number }
   const winsCount = document.getElementById('wins-count');
   const lossesCount = document.getElementById('losses-count');
   const winRate = document.getElementById('win-rate');
@@ -57,19 +58,25 @@ export function renderPlayerStatsFromLocalStorage() {
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', async () => {
   await loadPlayerStats();
   renderPlayerStatsFromLocalStorage();
 });
 
 export async function updateGameStats(username: string, isWin: boolean) {
-  console.log('helllo sdsdsd\n');
+  const token = await getToken();
+
+  if (!token) {
+    console.error("Token d'authentification manquant");
+    return;
+  }
+
   try {
     const response = await fetch("http://localhost:8098/api/user-management/games_data", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ username, isWin }),
     });

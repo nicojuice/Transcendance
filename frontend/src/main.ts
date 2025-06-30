@@ -13,7 +13,6 @@ import './2FA';
 import './status';
 import './showToast';
 import './google';
-import './authCallback';
 import './i18n';
 import './loadPlayerData';
 import './selectGame';

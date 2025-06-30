@@ -5,31 +5,25 @@ import { editPass } from "./editprofile";
 import "./i18n";
 import { showToast } from "./showToast";
 
-// export function initProfilePage(): void {
-// 	const storedUsername = localStorage.getItem('username');
-// 	if (storedUsername) {
-// 		const displayUsername = document.getElementById('display-username');
-// 		if (displayUsername) {
-// 			displayUsername.textContent = storedUsername;
-// 		}
-// 	}
-// }
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 async function displayAvatar(username: string): Promise<void> {
   try {
-    //console.log("display avatar");
+    const headers = await getAuthHeaders();
     const res = await fetch(
-      `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`
+      `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`,
+      { headers }
     );
     if (!res.ok) throw new Error("Avatar not found");
 
     const blob = await res.blob();
     const imageUrl = URL.createObjectURL(blob);
 
-    // Exemple d’utilisation : afficher l’image dans une balise <img id="avatar">
     const img = document.getElementById("avatar-preview") as HTMLImageElement;
     if (img) {
-      //console.log("image set");
       img.src = imageUrl;
     }
   } catch (err) {
@@ -52,24 +46,20 @@ export async function initProfilePage(): Promise<void> {
 
 async function openModalWithUserData(): Promise<void> {
   await fetchProfile();
+
   const username =
     (document.getElementById("username") as HTMLInputElement)?.value || "";
   const email =
     (document.getElementById("email") as HTMLInputElement)?.value || "";
 
-  (document.getElementById("modal-username") as HTMLInputElement).value =
-    username;
+  (document.getElementById("modal-username") as HTMLInputElement).value = username;
   (document.getElementById("modal-email") as HTMLInputElement).value = email;
   (document.getElementById("modal-password") as HTMLInputElement).value = "";
-  (
-    document.getElementById("modal-confirm-password") as HTMLInputElement
-  ).value = "";
+  (document.getElementById("modal-confirm-password") as HTMLInputElement).value = "";
 
   const modal = document.getElementById("editModal") as HTMLElement | null;
   const popup = modal?.querySelector("#popup-profile") as HTMLElement | null;
-  const handle = document.getElementById(
-    "drag-handle-profile"
-  ) as HTMLElement | null;
+  const handle = document.getElementById("drag-handle-profile") as HTMLElement | null;
 
   if (!modal || !popup || !handle) return;
 
@@ -127,18 +117,13 @@ async function saveProfileChanges() {
     return;
   }
 
-  // Pour mettre à jour le username dans l'input principal (visible sur la page)
   (document.getElementById("username") as HTMLInputElement).value = username;
   (document.getElementById("email") as HTMLInputElement).value = email;
 
   try {
-    // Appel à editUser() qui utilise l'input principal "username"
     await editUser();
-
-    // Appel à editEmail avec le nouvel email
     await editEmail(email);
 
-    // Si mot de passe renseigné, changement de mot de passe
     if (password !== "") {
       await editPass(password);
     }
@@ -165,15 +150,9 @@ function showPasswordEdit(): void {
 function cancelPasswordEdit(): void {
   const passwordView = document.getElementById("password-view");
   const passwordEdit = document.getElementById("password-edit");
-  const oldPassword = document.getElementById(
-    "old-password"
-  ) as HTMLInputElement | null;
-  const newPassword = document.getElementById(
-    "new-password"
-  ) as HTMLInputElement | null;
-  const confirmPassword = document.getElementById(
-    "confirm-password"
-  ) as HTMLInputElement | null;
+  const oldPassword = document.getElementById("old-password") as HTMLInputElement | null;
+  const newPassword = document.getElementById("new-password") as HTMLInputElement | null;
+  const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement | null;
 
   if (passwordEdit && passwordView) {
     passwordEdit.classList.add("hidden");

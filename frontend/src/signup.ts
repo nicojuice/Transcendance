@@ -54,7 +54,6 @@ async function register(e: Event): Promise<void> {
   }
 }
 
-// Expose function to global scope
 (window as any).register = register;
 
 window.addEventListener("DOMContentLoaded", () => {

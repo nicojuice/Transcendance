@@ -1,5 +1,3 @@
-// import { IsWindowObjectExist } from "@babylonjs/core";
-
 let x: number = window.innerWidth / 2.;
 let y: number = window.innerHeight / 2.;
 let dx: number = 1.5;
