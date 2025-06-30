@@ -1,39 +1,48 @@
+// server.js
+require('dotenv').config();
 const fastify = require('fastify')({ logger: true });
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
 const multipart = require('@fastify/multipart');
-const Player = require('./srcs/player_class'); // supposé être une classe Player
+const fastifyJwt = require('@fastify/jwt');
+const playerRoutes = require('./srcs/player_class');
 
 let db;
-
-fastify.register(fastifyCors, {
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
-});
 
 async function initDb() {
   db = await open({
     filename: '/data/data.db',
     driver: sqlite3.Database,
   });
+  fastify.decorate('db', db);
 }
 
-fastify.get('/api/player_class', async (request, reply) => {
-  try {
-    const users = await db.all('SELECT * FROM users');
-    const players = users.map(user => new Player(user));
-    return players; // Fastify stringify automatiquement
-  } catch (err) {
-    fastify.log.error(err);
-    return reply.status(500).send({ error: 'Erreur serveur' });
-  }
+fastify.register(fastifyCors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
 fastify.register(metricsPlugin, {
   endpoint: '/metrics',
 });
+
+fastify.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET
+});
+
+fastify.decorate('authenticate', async function(request, reply) {
+  try {
+    await request.jwtVerify();
+    console.log('✅ Token valide pour', request.user);
+  } catch (err) {
+    console.error('❌ Erreur auth:', err);
+    reply.send(err);
+  }
+});
+
+fastify.register(playerRoutes);
 
 const host = '0.0.0.0';
 const port = 8092;
@@ -50,4 +59,3 @@ async function start() {
 }
 
 start();
-

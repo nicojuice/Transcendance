@@ -9,5 +9,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/jwt": "^9.1.0",
+    "dotenv": "^17.0.0"
+  }
 }
