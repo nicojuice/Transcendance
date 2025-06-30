@@ -1,5 +1,6 @@
 import * as ROOM from "./games/room";
 import * as GameSys from "./games/gamesys";
+import { showToast } from "./showToast";
 
 function launchTournamentGame(gameId: string): void {
   const inputs = document.querySelectorAll<HTMLInputElement>(`#${gameId}-tournament-form input`);
@@ -30,29 +31,36 @@ async function handleStartClick(gameId: string): Promise<void> {
 
   const selectedMode = modeSelector.value;
 
+  // 🔒 Vérification : aucun mode sélectionné
+  if (!selectedMode) {
+    showToast("Veuillez sélectionner un mode de jeu.", "error");
+    return;
+  }
+
   const cardBack = card.querySelector<HTMLElement>('.card-back');
   const tournamentForm = document.getElementById(`${gameId}-tournament-form`);
+  
   if (selectedMode === 'tournament') {
     cardBack?.classList.add('hidden');
     tournamentForm?.classList.remove('hidden');
   } else {
     const room = new ROOM.Room();
     room.gameName = gameId;
-    const card = document.getElementById(`${gameId}-card`);
-    if (!card) {
-      console.error(`Impossible de trouver le game-card : ${gameId}-card`);
-      return;
-    }
+
     const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
     room.withIA = (selectedMode === 'ia');
+
     const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
     room.withCustom = bonus;
+
     let players: string[] = [];
     players.push(localStorage.getItem("username") || "Invité");
+
     const gamesys = new GameSys.GameManager(GameSys.GameMode.Versus, room, players);
     gamesys.Start();
   }
 }
+
 
 
 (window as any).launchTournamentGame = launchTournamentGame;

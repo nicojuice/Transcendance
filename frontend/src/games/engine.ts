@@ -259,7 +259,8 @@ async EndGame() {
     this.ui.addControl(scoreContainer);
 
     const img1 = this.room.players[0].avatar || "/assets/avatars/avatar1.png"; // Chemin par défaut si pas d'avatar
-    const img2 = this.room.players[1].avatar || "/assets/avatars/avatar2.png"; // Chemin par défaut si pas d'avatar
+    const img2 = this.room.players[1].avatar || (this.room.withIA ? "/assets/avatars/IA.png" : "/assets/avatars/avatar2.png"); // Chemin par défaut si pas d'avatar
+
   
     // Image du profil de p1 (à gauche du score)
     const p1Profile = new GUI.Image("p1Profile", img1);  // Remplace par le chemin de l'image
