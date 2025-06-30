@@ -9,13 +9,10 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 
 async function routes(fastify, options) {
-  // Vérification des variables d'environnement
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !REDIRECT_URI) {
     console.error('❌ Variables d\'environnement manquantes');
     throw new Error('Google OAuth credentials not configured');
   }
-
-  // S'assurer que les colonnes Google existent dans la DB
   try {
     await ensureGoogleColumns();
     console.log('✅ Colonnes Google vérifiées dans la DB');
@@ -29,7 +26,6 @@ async function routes(fastify, options) {
     redirect_uri: REDIRECT_URI
   });
 
-  // Step 1: Redirection vers Google OAuth
   fastify.get('/auth/google', async (request, reply) => {
     const params = {
       client_id: GOOGLE_CLIENT_ID,
@@ -45,7 +41,6 @@ async function routes(fastify, options) {
     reply.redirect(url);
   });
 
-  // Step 2: Callback GET - Redirect vers votre frontend avec les données
   fastify.get('/auth/google/callback', async (request, reply) => {
     const { code, error } = request.query;
 
@@ -103,22 +98,20 @@ async function routes(fastify, options) {
 
       console.log('✅ Utilisateur connecté:', userData.email);
 
-      // Génération du JWT
       const JWT_SECRET = process.env.JWT_SECRET;
       if (!JWT_SECRET) {
         console.error('❌ JWT_SECRET not configured');
         return reply.redirect('https://localhost:8443/log?error=server_config');
       }
 
-      // ✨ NOUVEAU: Synchroniser l'utilisateur avec la DB
       try {
         const dbUser = await syncGoogleUserToDB(userData);
         console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
 
-        const customToken = jwt.sign(
+        const customToken = fastify.jwt.sign(
           { 
-            id: dbUser.id, // ✨ ID de la DB
-            username: dbUser.username, // ✨ Username de la DB
+            id: dbUser.id,
+            username: dbUser.username,
             email: dbUser.email, 
             name: userData.name,
             google_id: userData.id,
@@ -129,7 +122,6 @@ async function routes(fastify, options) {
           { expiresIn: '24h' }
         );
 
-        // Redirection avec le token dans l'URL (vers votre frontend HTTPS)
         const redirectUrl = `https://localhost:8443/auth-success?user=${encodeURIComponent(dbUser.username)}&token=${customToken}`;
         console.log('🔄 Redirecting to:', redirectUrl);
         return reply.redirect(redirectUrl);
@@ -137,7 +129,7 @@ async function routes(fastify, options) {
       } catch (dbError) {
         console.error('❌ Erreur synchronisation DB:', dbError);
         // Fallback: créer le JWT sans sync DB
-        const customToken = jwt.sign(
+        const customToken = fastify.jwt.sign(
           { 
             email: userData.email, 
             name: userData.name,
@@ -158,8 +150,7 @@ async function routes(fastify, options) {
     }
   });
 
-  // Step 3: Endpoint POST pour échanger le code (pour les SPA qui gèrent le callback côté client)
-  fastify.post('/auth/google/token', async (request, reply) => {
+  fastify.post('/auth/google/token', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { code } = request.body;
 
     console.log('📤 POST /auth/google/token received code:', code ? 'present' : 'missing');
@@ -218,7 +209,6 @@ async function routes(fastify, options) {
 
       console.log('✅ User authenticated:', userData.email);
 
-      // ✨ NOUVEAU: Synchroniser l'utilisateur avec la DB
       try {
         const dbUser = await syncGoogleUserToDB(userData);
         console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
@@ -232,7 +222,7 @@ async function routes(fastify, options) {
           });
         }
 
-        const customToken = jwt.sign(
+        const customToken = fastify.jwt.sign(
           { 
             id: dbUser.id, 
             username: dbUser.username, 
@@ -249,8 +239,8 @@ async function routes(fastify, options) {
         return reply.send({
           success: true,
           user: {
-            id: dbUser.id, // ✨ ID de la DB
-            username: dbUser.username, // ✨ Username de la DB
+            id: dbUser.id,
+            username: dbUser.username,
             email: dbUser.email,
             name: userData.name,
             picture: userData.picture,
@@ -279,8 +269,7 @@ async function routes(fastify, options) {
     }
   });
 
-  // Route pour vérifier un token JWT
-  fastify.get('/auth/verify', async (request, reply) => {
+  fastify.get('/auth/verify', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const authHeader = request.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -291,13 +280,13 @@ async function routes(fastify, options) {
     
     try {
       const JWT_SECRET = process.env.JWT_SECRET;
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = fastify.jwt.verify(token, JWT_SECRET);
       
       return reply.send({ 
         valid: true, 
         user: {
-          id: decoded.id, // ✨ ID de la DB
-          username: decoded.username, // ✨ Username de la DB
+          id: decoded.id,
+          username: decoded.username, 
           email: decoded.email,
           name: decoded.name,
           google_id: decoded.google_id,

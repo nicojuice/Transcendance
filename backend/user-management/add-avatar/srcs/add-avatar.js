@@ -1,9 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
+require('dotenv').config();
 
 module.exports = async function (fastify, opts) {
 	const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-	fastify.patch('/backend/add-avatar', async (request, reply) => {
+	fastify.patch('/backend/add-avatar', { preHandler: [fastify.authenticate] }, async (request, reply) => {
 		const parts = await request.parts();
 		let username, avatarBuffer;
 	
@@ -35,7 +36,7 @@ module.exports = async function (fastify, opts) {
 		}
 	});
 
-	fastify.get('/backend/get-avatar/:username', async (request, reply) => {
+	fastify.get('/backend/get-avatar/:username', { preHandler: [fastify.authenticate] }, async (request, reply) => {
 		const username = request.params.username;
 
 		if (!username)
@@ -57,7 +58,6 @@ module.exports = async function (fastify, opts) {
 			if (!avatarBuffer)
 				return reply.code(404).send({ error: "Avatar not found" });
 
-			// Envoie l’image brute (content-type à ajuster selon ton usage, ici on suppose un PNG)
 			reply
 				.header('Content-Type', 'image/png')
 				.send(avatarBuffer);

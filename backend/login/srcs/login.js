@@ -3,7 +3,6 @@ const sqlite3 = require('sqlite3').verbose();
 require('dotenv').config();
 
 module.exports = function (fastify, opts, done) {
-  // Utilise l'instance partagée si disponible
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
   fastify.get('/backend/user_exist', (request, reply) => {
@@ -47,7 +46,6 @@ module.exports = function (fastify, opts, done) {
           return reply.code(401).send({ message: 'Mot de passe incorrect' });
         }
 
-        // Connexion réussie
         return reply.send({ 
           message: 'Connexion réussie', 
           token: fastify.jwt.sign({id: user.id, email: user.email })

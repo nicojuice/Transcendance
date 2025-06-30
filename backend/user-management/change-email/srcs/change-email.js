@@ -1,12 +1,13 @@
 const sqlite3 = require('sqlite3').verbose();
 const { promisify } = require('util');
+require('dotenv').config();
 
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
   const dbGet = promisify(db.get.bind(db));
   const dbRun = promisify(db.run.bind(db));
 
-  fastify.patch('/user-management/change-email', async (request, reply) => {
+  fastify.patch('/user-management/change-email', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, email } = request.body;
 
     if (!username || !email) {

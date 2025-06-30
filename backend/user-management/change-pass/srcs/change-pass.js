@@ -1,13 +1,14 @@
 const sqlite3 = require('sqlite3').verbose();
 const { promisify } = require('util');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
   const dbGet = promisify(db.get.bind(db));
   const dbRun = promisify(db.run.bind(db));
 
-  fastify.patch('/user-management/change-password', async (request, reply) => {
+  fastify.patch('/user-management/change-password', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, newPassword } = request.body;
 
     if (!username || !newPassword) {

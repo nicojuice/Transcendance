@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fastify/jwt": "^9.1.0",
     "dotenv": "^16.5.0",
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^2.7.0"

@@ -4,6 +4,8 @@ const add_avatar_route = require('./srcs/add-avatar.js');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
 const multipart = require('@fastify/multipart');
+const fastifyJwt = require('@fastify/jwt');
+
 
 fastify.register(fastifyCors, {
   origin: '*',
@@ -22,6 +24,20 @@ fastify.register(add_avatar_route, { prefix: '/api' })
 fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
+
+fastify.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET
+});
+
+fastify.decorate('authenticate', async function(request, reply) {
+  try {
+    await request.jwtVerify()
+    console.log('Token valide pour', request.user)
+  } catch (err) {
+    console.error('Erreur auth:', err)
+    reply.send(err)
+  }
+})
 
 const host = '0.0.0.0';
 const port = 8086;

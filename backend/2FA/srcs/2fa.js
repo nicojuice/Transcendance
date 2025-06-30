@@ -1,11 +1,13 @@
 const sqlite3 = require('sqlite3').verbose();
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 module.exports = async function (fastify, opts) {
 	const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-	fastify.post('/verify-2fa', async (req, reply) => {
+	fastify.post('/verify-2fa', { preHandler: [fastify.authenticate] }, async (req, reply) => {
 		const { username, code } = req.body;
 
 		if (!username || !code)
@@ -21,7 +23,6 @@ module.exports = async function (fastify, opts) {
 			});
 			if (!user)
 				return reply.status(404).send({ error: 'User not found' });
-			// Récupère le code OTP de la table otp_codes
 			const otpEntry = await new Promise((resolve, reject) => {
 				db.get(
 					"SELECT code, expires FROM otp_codes WHERE user_id = ?",
@@ -40,7 +41,7 @@ module.exports = async function (fastify, opts) {
 		
 			if (now > otpEntry.expires)
 				return reply.status(410).send({ error: 'OTP code expired' });
-			// Si tout est bon
+
 			reply.send({ success: true });
 		} catch (err) {
 			fastify.log.error(err);
@@ -48,7 +49,7 @@ module.exports = async function (fastify, opts) {
 		}
 	});
 
-	fastify.post('/send-2fa-code', async (req, reply) => {
+	fastify.post('/send-2fa-code', { preHandler: [fastify.authenticate] }, async (req, reply) => {
 		const { username } = req.body;
 
 		const OTPcode = await crypto.randomInt(100000, 999999).toString();
@@ -69,9 +70,6 @@ module.exports = async function (fastify, opts) {
 			if (email === null)
 				return reply.code(404).send({ error: "email not found" });
 
-			// gmail : no.reply.transcendance.42@gmail.com
-			// mdp : motdepasse123!
-			// recov sendgrid : 7P2PAS148WZPWP3VPAE62M8J
 			const transporter = nodemailer.createTransport({
 				service: "gmail",
 				auth: {
@@ -126,7 +124,7 @@ module.exports = async function (fastify, opts) {
 		}
 	});
 
-	fastify.post('/active-2fa', (req, reply) => {
+	fastify.post('/active-2fa', { preHandler: [fastify.authenticate] }, (req, reply) => {
 		const { username } = req.body;
 
 		if (!username)
@@ -144,7 +142,7 @@ module.exports = async function (fastify, opts) {
      	);
 	});
 
-	fastify.get('/is-2fa-active/:username', async (req, reply) => {
+	fastify.get('/is-2fa-active/:username', { preHandler: [fastify.authenticate] }, async (req, reply) => {
 		const username = req.params.username;
 
 		try {

@@ -18,19 +18,19 @@ fastify.register(require('fastify-metrics'), {
 });
 
 
-// JWT (clé secrète à mettre dans une variable d'environnement en prod)
 fastify.register(fastifyJwt, {
-  secret: 'supersecret'
+  secret: process.env.JWT_SECRET
 });
 
-// Décorateur pour protéger les routes (à utiliser dans d'autres services)
-fastify.decorate("authenticate", async function (request, reply) {
+fastify.decorate('authenticate', async function(request, reply) {
   try {
-    await request.jwtVerify();
+    await request.jwtVerify()
+    console.log('Token valide pour', request.user)
   } catch (err) {
-    reply.code(401).send({ message: 'Non autorisé' });
+    console.error('Erreur auth:', err)
+    reply.send(err)
   }
-});
+})
 
 const host = '0.0.0.0';
 const port = 8096;

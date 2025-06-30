@@ -5,7 +5,6 @@ const fastifyCors = require('@fastify/cors');
 const fastifyJwt = require('@fastify/jwt');
 const metricsPlugin = require('fastify-metrics');
 
-
 fastify.register(fastifyCors, {
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS']
@@ -17,20 +16,19 @@ fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
 
-
-// JWT (clé secrète à mettre dans une variable d'environnement en prod)
 fastify.register(fastifyJwt, {
   secret: process.env.JWT_SECRET
 });
 
-// Décorateur pour protéger les routes (à utiliser dans d'autres services)
-fastify.decorate("authenticate", async function (request, reply) {
+fastify.decorate('authenticate', async function(request, reply) {
   try {
-    await request.jwtVerify();
+    await request.jwtVerify()
+    console.log('Token valide pour', request.user)
   } catch (err) {
-    reply.code(401).send({ message: 'Non autorisé' });
+    console.error('Erreur auth:', err)
+    reply.send(err)
   }
-});
+})
 
 const host = '0.0.0.0';
 const port = 8081;

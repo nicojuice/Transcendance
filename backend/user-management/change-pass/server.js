@@ -3,6 +3,8 @@ const sqlite3 = require('sqlite3').verbose();
 const loginRoutes = require('./srcs/change-pass.js');
 const fastifyCors = require('@fastify/cors');
 const metricsPlugin = require('fastify-metrics');
+const fastifyJwt = require('@fastify/jwt');
+
 
 fastify.register(fastifyCors, {
   origin: '*',
@@ -15,6 +17,19 @@ fastify.register(require('fastify-metrics'), {
   endpoint: '/metrics',
 });
 
+fastify.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET
+});
+
+fastify.decorate('authenticate', async function(request, reply) {
+  try {
+    await request.jwtVerify()
+    console.log('Token valide pour', request.user)
+  } catch (err) {
+    console.error('Erreur auth:', err)
+    reply.send(err)
+  }
+})
 const host = '0.0.0.0';
 const port = 8084;
 

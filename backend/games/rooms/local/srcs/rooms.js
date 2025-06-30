@@ -1,5 +1,6 @@
+require('dotenv').config();
+
 module.exports = async function (fastify, opts) {
-  // Classe Room
   class Room {
     constructor(players, custom) {
       this.id = Math.random().toString(36).substring(2, 10);
@@ -8,11 +9,9 @@ module.exports = async function (fastify, opts) {
     }
   }
 
-  // Stockage temporaire en mémoire
   const rooms = [];
 
-  // Route POST pour créer une room
-  fastify.post('/api/rooms/local', async (request, reply) => {
+  fastify.post('/api/rooms/local', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { players, custom } = request.body;
 
     if (typeof players !== 'number' || players <= 0 || players > 10) {
@@ -33,8 +32,7 @@ module.exports = async function (fastify, opts) {
     });
   });
 
-  // ✅ Route GET pour récupérer toutes les rooms locales
-  fastify.get('/api/rooms/local', async (request, reply) => {
+  fastify.get('/api/rooms/local', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     return reply.code(200).send({
       message: "Liste des rooms locales",
       rooms,

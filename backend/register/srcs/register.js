@@ -4,12 +4,10 @@ const sqlite3 = require('sqlite3').verbose();
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-  // Endpoint de test
   fastify.get('/api/ping', async (request, reply) => {
     return { message: 'pong' };
   });
 
-  // Route d'inscription
   fastify.post('/backend/register', (request, reply) => {
     const { username, email, password } = request.body;
 

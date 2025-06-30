@@ -16,16 +16,17 @@ fastify.register(fastifyJwt, {
   secret: process.env.JWT_SECRET
 });
 
-fastify.decorate('authenticate', async function (request, reply) {
+fastify.decorate('authenticate', async function(request, reply) {
   try {
-    await request.jwtVerify();
+    await request.jwtVerify()
+    console.log('Token valide pour', request.user)
   } catch (err) {
-    reply.code(401).send({ message: 'Non authentifié' });
+    console.error('Erreur auth:', err)
+    reply.send(err)
   }
-});
+})
 
 fastify.register(metricsPlugin, { endpoint: '/metrics' });
-
 
 const host = '0.0.0.0';
 const port = 8090;

@@ -8,5 +8,10 @@
     "start": "node server.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/jwt": "^9.1.0",
+    "dotenv": "^17.0.0",
+    "jsonwebtoken": "^9.0.2"
+  }
 }

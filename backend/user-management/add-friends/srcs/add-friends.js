@@ -1,13 +1,14 @@
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
+require('dotenv').config();
 
 async function registerAddFriendsRoute(fastify, opts) {
   const db = await open({
-    filename: '/data/data.db', // adapte au chemin monté dans Docker
+    filename: '/data/data.db',
     driver: sqlite3.Database,
   });
 
-  fastify.get('/get-friends', async (request, reply) => {
+  fastify.get('/get-friends', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username } = request.query;
 
     if (!username)
@@ -32,7 +33,7 @@ async function registerAddFriendsRoute(fastify, opts) {
     }
   });
 
-  fastify.post('/add-friends', async (request, reply) => {
+  fastify.post('/add-friends', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, friend } = request.body;
 
     if (!username || !friend) {
@@ -65,7 +66,7 @@ async function registerAddFriendsRoute(fastify, opts) {
       return reply.code(500).send({ message: 'Erreur lors de l’ajout.' });
     }
   });
-  fastify.delete('/remove-friend/:username/:friend', async (request, reply) => {
+  fastify.delete('/remove-friend/:username/:friend', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, friend } = request.params;
 
 

@@ -1,10 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
+require('dotenv').config();
 
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-  // Endpoint pour mettre à jour les statistiques de jeu
-  fastify.patch('/user-management/games_data', async (request, reply) => {
+  fastify.patch('/user-management/games_data', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, isWin } = request.body;
 
     if (!username || typeof isWin === 'undefined') {
@@ -12,7 +12,6 @@ module.exports = async function (fastify, opts) {
     }
 
     try {
-      // 1. D'abord récupérer l'ID de l'utilisateur à partir du username
       const user = await new Promise((resolve, reject) => {
         db.get('SELECT id FROM users WHERE name = ?', [username], (err, row) => {
           if (err) reject(err);
@@ -24,7 +23,6 @@ module.exports = async function (fastify, opts) {
         return reply.code(404).send({ message: 'Utilisateur non trouvé' });
       }
 
-      // 2. Mettre à jour les statistiques avec l'ID trouvé
       let updateQuery;
       if (isWin) {
         updateQuery = 'UPDATE users SET wins = wins + 1, all_games = all_games + 1 WHERE id = ?';
@@ -63,7 +61,6 @@ module.exports = async function (fastify, opts) {
     }
 
     try {
-      // Récupérer les statistiques de l'utilisateur
       const stats = await new Promise((resolve, reject) => {
         db.get(
           'SELECT wins, all_games FROM users WHERE name = ?',

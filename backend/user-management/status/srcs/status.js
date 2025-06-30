@@ -1,21 +1,19 @@
 const fp = require('fastify-plugin');
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
+require('dotenv').config();
 
 module.exports = fp(async function (fastify, opts) {
   let db;
 
-  // Ouverture de la base de données
   db = await open({
     filename: '/data/data.db',
     driver: sqlite3.Database
   });
 
-  // Route PATCH pour mettre à jour le statut de connexion
-  fastify.patch('/api/status', async (request, reply) => {
+  fastify.patch('/api/status', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, status } = request.body;
 
-    // Vérification basique
     if (typeof username !== 'string' || (status !== 0 && status !== 1)) {
       return reply.code(400).send({ error: 'Requête invalide' });
     }
@@ -36,7 +34,8 @@ module.exports = fp(async function (fastify, opts) {
       return reply.code(500).send({ error: 'Erreur serveur' });
     }
   });
-  fastify.get('/api/status', async (request, reply) => {
+  
+  fastify.get('/api/status', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username } = request.query;
     console.log('GET /api/status called for:', username);
 

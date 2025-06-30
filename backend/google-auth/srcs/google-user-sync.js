@@ -1,12 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-// Fonction pour créer/mettre à jour un utilisateur Google dans votre base de données
 async function syncGoogleUserToDB(userData) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database('/data/data.db');
 
-    // Vérifier si l'utilisateur existe déjà (par email ou google_id)
     const checkUserSQL = `
       SELECT id, name FROM users 
       WHERE email = ? OR google_id = ?
@@ -20,7 +18,6 @@ async function syncGoogleUserToDB(userData) {
       }
 
       if (existingUser) {
-        // Utilisateur existe, mettre à jour ses infos Google
         const updateSQL = `
           UPDATE users SET 
             google_id = ?,
@@ -51,15 +48,12 @@ async function syncGoogleUserToDB(userData) {
         // Nouvel utilisateur, le créer
         // Générer un username unique basé sur le nom Google
         let baseUsername = userData.name.replace(/\s+/g, '').toLowerCase();
-        // Nettoyer le username (enlever les caractères spéciaux)
         baseUsername = baseUsername.replace(/[^a-z0-9]/g, '');
         
-        // Si le username est vide après nettoyage, utiliser 'user'
         if (!baseUsername) {
           baseUsername = 'user';
         }
-        
-        // Fonction pour trouver un username unique
+
         const findUniqueUsername = (username, attempt = 0) => {
           const testUsername = attempt === 0 ? username : `${username}${attempt}`;
           
@@ -73,11 +67,9 @@ async function syncGoogleUserToDB(userData) {
             }
 
             if (existingUsername) {
-              // Username existe, essayer avec un suffixe
               findUniqueUsername(baseUsername, attempt + 1);
             } else {
-              // Username unique trouvé, créer l'utilisateur
-              // Adapté à votre schéma DB sans created_at/updated_at
+
               const insertSQL = `
                 INSERT INTO users (
                   name, email, password, avatar, enabled_fa, status, wins, all_games,
@@ -111,7 +103,6 @@ async function syncGoogleUserToDB(userData) {
   });
 }
 
-// Fonction pour s'assurer que la table users a les colonnes nécessaires
 function ensureGoogleColumns() {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database('/data/data.db');
@@ -127,7 +118,6 @@ function ensureGoogleColumns() {
       const existingColumns = columns.map(col => col.name);
       console.log('📋 Colonnes existantes dans users:', existingColumns);
 
-      // Colonnes à ajouter si elles n'existent pas (adaptées à votre schéma)
       const columnsToAdd = [
         { name: 'google_id', sql: "ALTER TABLE users ADD COLUMN google_id TEXT" },
         { name: 'profile_picture', sql: "ALTER TABLE users ADD COLUMN profile_picture TEXT" },

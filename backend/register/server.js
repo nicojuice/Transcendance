@@ -9,7 +9,6 @@ fastify.register(fastifyCors, {
   methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 });
 
-// route api pour l inscription
 fastify.register(registerRoutes, { prefix: '/api' })
 
 fastify.register(require('fastify-metrics'), {
@@ -19,7 +18,6 @@ fastify.register(require('fastify-metrics'), {
 const host = '0.0.0.0';
 const port = 8082;
 
-// le serveur en ecoute 
 fastify.listen({ host, port }, (err, address) => {
   if (err) {
     fastify.log.error(err);
