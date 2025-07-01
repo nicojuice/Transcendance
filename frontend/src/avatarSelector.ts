@@ -70,12 +70,12 @@ function uploadCustomAvatar(event: Event): void {
 
   const reader = new FileReader();
   reader.onload = function () {
-    console.log("reader loaded file:", reader.result);
+    // console.log("reader loaded file:", reader.result);
 
     const avatarPreview = document.getElementById("avatar-preview") as HTMLImageElement | null;
     if (avatarPreview && typeof reader.result === "string") {
       avatarPreview.src = reader.result;
-      console.log("Avatar preview updated.");
+      // console.log("Avatar preview updated.");
       sendImgToDB(file, null);
     } else {
       console.warn("Avatar preview not found or invalid reader result");

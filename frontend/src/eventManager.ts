@@ -10,7 +10,7 @@ export class EventManager {
 	}
 
 	dispatch(): void {
-        console.log("Dispatching events to", this.listeners.size, "listeners");
+        // console.log("Dispatching events to", this.listeners.size, "listeners");
 		for (const cb of this.listeners) {
 			try {
 				cb();

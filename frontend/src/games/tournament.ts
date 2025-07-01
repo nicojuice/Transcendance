@@ -116,7 +116,7 @@ import { navigate, onNavigate } from "../nav";
 import * as ROOM from "./room";
 import { showToast } from "../showToast";
 
-console.log("✅ tournament.ts chargéee");
+// console.log("✅ tournament.ts chargéee");
 
 async function initTournamentPage() {
   // 1) Récupérer l'ID du tournoi
@@ -134,19 +134,19 @@ async function initTournamentPage() {
     const res = await fetch(`http://localhost:8001/api/backend/games/tournament/${tournamentId}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     tournament = await res.json();
-    console.log("la sql tournoi --->", res);
+    // console.log("la sql tournoi --->", res);
   } catch (err) {
     console.error("Erreur fetch tournoi:", err);
     showToast("Impossible de charger le tournoi.", "error");
     return;
   }
 
-  console.log(
-  "Match 1 players:",
-  tournament.match1[0],
-  "vs",
-  tournament.match1[1]
-  );
+  // console.log(
+  // "Match 1 players:",
+  // tournament.match1[0],
+  // "vs",
+  // tournament.match1[1]
+  // );
   const { match1, match2, match3, matchid} = tournament;
 
   // 3) Mettre à jour le DOM
@@ -172,7 +172,7 @@ async function initTournamentPage() {
         room.gameName = "pong";
         if (matchid === 1)
         {
-          console.log("hello match 1")
+          // console.log("hello match 1")
           new GameManager(GameMode.Versus, room, match1).Start();
         }
         if (matchid === 2)

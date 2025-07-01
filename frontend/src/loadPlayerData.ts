@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 export async function updateGameStats(username: string, isWin: boolean) {
-  console.log('helllo sdsdsd\n');
+  // console.log('helllo sdsdsd\n');
   try {
     const response = await fetch("http://localhost:8098/api/user-management/games_data", {
       method: "PATCH",
@@ -79,9 +79,9 @@ export async function updateGameStats(username: string, isWin: boolean) {
       return;
     }
 
-    const data = await response.json();
-    console.log("Statistiques mises à jour :", data);
+    // const data = await response.json();
+    // console.log("Statistiques mises à jour :", data);
   } catch (err) {
-    console.error("Erreur réseau stats:", err);
+    // console.error("Erreur réseau stats:", err);
   }
 }

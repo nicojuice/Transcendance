@@ -177,13 +177,16 @@ function setupModeSelectors() {
 
 export async function createRoomAndNavigate(game: string, playerNames: string[], custom: boolean, mode: any)
 {
-  console.log(playerNames[0] , 'player \n');
-  console.log(playerNames[1] , 'player \n');
-  console.log(playerNames[2] , 'player \n');
-  console.log(playerNames[3] , 'player \n');
-  console.log(game, ' le jeu\n')
-  console.log(custom, ' custom?')
-  console.log(mode, 'le mode\n')
+  game;
+  playerNames;
+  custom;
+  // console.log(playerNames[0] , 'player \n');
+  // console.log(playerNames[1] , 'player \n');
+  // console.log(playerNames[2] , 'player \n');
+  // console.log(playerNames[3] , 'player \n');
+  // console.log(game, ' le jeu\n')
+  // console.log(custom, ' custom?')
+  // console.log(mode, 'le mode\n')
   if(mode == 1)
   {
     //startGameAndNavigate(game);

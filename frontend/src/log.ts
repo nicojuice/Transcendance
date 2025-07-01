@@ -99,7 +99,7 @@ window.addEventListener("load", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log("Authentification réussie:", data.user);
+          // console.log("Authentification réussie:", data.user);
           // Sauvegarder les infos utilisateur
           localStorage.setItem("user", JSON.stringify(data.user));
           // Nettoyer l'URL et rediriger

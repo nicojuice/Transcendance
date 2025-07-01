@@ -1,8 +1,9 @@
 // src/games/tournament-result.ts
 
 export function initTournamentResultPage() {
+  // console.log('initTournamentResultPage called')
   const stored = localStorage.getItem("currentRoom");
-  let winner = "Inconnu";
+  let winner = "__undefined__";
   if (stored) {
     try {
       const room = JSON.parse(stored);
@@ -14,12 +15,4 @@ export function initTournamentResultPage() {
 }
 
 // On expose la fonction pour qu'on puisse l'appeler depuis nav.ts
-;(window as any).initTournamentResultPage = initTournamentResultPage;
-
-// Si on recharge directement sur /tournament-result
-if (window.location.pathname.endsWith("tournament-result")) {
-  // petit délai pour laisser innerHTML faire effet
-  setTimeout(initTournamentResultPage, 50);
-}
-
-
+(window as any).initTournamentResultPage = initTournamentResultPage;

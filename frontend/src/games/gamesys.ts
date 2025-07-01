@@ -84,7 +84,7 @@ export class GameManager
     // }
 
     async StartTournament() {
-        console.log("hello p1");
+        // console.log("hello p1");
         const players = [...this.players];
         for (let i = players.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -95,7 +95,7 @@ export class GameManager
             [players[0], players[1]],
             [players[2], players[3]],
         ];
-        console.log(pairs);
+        // console.log(pairs);
         try {
     const res = await fetch("http://localhost:8001/api/backend/games/tournament", {
       method: "POST",
@@ -110,17 +110,17 @@ export class GameManager
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
 
     const data = await res.json();
-    console.log("Tournoi créé en base, ID =", data.id);
+    // console.log("Tournoi créé en base, ID =", data.id);
     localStorage.setItem("tournamentId", data.id.toString());
   } catch (err) {
-    console.error("Échec enregistrement tournoi :", err);
+    // console.error("Échec enregistrement tournoi :", err);
     showToast("Impossibl de creer le tournoi", "error");
     return;
   }
         const currentUser = localStorage.getItem("username");
         const bracketRooms: ROOM.Room[] = [];
         for (const [p1, p2] of pairs) {
-            console.log("this.templatetRoom :", this.templatetRoom)
+            // console.log("this.templatetRoom :", this.templatetRoom)
             const room = this.templatetRoom.clone();
             // room.isTournament = true;
             const addWithAvatar = async (name: string) => {

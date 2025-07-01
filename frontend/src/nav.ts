@@ -98,6 +98,7 @@ import { EventManager } from './eventManager';
 import { initializeLanguageSwitcher } from './i18n';
 import { updateTexts } from './i18n'
 import * as ROOM from "./games/room";
+import { initTournamentResultPage } from './games/tournament-result';
 
 import './i18n';
 
@@ -189,7 +190,7 @@ export async function navigateOrTournament(): Promise<void> {
   // Sinon, on avance le match sur le serveur et on redirige
   try {
     const nextMatchId = await advanceTournamentMatchId();
-    console.log("MatchId avancé à", nextMatchId);
+    // console.log("MatchId avancé à", nextMatchId);
 
     if (nextMatchId > 3) {
       // Plus de demi-finales ni de finale → tournoi terminé
@@ -223,7 +224,7 @@ export async function navigate(page : string) {
         // Déclencher les listeners APRES injection du HTML
         onNavigate.dispatch();
 
-        console.log("navigation by navigate()");
+        // console.log("navigation by navigate()");
         
         // Initialiser i18n après le chargement du nouveau contenu
         setTimeout(() => {
@@ -239,7 +240,15 @@ export async function navigate(page : string) {
         }
         
         moveBall();
-        
+
+    // 🚩 Quand on navigue vers "tournament-result", on met à jour le nom du vainqueur
+        if (page === "tournament-result") {
+          setTimeout(() => {
+            initTournamentResultPage();
+          }, 100);
+      }
+
+              
     } catch (error) {
         console.error("Erreur de chargement :", error);
         const elem = document.getElementById('screen-content');
@@ -302,28 +311,28 @@ async function handleGoogleAuthCallback() {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
   
-  console.log("🔍 URL params:", window.location.search);
-  console.log("🔍 token received:", token);
+  // console.log("🔍 URL params:", window.location.search);
+  // console.log("🔍 token received:", token);
 
   if (!token) {
-    console.log("❌ No token found in URL");
+    // console.log("❌ No token found in URL");
     return;
   }
 
   try {
-    console.log("📤 Sending token request...");
+    // console.log("📤 Sending token request...");
     const response = await fetch("http://localhost:8095/api/auth/google/callback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
     });
 
-    console.log("📥 Response status:", response.status);
+    // console.log("📥 Response status:", response.status);
     const data = await response.json();
-    console.log("📥 Response data:", data);
+    // console.log("📥 Response data:", data);
 
     if (data.success) {
-      console.log("✅ Auth successful");
+      // console.log("✅ Auth successful");
       // ... rest of your token
     } else {
       console.error("❌ Auth failed:", data.error);

@@ -20,10 +20,10 @@ function launchTournamentGame(gameId: string): void {
   const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
   room.withCustom = bonus;
   const gamesys = new GameSys.GameManager(GameSys.GameMode.Tournament, room, playerNames);
-  console.log("before start : ")
-  console.log("room : ", room)
-  console.log("bonus : ", bonus)
-  console.log("gamesys : ", gamesys)
+  // console.log("before start : ")
+  // console.log("room : ", room)
+  // console.log("bonus : ", bonus)
+  // console.log("gamesys : ", gamesys)
   gamesys.Start();
 }
 
