@@ -81,7 +81,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+
+let hasUpdatedStats = false;
+
+
+export function resetHasUpdatedStats() {
+  hasUpdatedStats = false;
+}
+
+export function getHasUpdatedStats() {
+  return hasUpdatedStats;
+}
+
 export async function updateGameStats(username: string, isWin: boolean) {
+  if (hasUpdatedStats) {
+    console.log("updateGameStats ignorée : déjà appelée cette partie");
+    return;
+  }
+  hasUpdatedStats = true;
+
+  console.log('updateGameStats appelée', new Date().toISOString(), { username, isWin });
   const token = await getToken();
 
   if (!token) {

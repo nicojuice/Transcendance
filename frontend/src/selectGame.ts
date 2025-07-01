@@ -28,8 +28,6 @@ function selectGame(game: GameType): void {
   current = game;
 }
 
-
-
 function flipCard(cardId: string): void {
   const pongCard = document.getElementById('pong-card');
   const otherCard = document.getElementById('pacman-card');
@@ -65,8 +63,6 @@ function closeCard(cardId: string): void {
   otherCard.classList.remove('hidden');
 }
 
-
-
 function closeTournamentForm(gameId: string) {
   const form = document.getElementById(`${gameId}-tournament-form`);
   const back = document.querySelector(`#${gameId}-card .card-back`);
@@ -80,3 +76,4 @@ function closeTournamentForm(gameId: string) {
 (window as any).selectGame = selectGame;
 (window as any).closeCard = closeCard; 
 (window as any).flipCard = flipCard; 
+

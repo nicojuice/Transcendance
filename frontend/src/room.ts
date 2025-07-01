@@ -61,7 +61,5 @@ async function handleStartClick(gameId: string): Promise<void> {
   }
 }
 
-
-
 (window as any).launchTournamentGame = launchTournamentGame;
 (window as any).handleStartClick = handleStartClick;

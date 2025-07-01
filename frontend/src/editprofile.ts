@@ -241,7 +241,7 @@ export async function fetchProfile(): Promise<void> {
 
     const profileData = await profileResponse.json();
 
-    console.log("🎯 Données du profil:", profileData);
+    // console.log("🎯 Données du profil:", profileData);
 
     const finalUsername =
       profileData.username ||
@@ -262,7 +262,7 @@ export async function fetchProfile(): Promise<void> {
       localStorage.setItem("email", finalEmail);
     }
 
-    console.log("✅ Profil chargé avec succès:", finalUsername, finalEmail);
+    // console.log("✅ Profil chargé avec succès:", finalUsername, finalEmail);
 
   } catch (err) {
     console.error("Erreur lors du chargement du profil:", err);

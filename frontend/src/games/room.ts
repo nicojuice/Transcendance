@@ -136,13 +136,13 @@ export async function createRoomAndNavigate(
   custom: boolean,
   mode: any
 ) {
-  console.log(playerNames[0], "player \n");
-  console.log(playerNames[1], "player \n");
-  console.log(playerNames[2], "player \n");
-  console.log(playerNames[3], "player \n");
-  console.log(game, " le jeu\n");
-  console.log(custom, " custom?");
-  console.log(mode, "le mode\n");
+  // console.log(playerNames[0], "player \n");
+  // console.log(playerNames[1], "player \n");
+  // console.log(playerNames[2], "player \n");
+  // console.log(playerNames[3], "player \n");
+  // console.log(game, " le jeu\n");
+  // console.log(custom, " custom?");
+  // console.log(mode, "le mode\n");
   if (mode == 1) {
     //startGameAndNavigate(game);
     mode++;

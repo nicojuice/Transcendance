@@ -23,9 +23,6 @@ export async function updateConnectionStatus(status: 0 | 1): Promise<void> {
       throw new Error(`Erreur HTTP ${response.status}: ${errorText}`);
     }
 
-    console.log(
-      `✅ Statut mis à jour pour ${username} -> ${status === 1 ? "connecté" : "déconnecté"}`
-    );
   } catch (error) {
     console.error("❌ Échec de la mise à jour du statut de connexion :", error);
   }

@@ -80,7 +80,6 @@ window.addEventListener("load", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log("Authentification réussie:", data.user);
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
           window.history.replaceState({}, document.title, window.location.pathname);

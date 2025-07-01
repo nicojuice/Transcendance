@@ -52,7 +52,7 @@ async function registerAddFriendsRoute(fastify, opts) {
         [user.id, friendUser.id]
       );
       if (existing) {
-        return reply.code(409).send({ message: `Vous suivez deja ${friend}.` });
+        return reply.code(409).send({ message: `Vous suivez déja ${friend}.` });
       }
 
       await db.run(
@@ -60,7 +60,7 @@ async function registerAddFriendsRoute(fastify, opts) {
         [user.id, friendUser.id]
       );
 
-      return reply.send({ message: `${friend} ajouté comme ami à ${username}` });
+      return reply.send({ message: `${friend} a été ajouté comme ami` });
     } catch (err) {
       fastify.log.error(err);
       return reply.code(500).send({ message: 'Erreur lors de l’ajout.' });

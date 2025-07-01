@@ -92,10 +92,8 @@ async function handleAuthSuccess() {
   const user = urlParams.get("user");
   const token = urlParams.get("token");
 
-  console.log("🔍 Auth success params:", { user, token: token ? "present" : "missing" });
 
   if (user && token) {
-    console.log("✅ Storing Google auth data");
     localStorage.setItem("username", decodeURIComponent(user));
     localStorage.setItem("token", token);
     localStorage.setItem("isConnected", "true");
@@ -113,7 +111,6 @@ export async function handleGoogleAuthCode() {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get("code");
   const error = urlParams.get("error");
-  console.log("🚀 handleGoogleAuthCode called");
 
   if (error) {
     console.error("❌ OAuth error:", error);
@@ -124,10 +121,8 @@ export async function handleGoogleAuthCode() {
 
   if (!code) return false;
 
-  console.log("🔍 Processing OAuth code:", code.substring(0, 20) + "...");
 
   try {
-    console.log("📤 Exchanging code for token...");
     const headers = await getAuthHeaders();
     const response = await fetch("http://localhost:8095/api/auth/google/token", {
       method: "POST",
@@ -138,15 +133,11 @@ export async function handleGoogleAuthCode() {
       body: JSON.stringify({ code }),
     });
 
-    console.log("📥 Token exchange response status:", response.status);
-
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const data = await response.json();
-    console.log("📥 Token exchange data:", { success: data.success, user: data.user?.name });
 
     if (data.success && data.token && data.user) {
-      console.log("✅ OAuth successful, storing data");
       localStorage.setItem("username", data.user.name);
       localStorage.setItem("email", data.user.email);
       localStorage.setItem("token", data.token);
@@ -174,7 +165,6 @@ export async function handleGoogleAuthCode() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  console.log("🚀 App loading...");
 
   if (await handleAuthSuccess()) return;
   if (await handleGoogleAuthCode()) return;

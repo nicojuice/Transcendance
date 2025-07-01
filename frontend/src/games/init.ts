@@ -3,11 +3,13 @@ import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";
 import * as Engine from "./engine";
+import { waitForElements } from "../win-losses"
+import { resetHasUpdatedStats } from '../loadPlayerData';
 
 let engine: Engine.GameEngine | null = null;
 
 function startGame(canvas: HTMLCanvasElement) {
-
+  resetHasUpdatedStats();
   //focus
   canvas.setAttribute("tabindex", "1");
   canvas.focus();
@@ -40,12 +42,25 @@ window.addEventListener("resize", () => {
 
 waitForCanvasAndStart();
 
+// NAV.onNavigate.addEventListener(() => {
+//   if (engine) {
+//     console.log("Navigation detected, cleaning up game resources.");
+//     engine.dispose();
+//     engine = null;
+//     waitForCanvasAndStart();
+//   }
+// }
+// );
+
 NAV.onNavigate.addEventListener(() => {
   if (engine) {
-    console.log("Navigation detected, cleaning up game resources.");
     engine.dispose();
     engine = null;
+
+    // Ajoute un petit délai pour attendre le nouveau DOM
+    setTimeout(() => {
+      waitForElements(); // relance fetchProfileWL quand les éléments sont prêts
+    }, 200);
     waitForCanvasAndStart();
   }
-}
-);
+});
