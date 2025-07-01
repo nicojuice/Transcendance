@@ -1,64 +1,65 @@
 export async function fetchProfileWL() {
   const token = localStorage.getItem("token");
-  const storedUsername = localStorage.getItem("username");
-  
+  const storedUsername = localStorage.getItem("username") || "Utilisateur";
+
+  const displayUsernameWin = document.getElementById("display-username-win");
+  const displayUsernameLose = document.getElementById("display-username-lose");
+  const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+
   try {
-    const response = await fetch(
-      "http://localhost:8090/api/user-management/profile-info",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    const profileRes = await fetch("http://localhost:8090/api/user-management/profile-info", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!profileRes.ok) {
+      console.warn("Impossible de récupérer le profil, statut :", profileRes.status);
+      updateUI(storedUsername, null);
+      return;
+    }
+
+    const data = await profileRes.json();
+    const usernameToDisplay = data.username || storedUsername;
+
+    let avatarUrl: string | null = null;
+
+    if (avatarImg) {
+      try {
+        const res = await fetch(
+          `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(usernameToDisplay)}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token || ""}`,
+            },
+          }
+        );
+
+        if (res.ok) {
+          const blob = await res.blob();
+          avatarUrl = URL.createObjectURL(blob);
+        } else {
+          console.warn("Avatar non trouvé pour", usernameToDisplay);
+        }
+      } catch (err) {
+        console.error("Erreur lors de la récupération de l'avatar :", err);
       }
-    );
-    
-    if (!response.ok) {
-      if (response.status === 401) {
-        console.error("Token invalide ou expiré");
-        return;
-      }
-      throw new Error(`HTTP ${response.status}`);
     }
-    
-    const data = await response.json();
-    if (!data || typeof data !== "object") {
-      throw new Error("Données de profil invalides");
-    }
-    
-    // Utilise les données du serveur en priorité, sinon fallback sur localStorage
-    const usernameToDisplay = data.username || storedUsername || "Utilisateur";
-    
-    // Assure-toi que les éléments existent avant de les modifier
-    const displayUsername = document.getElementById("display-username-win");
-    const displayUsernameLose = document.getElementById("display-username-lose");
-    
-    if (displayUsername) {
-      displayUsername.textContent = usernameToDisplay;
-    } else {
-      console.warn("Élément display-username-win non trouvé");
-    }
-    
-    if (displayUsernameLose) {
-      displayUsernameLose.textContent = usernameToDisplay;
-    } else {
-      console.warn("Élément display-username-lose non trouvé");
-    }
-    
+
+    updateUI(usernameToDisplay, avatarUrl);
   } catch (error) {
-    console.error("Erreur lors de la récupération du profil:", error);
-    
-    // En cas d'erreur, utilise au moins le username du localStorage
-    const fallbackUsername = storedUsername || "Utilisateur";
-    const displayUsername = document.getElementById("display-username-win");
-    const displayUsernameLose = document.getElementById("display-username-lose");
-    
-    if (displayUsername) {
-      displayUsername.textContent = fallbackUsername;
-    }
-    if (displayUsernameLose) {
-      displayUsernameLose.textContent = fallbackUsername;
+    console.error("Erreur lors de la récupération du profil :", error);
+    updateUI(storedUsername, null);
+  }
+
+  function updateUI(username: string, avatarUrl: string | null) {
+    if (displayUsernameWin) displayUsernameWin.textContent = username;
+    if (displayUsernameLose) displayUsernameLose.textContent = username;
+    if (avatarImg) {
+      avatarImg.src = avatarUrl || "assets/avatars/default.png";
     }
   }
 }
@@ -66,47 +67,43 @@ export async function fetchProfileWL() {
 export function waitForElements() {
   const displayUsername = document.getElementById("display-username-win");
   const displayUsernameLose = document.getElementById("display-username-lose");
-  
-  // Attendre que TOUS les éléments nécessaires soient présents
+
   if (displayUsername && displayUsernameLose) {
     fetchProfileWL();
   } else {
-    // console.log("Éléments non trouvés, nouvelle tentative dans 100ms");
     setTimeout(waitForElements, 100);
   }
 }
 
-// Alternative plus robuste avec MutationObserver
 function initProfileDisplay() {
   // Tentative immédiate
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', waitForElements);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", waitForElements);
   } else {
     waitForElements();
   }
-  
-  // Observer pour détecter les changements du DOM (si les éléments sont ajoutés dynamiquement)
+
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.type === 'childList') {
+      if (mutation.type === "childList") {
         const displayUsername = document.getElementById("display-username-win");
-        const displayUsernameLose = document.getElementById("display-username-lose");
-        
+        const displayUsernameLose = document.getElementById(
+          "display-username-lose"
+        );
+
         if (displayUsername && displayUsernameLose) {
-          observer.disconnect(); // Arrête l'observation
+          observer.disconnect();
           fetchProfileWL();
         }
       }
     });
   });
-  
-  // Observe les changements dans le document
+
   observer.observe(document.body, {
     childList: true,
-    subtree: true
+    subtree: true,
   });
-  
-  // Timeout de sécurité pour arrêter l'observer après 5 secondes
+
   setTimeout(() => {
     observer.disconnect();
   }, 5000);

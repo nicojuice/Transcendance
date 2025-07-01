@@ -9,11 +9,9 @@ function selectGame(game: GameType): void {
 
   if (!pong || !pacman) return;
 
-  // Réinitialise les classes d’état visuel
   pong.classList.remove('card-selected', 'card-deselected');
   pacman.classList.remove('card-selected', 'card-deselected');
 
-  // Réinitialise les couches (z-index)
   pong.classList.remove('top-card', 'bottom-card');
   pacman.classList.remove('top-card', 'bottom-card');
 

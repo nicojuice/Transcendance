@@ -57,9 +57,8 @@ NAV.onNavigate.addEventListener(() => {
     engine.dispose();
     engine = null;
 
-    // Ajoute un petit délai pour attendre le nouveau DOM
     setTimeout(() => {
-      waitForElements(); // relance fetchProfileWL quand les éléments sont prêts
+      waitForElements();
     }, 200);
     waitForCanvasAndStart();
   }

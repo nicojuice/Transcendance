@@ -45,7 +45,7 @@ module.exports = async function (fastify, opts) {
 		try {
 			const avatarBuffer = await new Promise((resolve, reject) => {
 				db.get(
-					"SELECT avatar FROM users WHERE name = ?",
+					"SELECT avatar, profile_picture FROM users WHERE name = ?",
 					[username],
 					(err, row) => {
 						if (err) return reject(err);
