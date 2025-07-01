@@ -21,3 +21,5 @@ if (window.location.pathname.endsWith("tournament-result")) {
   // petit délai pour laisser innerHTML faire effet
   setTimeout(initTournamentResultPage, 50);
 }
+
+

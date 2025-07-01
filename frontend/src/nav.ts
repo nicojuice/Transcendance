@@ -193,6 +193,9 @@ export async function navigateOrTournament(): Promise<void> {
 
     if (nextMatchId > 3) {
       // Plus de demi-finales ni de finale → tournoi terminé
+      const room = new ROOM.Room();
+      room.loadFromLocalStorage();
+      localStorage.setItem("tournament", room.winner || "Inconnu");
       navigate("tournament-result");
     } else {
       // On recharge la page tournoi pour le prochain match
@@ -236,7 +239,7 @@ export async function navigate(page : string) {
         }
         
         moveBall();
-              
+        
     } catch (error) {
         console.error("Erreur de chargement :", error);
         const elem = document.getElementById('screen-content');
