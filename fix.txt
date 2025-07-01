@@ -1,6 +1,2 @@
-
-avatar pour utilisateur google
-avatar page win/lose si photo importee
 grafana/prometheus
-
-on reste co meme apres un docker compose et ca reinitialise la page profile 
+front tournoi

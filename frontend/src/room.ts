@@ -7,7 +7,7 @@ function launchTournamentGame(gameId: string): void {
   const playerNames: string[] = Array.from(inputs).map(input => input.value.trim());
 
   if (playerNames.some(name => name === "")) {
-    alert("Merci de renseigner tous les pseudos !");
+    showToast("Merci de renseigner tous les pseudos !", "error");
     return;
   }
 
@@ -31,7 +31,6 @@ async function handleStartClick(gameId: string): Promise<void> {
 
   const selectedMode = modeSelector.value;
 
-  // 🔒 Vérification : aucun mode sélectionné
   if (!selectedMode) {
     showToast("Veuillez sélectionner un mode de jeu.", "error");
     return;
