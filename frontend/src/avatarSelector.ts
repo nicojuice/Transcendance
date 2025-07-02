@@ -137,13 +137,13 @@ async function fetchUserAvatar(username: string): Promise<string> {
       }
     );
     if (!response.ok) {
-      return "/assets/default-avatar.png";
+      return "/assets/avatars/avatar3.png";
     }
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   } catch (err) {
     console.error("Erreur fetch avatar:", err);
-    return "/assets/default-avatar.png";
+    return "/assets/avatars/avatar3.png";
   }
 }
 

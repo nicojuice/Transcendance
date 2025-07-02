@@ -3,7 +3,7 @@ export async function fetchProfileWL() {
   const storedUsername = localStorage.getItem("username") || "Utilisateur";
 
   const displayUsernameWin = document.getElementById("display-username-win");
-  const displayUsernameLose = document.getElementById("display-username-lose");
+  // const displayUsernameLose = document.getElementById("display-username-lose");
   const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
 
   try {
@@ -57,7 +57,7 @@ export async function fetchProfileWL() {
 
   function updateUI(username: string, avatarUrl: string | null) {
     if (displayUsernameWin) displayUsernameWin.textContent = username;
-    if (displayUsernameLose) displayUsernameLose.textContent = username;
+    // if (displayUsernameLose) displayUsernameLose.textContent = username;
     if (avatarImg) {
       avatarImg.src = avatarUrl || "assets/avatars/default.png";
     }
@@ -66,9 +66,9 @@ export async function fetchProfileWL() {
 
 export function waitForElements() {
   const displayUsername = document.getElementById("display-username-win");
-  const displayUsernameLose = document.getElementById("display-username-lose");
+  // const displayUsernameLose = document.getElementById("display-username-lose");
 
-  if (displayUsername && displayUsernameLose) {
+  if (displayUsername) {
     fetchProfileWL();
   } else {
     setTimeout(waitForElements, 100);
@@ -87,11 +87,9 @@ function initProfileDisplay() {
     mutations.forEach((mutation) => {
       if (mutation.type === "childList") {
         const displayUsername = document.getElementById("display-username-win");
-        const displayUsernameLose = document.getElementById(
-          "display-username-lose"
-        );
+        // const displayUsernameLose = document.getElementById("display-username-lose");
 
-        if (displayUsername && displayUsernameLose) {
+        if (displayUsername) {
           observer.disconnect();
           fetchProfileWL();
         }

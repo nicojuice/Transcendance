@@ -169,15 +169,6 @@ export async function startGameAndNavigate(game: string) {
     return;
   }
 
-  if (selectedMode === "ia" && game == "pacman") {
-    showToast("IA is coming", "error");
-    return;
-  }
-  if (selectedMode === "tournament") {
-    showToast("Tournament is coming", "error");
-    return;
-  }
-
   const username = localStorage.getItem("username") || "Invité";
   const room = new Room();
   room.gameName = game;
@@ -202,14 +193,17 @@ export async function startGameAndNavigate(game: string) {
   }
   if (selectedMode === "ia") {
     room.withIA = true;
+    localStorage.setItem("opponent", "AI");
     room.addPlayer("IA");
   } else {
     room.withIA = false;
+    localStorage.setItem("opponent", "player");
     room.addPlayer("Guest");
   }
   room.saveToLocalStorage();
   navigate("game");
 }
+
 
 (window as any).setupModeSelectors = setupModeSelectors;
 (window as any).createRoomAndNavigate = createRoomAndNavigate;
