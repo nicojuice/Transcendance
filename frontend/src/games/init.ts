@@ -3,6 +3,7 @@ import * as PACMAN from "./pacman/game";
 import * as ROOM from "./room";
 import * as NAV from "../nav";
 import * as Engine from "./engine";
+// import { SelectionPanel } from "@babylonjs/gui";
 
 let engine: Engine.GameEngine | null = null;
 

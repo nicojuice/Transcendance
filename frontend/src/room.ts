@@ -49,7 +49,8 @@ async function handleStartClick(gameId: string): Promise<void> {
       console.error(`Impossible de trouver le game-card : ${gameId}-card`);
       return;
     }
-    const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
+    const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value;
+    if (!selectedMode) return;
     room.withIA = (selectedMode === 'ia');
     const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
     room.withCustom = bonus;

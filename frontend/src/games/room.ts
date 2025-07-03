@@ -208,7 +208,7 @@ export async function startGameAndNavigate(game: string) {
     return;
   }
   
-  const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || '';
+  const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || false;
 
   if (!selectedMode) {
     showToast("Veuillez sélectionner un mode de jeu.", "error");
