@@ -30,6 +30,7 @@ export class Room {
   winner: Winner;
   manualQuit: boolean;
   mode: any;
+  isTournament: boolean;
 
   constructor() {
     this.gameName = "";
@@ -39,6 +40,7 @@ export class Room {
     this.withCustom = false;
     this.winner = Winner.NONE;
     this.manualQuit = false;
+    this.isTournament = false;
   }
 
   addPlayer(playerName: string, avatar: string = "") {
@@ -56,6 +58,7 @@ export class Room {
       this.withIA = parsedRoom.withIA || false;
       this.withCustom = parsedRoom.withCustom || false;
       this.players = parsedRoom.players || [];
+      this.isTournament = parsedRoom.isTournament || false;
     } else {
       console.warn(
         "Aucune room trouvée dans localStorage, création d'une par défaut."
@@ -72,6 +75,7 @@ export class Room {
     clone_room.withCustom = this.withCustom;
     clone_room.winner = this.winner;
     clone_room.manualQuit = this.manualQuit;
+    clone_room.isTournament = this.isTournament;
     return clone_room;
   }
 
@@ -130,20 +134,23 @@ function setupModeSelectors() {
   });
 }
 
-export async function createRoomAndNavigate(
-  game: string,
-  playerNames: string[],
-  custom: boolean,
-  mode: any
-) {
-  console.log(playerNames[0], "player \n");
-  console.log(playerNames[1], "player \n");
-  console.log(playerNames[2], "player \n");
-  console.log(playerNames[3], "player \n");
-  console.log(game, " le jeu\n");
-  console.log(custom, " custom?");
-  console.log(mode, "le mode\n");
-  if (mode == 1) {
+
+// ------------------------- ROOM CREATION -------------------------
+
+export async function createRoomAndNavigate(game: string, playerNames: string[], custom: boolean, mode: any)
+{
+  game;
+  playerNames;
+  custom;
+  // console.log(playerNames[0] , 'player \n');
+  // console.log(playerNames[1] , 'player \n');
+  // console.log(playerNames[2] , 'player \n');
+  // console.log(playerNames[3] , 'player \n');
+  // console.log(game, ' le jeu\n')
+  // console.log(custom, ' custom?')
+  // console.log(mode, 'le mode\n')
+  if(mode == 1)
+  {
     //startGameAndNavigate(game);
     mode++;
   }

@@ -133,6 +133,20 @@ services:
       - Transcendance
     restart: unless-stopped
 
+  tournament-service:
+    build:
+      context: ./backend/games/tournament
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
+    restart: unless-stopped
+
   status-service:
     build:
       context: ./backend/user-management/status
@@ -161,18 +175,18 @@ services:
     networks:
       - Transcendance
 
-  rooms-local-service:
-    build:
-      context: ./backend/games/rooms/local
-      dockerfile: Dockerfile
-    ports:
-      - "8096:8096"
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - sql:/data
-    networks:
-      - Transcendance
+  # rooms-local-service:
+  #   build:
+  #     context: ./backend/games/rooms/local
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8096:8096"
+  #   environment:
+  #     - NODE_ENV=production
+  #   volumes:
+  #     - sql:/data
+  #   networks:
+  #     - Transcendance
     
   google-auth-service:
     build:
@@ -207,6 +221,7 @@ services:
       - games-player
       - games_data-service
       - status-service
+      - tournament-service
     networks:
       - Transcendance
 
