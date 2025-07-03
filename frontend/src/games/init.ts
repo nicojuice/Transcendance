@@ -42,16 +42,6 @@ window.addEventListener("resize", () => {
 
 waitForCanvasAndStart();
 
-// NAV.onNavigate.addEventListener(() => {
-//   if (engine) {
-//     console.log("Navigation detected, cleaning up game resources.");
-//     engine.dispose();
-//     engine = null;
-//     waitForCanvasAndStart();
-//   }
-// }
-// );
-
 NAV.onNavigate.addEventListener(() => {
   if (engine) {
     engine.dispose();

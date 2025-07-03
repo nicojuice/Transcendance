@@ -328,3 +328,7 @@
   font-family: 'Courier New', Courier, monospace; 
   font-size: 1.125rem;
 }
+
+.hidden {
+  display: none;
+}

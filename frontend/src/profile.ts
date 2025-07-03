@@ -17,7 +17,11 @@ async function displayAvatar(username: string): Promise<void> {
       `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`,
       { headers }
     );
-    if (!res.ok) throw new Error("Avatar not found");
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Erreur avatar:", res.status, text);
+      throw new Error("Avatar not found");
+    }
 
     const blob = await res.blob();
     const imageUrl = URL.createObjectURL(blob);
@@ -30,6 +34,7 @@ async function displayAvatar(username: string): Promise<void> {
     console.error("Error fetching avatar:", err);
   }
 }
+
 
 export async function initProfilePage(): Promise<void> {
   await fetchProfile();

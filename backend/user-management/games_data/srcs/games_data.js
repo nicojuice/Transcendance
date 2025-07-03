@@ -53,7 +53,7 @@ module.exports = async function (fastify, opts) {
     }
   });
 
-  fastify.get('/user-management/games_data/:username', async (request, reply) => {
+  fastify.get('/user-management/games_data/:username', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username } = request.params;
 
     if (!username) {

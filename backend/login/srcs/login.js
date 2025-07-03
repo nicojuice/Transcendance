@@ -4,18 +4,28 @@ require('dotenv').config();
 
 module.exports = function (fastify, opts, done) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
+fastify.get('/backend/user_exist', { preHandler: [fastify.authenticate] }, (request, reply) => {
+  const { username } = request.query;
 
-  fastify.get('/backend/user_exist', (request, reply) => {
-    const { username } = request.query;
+  if (!username) {
+    return reply.code(400).send({ message: 'Nom d’utilisateur manquant' });
+  }
 
-    if (!username)
-        return (reply.send({ message: 'Pas de connexion courante' }));
-    db.get('SELECT * FROM users WHERE name = ?', [username], (err, user) => {
-      if (err || !user)
-        return (reply.code(500).send({ message: "Utilisateur non existant" }));
-      return (reply.send({ message: "Connexion" }));
-    })
+  db.get('SELECT * FROM users WHERE name = ?', [username], (err, user) => {
+    if (err) {
+      fastify.log.error('Erreur DB:', err);
+      return reply.code(500).send({ message: 'Erreur serveur' });
+    }
+
+    if (!user) {
+      // Utilisateur non trouvé — pas une erreur serveur
+      return reply.send({ exists: false });
+    }
+
+    // Utilisateur trouvé
+    return reply.send({ exists: true });
   });
+});
 
   fastify.post('/backend/login', (request, reply) => {
     const { username, password } = request.body;

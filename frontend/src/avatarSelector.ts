@@ -168,6 +168,7 @@ updateAvatarForCurrentUser();
 
 function safeUpdateAvatar() {
   const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
+
   if (avatarImg) {
     updateAvatarForCurrentUser();
   } else {
