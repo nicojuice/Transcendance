@@ -36,7 +36,6 @@ function changeAvatar(direction: number): void {
 
 export async function sendImgToDB(file: File, u: string | null): Promise<void> {
   const username = localStorage.getItem("username") || u;
-  const token = localStorage.getItem("token");
 
   const formData = new FormData();
 
@@ -49,9 +48,6 @@ export async function sendImgToDB(file: File, u: string | null): Promise<void> {
       {
         method: "PATCH",
         body: formData,
-        headers: {
-          Authorization: `Bearer ${token || ""}`
-        },
       }
     );
 

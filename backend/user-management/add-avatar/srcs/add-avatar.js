@@ -22,7 +22,7 @@ function getAsync(db, sql, params) {
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
 
-  fastify.patch('/backend/add-avatar', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+  fastify.patch('/backend/add-avatar', async (request, reply) => {
     const parts = await request.parts();
     let username, avatarBuffer;
 
