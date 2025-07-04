@@ -5,6 +5,7 @@ import * as NAV from "../nav";
 import * as Engine from "./engine";
 import { waitForElements } from "../win-losses"
 import { resetHasUpdatedStats } from '../loadPlayerData';
+// import { SelectionPanel } from "@babylonjs/gui";
 
 let engine: Engine.GameEngine | null = null;
 

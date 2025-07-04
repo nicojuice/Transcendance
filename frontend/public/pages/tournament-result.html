@@ -1,13 +1,131 @@
-<!-- /pages/tournament-result.html -->
-<div
-  id="tournament-result-container"
-  class="min-h-screen p-8 flex flex-col items-center justify-center font-pixelify text-white bg-black"
->
-  <h1 class="text-5xl mb-6">🏆 Tournoi Terminé</h1>
-  <p class="text-3xl mb-8">
-    Vainqueur : <span id="winner-name">Chargement…</span>
-  </p>
-  <button onclick="navigate('profile')" class="px-6 py-3 border border-neon rounded text-neon hover:bg-neon hover:text-black transition text-lg">
-    Retour au profil
-  </button>
-</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" 
+    rel="stylesheet"
+  >
+  <style>
+    :root {
+      --neon: #39ff14;
+    }
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .text-neon { color: #fff; }
+
+    /* Animation flashy neon */
+    @keyframes flashy {
+      0%, 100% { 
+        box-shadow: 0 0 10px var(--neon), inset 0 0 10px var(--neon);
+      }
+      50% { 
+        box-shadow: 0 0 20px var(--neon), inset 0 0 20px var(--neon);
+      }
+    }
+    .animate-flashy-neon {
+      animation: flashy 1.5s ease-in-out infinite;
+    }
+
+    .card {
+      width: 340px;
+      height: 520px;
+      background: #000;
+      border: 2px solid #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+    }
+    /* Agrandir le nom du vainqueur */
+    #winner-name {
+      font-size: 2rem; /* agrandi */
+      display: block;
+      margin-top: 2rem;
+    }
+    .emoji-row {
+      margin-top: 1rem;
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    /* Flèche de retour, plus grande et fixe */
+    .back-arrow {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      color: #fff;
+      font-size: 3rem;
+      line-height: 1;
+      padding: 0.25rem;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+      z-index: 1000;
+    }
+    .back-arrow:hover {
+      color: var(--neon);
+    }
+  </style>
+  <title>Tournoi Terminé</title>
+</head>
+<body>
+  <!-- Bouton-flèche fixe -->
+  <button
+    class="back-arrow"
+    onclick="navigate('profile')"
+    aria-label="Retour"
+  >←</button>
+
+  <div class="container">
+    <h1 class="text-neon" style="font-size:2.5rem;">Tournoi Terminé</h1>
+
+    <div class="card">
+      <h2 class="text-neon">VICTOIRE</h2>
+      <span id="winner-name" class="text-neon">Chargement…</span>
+      <div class="emoji-row text-neon" aria-hidden="true">
+        🔥 🏆 🏆 🔥
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/tournament/result')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('winner-name').textContent = data.winner;
+      })
+      .catch(() => {
+        document.getElementById('winner-name').textContent = 'Erreur…';
+      });
+  </script>
+</body>
+</html>
+
+
+
+
+
+

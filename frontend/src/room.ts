@@ -51,7 +51,14 @@ async function handleStartClick(gameId: string): Promise<void> {
     const room = new ROOM.Room();
     room.gameName = gameId;
 
-    const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
+    // const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
+    const card = document.getElementById(`${gameId}-card`);
+    if (!card) {
+      console.error(`Impossible de trouver le game-card : ${gameId}-card`);
+      return;
+    }
+    const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value;
+    if (!selectedMode) return;
     room.withIA = (selectedMode === 'ia');
 
     const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;

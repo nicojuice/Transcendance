@@ -4,9 +4,27 @@ import * as Entities from "./entities";
 import { buildTerrain } from "./spawn";
 import * as GUI from "@babylonjs/gui";
 
+// function countdown() : Promise<void> {
+//   return new Promise<void>(resolve => {
+//     setTimeout(() => {
+//       console.log('3');
+//       setTimeout(() => {
+//         console.log('2');
+//         setTimeout(() => {
+//           console.log('1');
+//           setTimeout(() => {
+//             console.log('GO!');
+//             resolve();
+//           }, 1000);
+//         }, 1000);
+//       }, 1000);
+//     }, 0);
+//   });
+// }
 
 // === Main game function ===
 export function main(engine: Engine.GameEngine): void {
+
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -89,9 +107,11 @@ export function main(engine: Engine.GameEngine): void {
       ball.reset();
       if (Math.abs(engine.room.players[0].score - engine.room.players[1].score) >= 2)
         engine.EndGame();
-    }
+    } 
   });
-  engine.runRenderLoop(() => scene.render());
+  //countdown(scene).then((scene) => {
+    engine.runRenderLoop(() => scene.render());
+  //});
 
   engine.OnResize.addEventListener(updateCameraRadius);
 }

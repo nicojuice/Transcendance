@@ -1,22 +1,137 @@
-<!-- /pages/tournament.html -->
-<div id="tournament-container" class="min-h-screen p-8 flex flex-col items-center justify-center font-pixelify text-white">
-  <h1 class="text-4xl mb-6">🏆 Résumé du Tournoi</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" 
+    rel="stylesheet"
+  >
+  <style>
+    :root {
+      --neon: #39ff14;
+    }
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .text-neon { color: #fff; }
+    /* Bouton-flèche “Retour” */
+    .back-arrow {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      color: #fff;
+      font-size: 3rem;
+      line-height: 1;
+      padding: 0.25rem;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+      z-index: 1000;
+    }
+    .back-arrow:hover {
+      color: var(--neon);
+    }
+    /* Conteneur central */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 2rem;
+    }
+    /* Style des sections Demi-finales / Finale */
+    .section-card {
+      width: 100%;
+      max-width: 400px;
+      background: #000;
+      border: 2px solid #fff;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      text-align: left;
+    }
+    .section-card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.25rem;
+      color: #fff;
+    }
+    .section-card p {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+    /* Boutons néon */
+    .param-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      color: #fff;
+      background: transparent;
+      border: 2px solid var(--neon);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+      margin-top: 1rem;
+    }
+    .param-button:hover {
+      background: var(--neon);
+      color: #000;
+      box-shadow: 0 0 10px var(--neon), inset 0 0 10px var(--neon);
+      transform: scale(1.05);
+    }
+  </style>
+  <title>Résumé du Tournoi</title>
+</head>
+<body>
+  <!-- Flèche “Retour au profil” -->
+  <button class="back-arrow" onclick="navigate('profile')" aria-label="Retour">←</button>
 
-  <!-- Demi-finales -->
-  <div class="mb-6 w-full max-w-md">
-    <h2 class="text-2xl mb-2">Demi-finales</h2>
-    <p id="match1" class="mb-2">Chargement...</p>
-    <p id="match2">Chargement...</p>
+  <div class="container">
+    <h1 class="text-neon" style="font-size:2rem;">🏆 Résumé du Tournoi</h1>
+
+    <!-- Demi-finales -->
+    <div class="section-card">
+      <h2>Demi-finales</h2>
+      <p id="match1">Chargement…</p>
+      <p id="match2">Chargement…</p>
+    </div>
+
+    <!-- Finale -->
+    <div class="section-card">
+      <h2>Finale</h2>
+      <p id="final-match">Chargement…</p>
+    </div>
+
+    <!-- Bouton Lancer le match -->
+    <button id="launch-final-btn" class="param-button">Lancer le match</button>
   </div>
 
-  <!-- Finale -->
-  <div class="mb-6 w-full max-w-md">
-    <h2 class="text-2xl mb-2">Finale</h2>
-    <p id="final-match" class="mb-4">Chargement...</p>
-    <button id="launch-final-btn" class="param-button">Lancer la finale</button>
-  </div>
+  <script>
+    // Exemple de peuplement dynamique
+    fetch('/api/tournament/summary')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('match1').textContent = data.semi1;
+        document.getElementById('match2').textContent = data.semi2;
+        document.getElementById('final-match').textContent = data.final;
+      })
+      .catch(() => {
+        document.getElementById('match1').textContent = 'Erreur…';
+        document.getElementById('match2').textContent = 'Erreur…';
+        document.getElementById('final-match').textContent = 'Erreur…';
+      });
 
-  <button onclick="navigate('profile')" class="text-neon text-xl mt-6 hover:underline">
-    ← Retour au profil
-  </button>
-</div>
+    document.getElementById('launch-final-btn').addEventListener('click', () => {
+      // Lancer la finale
+      startFinal();
+    });
+  </script>
+</body>
+</html>
+
