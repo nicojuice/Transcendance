@@ -12,7 +12,6 @@ export async function updateConnectionStatus(status: 0 | 1): Promise<void> {
     const response = await fetch("http://localhost:8094/api/status", {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, status }),

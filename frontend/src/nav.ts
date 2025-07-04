@@ -121,11 +121,8 @@ export async function navigate(page: string) {
 export async function user_exist(username: string): Promise<boolean> {
   if (!username) return false;
   try {
-    const headers = await getAuthHeaders();
     const response = await fetch(
-      `http://localhost:8081/api/backend/user_exist?username=${encodeURIComponent(username)}`,
-      { headers }
-    );
+      `http://localhost:8081/api/backend/user_exist?username=${encodeURIComponent(username)}`,);
     if (!response.ok) return false;
     const data = await response.json();
     return data.exists === true;

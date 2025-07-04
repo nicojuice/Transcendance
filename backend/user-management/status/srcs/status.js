@@ -11,7 +11,7 @@ module.exports = fp(async function (fastify, opts) {
     driver: sqlite3.Database
   });
 
-  fastify.patch('/api/status', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+  fastify.patch('/api/status', async (request, reply) => {
     const { username, status } = request.body;
 
     if (typeof username !== 'string' || (status !== 0 && status !== 1)) {
