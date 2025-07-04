@@ -20,6 +20,8 @@ export class GameEngine extends BABYLON.Engine {
   private popupText: GUI.TextBlock | null = null; // Text block for the popup message
   private popupTimeout?: number;
 
+  
+
   OnDispose: EventManager;
   OnResize: EventManager;
   constructor(canvas: HTMLCanvasElement, room: ROOM.Room) {
@@ -79,7 +81,6 @@ export class GameEngine extends BABYLON.Engine {
     this.resize();
     this.OnResize.dispatch();
   }
-
 async EndGame() {
   const currentUser = this.room.players.length > 0 ? this.room.players[0].name : null;
 
@@ -98,6 +99,7 @@ async EndGame() {
   this.room.manualQuit = false;
   this.room.saveToLocalStorage();
 
+  // Mise à jour des stats uniquement si ce n'est pas un tournoi
   if (currentUser && !this.room.isTournament) {
     const isWin = winnerName === currentUser;
     await updateGameStats(currentUser, isWin);
@@ -109,19 +111,36 @@ async EndGame() {
     }
   }
 
-  if (winnerName === currentUser) {
-    if (this.room.isTournament) {
-      setTimeout(() => navigate("win-tournament"), 0);
+  // Gérer les gagnants de tournoi
+  if (this.room.isTournament) {
+    const tournamentId = localStorage.getItem("tournamentId");
+
+    if (tournamentId) {
+      try {
+        const res = await fetch(`http://localhost:8001/api/backend/games/tournament/${tournamentId}`);
+        if (!res.ok) throw new Error("Impossible de récupérer les infos du tournoi");
+        const data = await res.json();
+
+        const currentMatchIndex = (data.matchid ?? 1) - 1; // index du match qui vient de se terminer
+        const winnersStr = localStorage.getItem("tournamentWinners");
+        const winners = winnersStr ? JSON.parse(winnersStr) : {};
+
+        winners[`match${currentMatchIndex + 1}`] = winnerName;
+
+        localStorage.setItem("tournamentWinners", JSON.stringify(winners));
+        localStorage.setItem("lastMatchPlayed", (currentMatchIndex + 1).toString());
+        console.log("Gagnant tournoi enregistré:", winnerName, "pour match", currentMatchIndex + 1);
+      } catch (err) {
+        console.error("Erreur enregistrement gagnant tournoi:", err);
+      }
     } else {
-      setTimeout(() => navigate("win"), 0);
-    }
-  } else {
-    if (this.room.isTournament) {
-      setTimeout(() => navigate("win-tournament"), 0);
-    } else {
-      setTimeout(() => navigate("loose"), 0);
+      console.warn("Aucun tournamentId trouvé dans le localStorage");
     }
   }
+
+  // Redirection selon gagnant et type de partie
+  const route = this.room.isTournament ? "win-tournament" : (winnerName === currentUser ? "win" : "loose");
+  setTimeout(() => navigate(route), 0);
 }
 
 

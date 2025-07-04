@@ -4,7 +4,7 @@ require('dotenv').config();
 
 module.exports = function (fastify, opts, done) {
   const db = fastify.db || new sqlite3.Database('/data/data.db');
-fastify.get('/backend/user_exist', { preHandler: [fastify.authenticate] }, (request, reply) => {
+fastify.get('/backend/user_exist', (request, reply) => {
   const { username } = request.query;
 
   if (!username) {
