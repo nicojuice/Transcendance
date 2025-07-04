@@ -17,5 +17,4 @@ import './i18n';
 import './loadPlayerData';
 import './selectGame';
 import './games/tournament';
-import './win-losses'
-
+import './win-losses';

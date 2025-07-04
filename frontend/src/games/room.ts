@@ -202,11 +202,9 @@ export async function startGameAndNavigate(game: string) {
   }
   if (selectedMode === "ia") {
     room.withIA = true;
-    localStorage.setItem("opponent", "AI");
     room.addPlayer("IA");
   } else {
     room.withIA = false;
-    localStorage.setItem("opponent", "player");
     room.addPlayer("Guest");
   }
   room.saveToLocalStorage();

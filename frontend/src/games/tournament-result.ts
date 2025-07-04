@@ -14,5 +14,6 @@ export function initTournamentResultPage() {
   if (el) el.textContent = winner;
 }
 
+
 // On expose la fonction pour qu'on puisse l'appeler depuis nav.ts
 (window as any).initTournamentResultPage = initTournamentResultPage;

@@ -20,8 +20,6 @@ export class GameEngine extends BABYLON.Engine {
   private popupText: GUI.TextBlock | null = null; // Text block for the popup message
   private popupTimeout?: number;
 
-  
-
   OnDispose: EventManager;
   OnResize: EventManager;
   constructor(canvas: HTMLCanvasElement, room: ROOM.Room) {
@@ -112,9 +110,17 @@ async EndGame() {
   }
 
   if (winnerName === currentUser) {
-    setTimeout(() => navigate("win"), 0);
+    if (this.room.isTournament) {
+      setTimeout(() => navigate("win-tournament"), 0);
+    } else {
+      setTimeout(() => navigate("win"), 0);
+    }
   } else {
-    setTimeout(() => navigate("loose"), 0);
+    if (this.room.isTournament) {
+      setTimeout(() => navigate("win-tournament"), 0);
+    } else {
+      setTimeout(() => navigate("loose"), 0);
+    }
   }
 }
 

@@ -253,7 +253,6 @@ onNavigate.addEventListener(() => {
   }
 });
 
-
 (window as any).navigateOrTournament = navigateOrTournament;
 (window as any).navigate = navigate;
 (window as any).default_navigate = default_navigate;

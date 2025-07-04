@@ -1,50 +1,40 @@
+<!-- Language Switcher -->
 <select
   id="language-switcher"
-  class="fixed top-4 right-4 z-50 border border-neon rounded bg-black text-neon font-pixelify px-3 py-1 cursor-pointer"
+  class="fixed top-4 right-4 z-50 border border-[#39ff14] bg-black rounded text-neon font-pixelify px-3 py-1 cursor-pointer shadow-lg"
 >
   <option value="fr">Français</option>
   <option value="en">English</option>
   <option value="es">Español</option>
 </select>
 
-<div class="min-h-screen flex flex-col items-center justify-center font-pixelify p-6 space-y-8">
-  <!-- Cartes Victoire / Défaite -->
-  <div class="flex flex-col md:flex-row md:space-x-10 space-y-6 md:space-y-0">
-    
-    <!-- Carte Victoire -->
-    <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg"
-         style="width: 340px; height: 480px;">
-      <h2 class="text-4xl text-neon font-bold mb-10">VICTOIRE</h2>
-      <img
-        id="user-avatar"
-        src="assets/avatars/avatar3.png"
-        alt="Avatar utilisateur"
-        class="w-44 h-44 rounded-full border-2 border-neon object-cover"
-      />
-      <span class="text-white text-4xl mt-10" id="display-username-win"></span>
-      <!-- <div class="text-white text-xl font-semibold mt-10" id="display-username-win">username1</div> -->
-    </div>
+<!-- Flèche “Retour au profil” -->
+<button
+  class="absolute top-0 left-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
+  onclick="navigate('profile')"
+  aria-label="Retour"
+>
+  ←
+</button>
 
-    <!-- Carte Défaite (avec effet) -->
-    <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg opacity-60 grayscale"
-         style="width: 340px; height: 480px;">
-      <h2 class="text-4xl text-red-500 font-bold mb-10">DEFAITE</h2>
-      <img
-        src="assets/avatars/avatar2.png"
-        alt="Avatar utilisateur"
-        class="w-44 h-44 rounded-full border-2 border-red-500 object-cover mb-10"
-      />
-      <!-- <span class="text-white text-xl font-semibold" >User2</span> -->
-      <!-- <div class="text-white text-xl font-semibold" id="display-username-lose">username2</div> -->
+<!-- Conteneur principal -->
+<div class="card-container flex flex-col items-center bg-black border border-white font-pixelify rounded-2xl p-6 space-y-6 shadow-lg max-w-xl mx-auto mt-20 overflow-hidden relative z-10">
+  <div class="game-card"></div>
+  <div class="flex flex-col items-center justify-center text-[var(--neon)] text-xl mt-8 select-none leading-none">
+    <h2 class="text-2xl text-white mb-8 mt-12">VICTOIRE</h2>
+    <span id="winner-name" class="text-white text-2xl mb-8 block">Chargement…</span>
+    <div class="text-2xl mt-4" aria-hidden="true">
+      🔥 🏆 🏆 🔥
     </div>
     
+    <!-- Bouton RETOUR centré -->
+    <div class="flex justify-center mt-8 z-50 relative">
+      <button
+        onclick="navigateOrTournament()"
+        class="mt-4 param-button"
+      >
+        RETOUR
+      </button>
+    </div>
   </div>
-
-  <!-- Bouton Retour -->
-  <button
-    onclick="navigateOrTournament()"
-    class="px-6 py-3 border border-neon rounded text-neon hover:bg-neon hover:text-black transition text-lg"
-  >
-    ICI C'EST NICO
-  </button>
 </div>

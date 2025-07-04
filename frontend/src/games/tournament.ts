@@ -33,12 +33,12 @@ export async function initTournamentPage() {
   const el2 = document.getElementById("match2");
   const finalEl = document.getElementById("final-match");
 
-  if (el1) el1.textContent = `${match1[0]} vs ${match1[1]}`;
-  if (el2) el2.textContent = `${match2[0]} vs ${match2[1]}`;
+  if (el1) el1.textContent = `${match1[0]}  VS  ${match1[1]}`;
+  if (el2) el2.textContent = `${match2[0]}  VS  ${match2[1]}`;
   if (finalEl) {
     finalEl.textContent = match3 && match3[0] && match3[1]
       ? `${match3[0]} vs ${match3[1]}`
-      : "En attente des résultats des demi-finales";
+      : "En attente...";
   }
 
   const btn = document.getElementById("launch-final-btn") as HTMLButtonElement;
@@ -98,3 +98,4 @@ export async function initTournamentPage() {
     console.log("Bouton configuré - disabled:", btn.disabled, "text:", btn.textContent);
   }
 }
+
