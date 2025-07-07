@@ -52,46 +52,44 @@ export async function fetchProfileWL() {
 }
 
 function updateUI(username: string, avatarUrl: string | null) {
-  // Éléments du joueur (VICTOIRE)
+  console.log('ici');
   const displayUsernameWin = document.getElementById("display-username-win");
   const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
   
-  // Éléments de l'adversaire (DEFAITE)
   const displayOpponentName = document.getElementById("display-opponent-name");
   const opponentAvatarImg = document.getElementById("opponent-avatar") as HTMLImageElement | null;
-  
-  // Mise à jour du joueur
+
+  const match1WinnerEl = document.getElementById("match1-winner");
+
   if (displayUsernameWin) displayUsernameWin.textContent = username;
   if (avatarImg) {
     avatarImg.src = avatarUrl || "assets/avatars/avatar2.png";
   }
-  
-  // Chargement de la room depuis localStorage
+
   const room = new Room();
   room.loadFromLocalStorage();
   
-  console.log("Room loaded:", room);
-  console.log("Room.withIA:", room.withIA);
-  console.log("Room.players:", room.players);
-  
   const isAI = room.withIA;
-  console.log("Is AI opponent:", isAI);
-  
-  // Mise à jour de l'adversaire
+
   if (displayOpponentName) {
     displayOpponentName.textContent = isAI ? "IA" : "JOUEUR 2";
-    console.log("Opponent name set to:", displayOpponentName.textContent);
   }
   
   if (opponentAvatarImg) {
     if (isAI) {
       opponentAvatarImg.src = "assets/avatars/IA.png";
     } else {
-      // Si c'est un joueur, essayer d'utiliser l'avatar du deuxième joueur
       const player2 = room.players.find(p => p.name !== username);
       opponentAvatarImg.src = player2?.avatar || "assets/avatars/avatar2.png";
     }
-    console.log("Opponent avatar set to:", opponentAvatarImg.src);
+  }
+
+  const winnersStr = localStorage.getItem("tournamentWinners");
+  if (winnersStr) {
+    const winners = JSON.parse(winnersStr);
+    if (match1WinnerEl && winners.match1) {
+      match1WinnerEl.textContent = winners.match1;
+    }
   }
 }
 

@@ -3,6 +3,30 @@ import { navigate } from "../nav";
 import * as ROOM from "./room";
 import { showToast } from "../showToast";
 
+function updateTournamentWinnersUI(currentMatchId: number) {
+  const winnersStr = localStorage.getItem("tournamentWinners");
+  if (!winnersStr) return;
+
+  const winners: Partial<Record<"match1" | "match2" | "match3", string>> = JSON.parse(winnersStr);
+
+  ["match1-winner", "match2-winner", "final-winner"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  let idToShow = "";
+  if (currentMatchId === 1) idToShow = "match1-winner";
+  else if (currentMatchId === 2) idToShow = "match2-winner";
+  else if (currentMatchId === 3) idToShow = "final-winner";
+
+  const el = document.getElementById(idToShow);
+  if (el) {
+    const key = `match${currentMatchId}` as "match1" | "match2" | "match3";
+    el.textContent = winners[key] || "-";
+    el.style.display = "block";
+  }
+}
+
 export async function initTournamentPage() {
   console.log("initTournamentPage");
   const rawId = localStorage.getItem("tournamentId");
@@ -16,7 +40,9 @@ export async function initTournamentPage() {
   let tournament;
 
   try {
-    const res = await fetch(`http://localhost:8001/api/backend/games/tournament/${tournamentId}`);
+    const res = await fetch(
+      `http://localhost:8001/api/backend/games/tournament/${tournamentId}`
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     tournament = await res.json();
     console.log("Tournoi reçu:", tournament);
@@ -28,7 +54,6 @@ export async function initTournamentPage() {
 
   const { match1, match2, match3, matchid } = tournament;
 
-  // Mise à jour de l'affichage
   const el1 = document.getElementById("match1");
   const el2 = document.getElementById("match2");
   const finalEl = document.getElementById("final-match");
@@ -36,9 +61,10 @@ export async function initTournamentPage() {
   if (el1) el1.textContent = `${match1[0]}  VS  ${match1[1]}`;
   if (el2) el2.textContent = `${match2[0]}  VS  ${match2[1]}`;
   if (finalEl) {
-    finalEl.textContent = match3 && match3[0] && match3[1]
-      ? `${match3[0]} vs ${match3[1]}`
-      : "En attente...";
+    finalEl.textContent =
+      match3 && match3[0] && match3[1]
+        ? `${match3[0]} vs ${match3[1]}`
+        : "En attente...";
   }
 
   const btn = document.getElementById("launch-final-btn") as HTMLButtonElement;
@@ -91,11 +117,16 @@ export async function initTournamentPage() {
       default:
         btn.disabled = true;
         btn.textContent = "Tournoi terminé";
-        localStorage.setItem("fin du tournoi", "true");
         break;
     }
 
-    console.log("Bouton configuré - disabled:", btn.disabled, "text:", btn.textContent);
+    console.log(
+      "Bouton configuré - disabled:",
+      btn.disabled,
+      "text:",
+      btn.textContent
+    );
   }
+  const currentMatchId = parseInt(localStorage.getItem("lastMatchPlayed") || "1", 10);
+  updateTournamentWinnersUI(currentMatchId);
 }
-
