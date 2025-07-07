@@ -20,6 +20,11 @@ export class GameEngine extends BABYLON.Engine {
   private popupText: GUI.TextBlock | null = null; // Text block for the popup message
   private popupTimeout?: number;
 
+  private countdownText: GUI.TextBlock | null = null; // TextBlock pour afficher le compte à rebours
+  private countdownStep: number = 0; // Pour suivre les étapes du compte à rebours
+  private countdownTimer: number = 0; // Timer pour la gestion du délai
+  mainLoop?: (eventData: BABYLON.Scene, eventState: BABYLON.EventState) => void; // La fonction de la boucle principale du jeu
+
   OnDispose: EventManager;
   OnResize: EventManager;
   constructor(canvas: HTMLCanvasElement, room: ROOM.Room) {
@@ -61,6 +66,7 @@ export class GameEngine extends BABYLON.Engine {
     );
     this.ui.idealWidth = 1280; // Set the ideal width for the UI
     this.ui.idealHeight = 720; // Set the ideal height for the UI
+    this.SetupMatch();
     this.SetupPauseMenu();
     this.SetupScoreUI();
     this.SetupPopup();
@@ -172,6 +178,78 @@ export class GameEngine extends BABYLON.Engine {
       route = winnerName === currentUser ? "win" : "loose";
     }
     setTimeout(() => navigate(route), 0);
+  }
+
+  SetupMatch(): void {
+    // Créer un Rectangle pour afficher le texte du match
+    const matchTextContainer = new GUI.Rectangle("matchTextContainer");
+    matchTextContainer.width = "100%";
+    matchTextContainer.height = "100px";
+    matchTextContainer.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    matchTextContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    matchTextContainer.isVisible = true;
+    matchTextContainer.background = "transparent"; // Arrière-plan transparent
+    matchTextContainer.thickness = 0; // Pas de contour
+    this.ui.addControl(matchTextContainer);
+
+    // Créer le TextBlock principal pour afficher le texte du match
+    this.countdownText = new GUI.TextBlock();
+    this.countdownText.text = `${this.room.players[0].name} - ${this.room.players[1].name}`;
+    this.countdownText.fontFamily = "Pixelify Sans, sans-serif";
+    this.countdownText.color = "#fb00ff";
+    this.countdownText.fontSize = 72;
+    this.countdownText.outlineColor = "yellow";
+    this.countdownText.outlineWidth = 4;
+    this.countdownText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+    this.countdownText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    matchTextContainer.addControl(this.countdownText);
+
+
+    // Déclencher l'animation du match
+    this.scene.onBeforeRenderObservable.add(this.matchCountdown.bind(this));
+  }
+
+  // Gestion du décompte du match
+  matchCountdown(eventData: BABYLON.Scene, eventState: BABYLON.EventState): void {
+    void eventData;
+    void eventState;
+    if (this.countdownTimer > 0) {
+      this.countdownTimer--;
+    }
+
+    // Affichage des noms des joueurs
+    if (this.countdownStep === 0 && this.countdownTimer <= 0) {
+      this.countdownText!.text = `${this.room.players[0].name} - ${this.room.players[1].name}`;
+      this.countdownTimer = 60; // 1 seconde d'attente avant de commencer le décompte
+      this.countdownStep = 1;
+    }
+
+    // Décompte 3 -> 2 -> 1 -> GO
+    else if (this.countdownStep === 1 && this.countdownTimer <= 0) {
+      this.countdownText!.text = "3";
+      this.countdownTimer = 60; // 1 seconde pour afficher "3"
+      this.countdownStep = 2;
+    } else if (this.countdownStep === 2 && this.countdownTimer <= 0) {
+      this.countdownText!.text = "2";
+      this.countdownTimer = 60; // 1 seconde pour afficher "2"
+      this.countdownStep = 3;
+    } else if (this.countdownStep === 3 && this.countdownTimer <= 0) {
+      this.countdownText!.text = "1";
+      this.countdownTimer = 60; // 1 seconde pour afficher "1"
+      this.countdownStep = 4;
+    } else if (this.countdownStep === 4 && this.countdownTimer <= 0) {
+      this.countdownText!.text = "GO !";
+      this.countdownTimer = 60; // 1 seconde pour afficher "GO"
+      this.countdownStep = 5;
+    }
+
+    // Après le décompte, commencer la boucle principale
+    if (this.countdownStep === 5 && this.countdownTimer <= 0) {
+      this.countdownText!.text = "";
+      this.scene.onBeforeRenderObservable.clear(); // Nettoyer l'animation de décompte
+      if (this.mainLoop)
+        this.scene.onBeforeRenderObservable.add(this.mainLoop); // Ajouter la boucle principale
+    }
   }
 
   SetupPauseMenu(): void {
@@ -307,45 +385,63 @@ export class GameEngine extends BABYLON.Engine {
         ? "/assets/avatars/IA.png"
         : "/assets/avatars/avatar2.png"); // Chemin par défaut si pas d'avatar
 
-    // Image du profil de p1 (à gauche du score)
-    const p1Profile = new GUI.Image("p1Profile", img1); // Remplace par le chemin de l'image
-    p1Profile.width = "50px"; // Taille de l'image
-    p1Profile.height = "50px"; // Taille de l'image
-    p1Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
-    p1Profile.left = "-80px"; // Positionner à gauche du score avec un espacement
-    p1Profile.stretch = GUI.Image.STRETCH_UNIFORM; // Garder l'aspect ratio
-    scoreContainer.addControl(p1Profile);
+    if (this.room.isTournament) {
+      const scoreText = new GUI.TextBlock();
+      scoreText.fontFamily = "Pixelify Sans, sans-serif";
+      scoreText.text = `${this.room.players[0].name} [${this.room.players[0].score} - ${this.room.players[1].score}] ${this.room.players[1].name}`;
+      scoreText.color = "white";
+      scoreText.fontSize = 48;
+      scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER; // Centrer horizontalement
+      scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement
+      scoreContainer.addControl(scoreText);
+      this.scene.onAfterRenderObservable.add(() => {
+        // Mettre à jour le texte du score
+        scoreText.text = `${this.room.players[0].name} [${this.room.players[0].score} - ${this.room.players[1].score}] ${this.room.players[1].name}`;
 
-    // Score UI
-    const scoreText = new GUI.TextBlock();
-    (scoreText.fontFamily = "Pixelify Sans"), "sans-serif";
-    scoreText.text = "0 - 0";
-    scoreText.color = "white";
-    scoreText.fontSize = 48;
-    scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER; // Centrer horizontalement
-    scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement
-    scoreContainer.addControl(scoreText);
+        // Ajuster la largeur du conteneur en fonction de la longueur du texte
+        scoreContainer.width = `${scoreText.text.length * 22}px`; // Ajuster la largeur du container
+      });
+    } else {
+      // Image du profil de p1 (à gauche du score)
+      const p1Profile = new GUI.Image("p1Profile", img1); // Remplace par le chemin de l'image
+      p1Profile.width = "50px"; // Taille de l'image
+      p1Profile.height = "50px"; // Taille de l'image
+      p1Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
+      p1Profile.left = "-80px"; // Positionner à gauche du score avec un espacement
+      p1Profile.stretch = GUI.Image.STRETCH_UNIFORM; // Garder l'aspect ratio
+      scoreContainer.addControl(p1Profile);
 
-    // Image du profil de p2 (à droite du score)
-    const p2Profile = new GUI.Image("p2Profile", img2); // Remplace par le chemin de l'image
-    p2Profile.width = "50px"; // Taille de l'image
-    p2Profile.height = "50px"; // Taille de l'image
-    p2Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
-    p2Profile.left = "80px"; // Positionner à droite du score avec un espacement
-    p2Profile.stretch = GUI.Image.STRETCH_UNIFORM; // Garder l'aspect ratio
-    scoreContainer.addControl(p2Profile);
+      // Score UI
+      const scoreText = new GUI.TextBlock();
+      (scoreText.fontFamily = "Pixelify Sans"), "sans-serif";
+      scoreText.text = "0 - 0";
+      scoreText.color = "white";
+      scoreText.fontSize = 48;
+      scoreText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER; // Centrer horizontalement
+      scoreText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement
+      scoreContainer.addControl(scoreText);
 
-    this.scene.onBeforeRenderObservable.add(() => {
-      // Mettre à jour le texte du score
-      scoreText.text = `${this.room.players[0].score} - ${this.room.players[1].score}`;
+      // Image du profil de p2 (à droite du score)
+      const p2Profile = new GUI.Image("p2Profile", img2); // Remplace par le chemin de l'image
+      p2Profile.width = "50px"; // Taille de l'image
+      p2Profile.height = "50px"; // Taille de l'image
+      p2Profile.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER; // Centrer verticalement par rapport au conteneur
+      p2Profile.left = "80px"; // Positionner à droite du score avec un espacement
+      p2Profile.stretch = GUI.Image.STRETCH_UNIFORM; // Garder l'aspect ratio
+      scoreContainer.addControl(p2Profile);
 
-      // Ajuster la largeur du conteneur en fonction de la longueur du texte
-      scoreContainer.width = `${scoreText.text.length * 20 + 100}px`; // Ajuster la largeur du container
-      // Ajuster la position des images en fonction de la largeur du conteneur
-      const containerWidth = parseInt(scoreContainer.width, 10);
-      p1Profile.left = `${-containerWidth / 2 + 25}px`; // Ajuster la position de l'image de p1
-      p2Profile.left = `${containerWidth / 2 - 25}px`; // Ajuster la position de l'image de p2
-    });
+      this.scene.onAfterRenderObservable.add(() => {
+        // Mettre à jour le texte du score
+        scoreText.text = `${this.room.players[0].score} - ${this.room.players[1].score}`;
+
+        // Ajuster la largeur du conteneur en fonction de la longueur du texte
+        scoreContainer.width = `${scoreText.text.length * 20 + 100}px`; // Ajuster la largeur du container
+        // Ajuster la position des images en fonction de la largeur du conteneur
+        const containerWidth = parseInt(scoreContainer.width, 10);
+        p1Profile.left = `${-containerWidth / 2 + 25}px`; // Ajuster la position de l'image de p1
+        p2Profile.left = `${containerWidth / 2 - 25}px`; // Ajuster la position de l'image de p2
+      });
+    }
   }
 
   SetupPopup(): void {

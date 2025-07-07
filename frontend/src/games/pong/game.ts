@@ -4,27 +4,9 @@ import * as Entities from "./entities";
 import { buildTerrain } from "./spawn";
 import * as GUI from "@babylonjs/gui";
 
-// function countdown() : Promise<void> {
-//   return new Promise<void>(resolve => {
-//     setTimeout(() => {
-//       console.log('3');
-//       setTimeout(() => {
-//         console.log('2');
-//         setTimeout(() => {
-//           console.log('1');
-//           setTimeout(() => {
-//             console.log('GO!');
-//             resolve();
-//           }, 1000);
-//         }, 1000);
-//       }, 1000);
-//     }, 0);
-//   });
-// }
-
 // === Main game function ===
 export function main(engine: Engine.GameEngine): void {
-
+  console.log("difficulty : ", engine.room.difficulty);
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -77,7 +59,7 @@ export function main(engine: Engine.GameEngine): void {
 
   let powerUpBox: Entities.PowerUpBox | null = null;
   let powerUps: Entities.PowerUp[] = [];
-  scene.onBeforeRenderObservable.add(() => {
+  engine.mainLoop = () => {
     if (engine.paused) return;
     const delta = engine.getDeltaTime();
     player1.updatePosition(engine, ball);
@@ -108,10 +90,8 @@ export function main(engine: Engine.GameEngine): void {
       if (Math.abs(engine.room.players[0].score - engine.room.players[1].score) >= 2)
         engine.EndGame();
     } 
-  });
-  //countdown(scene).then((scene) => {
-    engine.runRenderLoop(() => scene.render());
-  //});
+  };
+  engine.runRenderLoop(() => scene.render());
 
   engine.OnResize.addEventListener(updateCameraRadius);
 }

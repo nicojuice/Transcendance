@@ -1,6 +1,7 @@
 import * as BABYLON from "@babylonjs/core";
 import * as Engine from "../engine";
 import { getText } from "../../i18n";
+import { DifficultyIA } from "../room";
 
 export class Ball {
   public mesh: BABYLON.Mesh;
@@ -73,7 +74,7 @@ export class Ball {
       this.direction.z += (this.mesh.position.z - player1.mesh.position.z) * 0.03;
       this.direction.normalize();
       this.mesh.position.x = player1.mesh.position.x + paddleRadius + ballRadius;
-      this.speed += 0.01;
+      this.speed += 0.015;
     }
 
     if (checkCollision(this.mesh.position.x + ballRadius, player2.mesh, false) && this.direction.x > 0) {
@@ -81,7 +82,7 @@ export class Ball {
       this.direction.z += (this.mesh.position.z - player2.mesh.position.z) * 0.03;
       this.direction.normalize();
       this.mesh.position.x = player2.mesh.position.x - paddleRadius - ballRadius;
-      this.speed += 0.01;
+      this.speed += 0.015;
     }
   }
 }
@@ -247,7 +248,7 @@ export class IA extends Paddle {
   constructor(scene: BABYLON.Scene, side: Side) {
     super(scene, side); // IA does not use keys
     this.predictPaddlePosition = 0;
-    this.elapsedTime = 0;
+    this.elapsedTime = 1000000;
   }
 
   public updatePosition(engine: Engine.GameEngine, ball: Ball): void {
@@ -255,9 +256,23 @@ export class IA extends Paddle {
     const deltaTime = engine.getDeltaTime();
     this.elapsedTime += deltaTime;
     // Update IA paddle position based on predicted ball trajectory
-    if (this.elapsedTime > 1000) {
+    var refreshRate = 1000; // milliseconds
+    if (engine.room.difficulty === DifficultyIA.HARD)
+      refreshRate = 500; // milliseconds for hard difficulty
+    else if (engine.room.difficulty === DifficultyIA.EASY)
+      refreshRate = 2200; // milliseconds for easy difficulty
+    if (this.elapsedTime > refreshRate) {
       this.elapsedTime = 0;
       const AI_points = predictIATrajectoryPoints(ball);
+      if (engine.room.difficulty !== DifficultyIA.HARD && AI_points.length > 1)
+      {
+        if (AI_points.length > 3)
+          AI_points.pop(); // remove the last point to avoid overshooting
+        //add a random offset to the last point to simulate human error
+        const lastPoint = AI_points[AI_points.length - 1];
+        const offset = Math.random() * (Paddle.LENGTH*1.2) - (Paddle.LENGTH/2*1.2); //
+        AI_points[AI_points.length - 1] = new BABYLON.Vector3(lastPoint.x, lastPoint.y, lastPoint.z + offset);
+      }
       //drawDebugTrajectory(engine.scene, AI_points);
       this.predictPaddlePosition = AI_points[AI_points.length - 1].z;
     }

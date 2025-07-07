@@ -92,7 +92,7 @@ export function main(engine: Engine.GameEngine): void {
   let powerUpBox: Entities.PowerUpBox | null = null;
   let powerUps: Entities.PowerUp[] = [];
   // Déplacement de Pac-Man avec les touches fléchées
-  scene.onBeforeRenderObservable.add(() => {
+  engine.mainLoop = () => {
     engine.room.players[0].score = player1.score;
     engine.room.players[1].score  = player2.score;
     if (engine.paused)
@@ -157,7 +157,7 @@ export function main(engine: Engine.GameEngine): void {
     if (balls.miniBalls.length === 0 && balls.bigBalls.length === 0)
       engine.EndGame();
 
-  });
+  };
 
   // Démarrer le moteur
   engine.runRenderLoop(() => {
