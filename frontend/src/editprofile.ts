@@ -241,8 +241,6 @@ export async function fetchProfile(): Promise<void> {
 
     const profileData = await profileResponse.json();
 
-    // console.log("🎯 Données du profil:", profileData);
-
     const finalUsername =
       profileData.username ||
       profileData.name ||
@@ -262,8 +260,6 @@ export async function fetchProfile(): Promise<void> {
       localStorage.setItem("email", finalEmail);
     }
 
-    // console.log("✅ Profil chargé avec succès:", finalUsername, finalEmail);
-
   } catch (err) {
     console.error("Erreur lors du chargement du profil:", err);
 
@@ -271,18 +267,11 @@ export async function fetchProfile(): Promise<void> {
     const storedEmail = localStorage.getItem("email");
 
     if (storedUsername || storedEmail) {
-      console.log("📦 Utilisation des données en cache");
       updateUserInterface(storedUsername || "Utilisateur", storedEmail || "");
     } else {
       showToast("Impossible de charger les données du profil", "error");
       clearUserData();
     }
-    console.log("🔍 localStorage:", {
-      token,
-      authMethod,
-      username: storedUsername,
-    });
-
   }
 }
 

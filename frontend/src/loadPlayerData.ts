@@ -70,7 +70,6 @@ async function loadAndRenderStats() {
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', async () => {
   const stats = await loadPlayerStats();
   if (stats) {
@@ -93,14 +92,51 @@ export function getHasUpdatedStats() {
   return hasUpdatedStats;
 }
 
-export async function updateGameStats(username: string, isWin: boolean) {
+// export async function updateGameStats(username: string, isWin: boolean) {
+//   if (hasUpdatedStats) {
+//     console.log("updateGameStats ignorée : déjà appelée cette partie");
+//     return;
+//   }
+//   hasUpdatedStats = true;
+
+//   console.log('updateGameStats appelée', new Date().toISOString(), { username, isWin });
+//   const token = await getToken();
+
+//   if (!token) {
+//     console.error("Token d'authentification manquant");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch("http://localhost:8098/api/user-management/games_data", {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ username, isWin }),
+//     });
+
+//     if (!response.ok) {
+//       console.error("Erreur lors de la mise à jour des stats");
+//       return;
+//     }
+
+//     const data = await response.json();
+//     console.log("Statistiques mises à jour :", data);
+//   } catch (err) {
+//     // console.error("Erreur réseau stats:", err);
+//   }
+// }
+
+export async function updateGameStats(username: string, isWin: boolean, game: string, mode: number = 1) {
   if (hasUpdatedStats) {
     console.log("updateGameStats ignorée : déjà appelée cette partie");
     return;
   }
   hasUpdatedStats = true;
-
-  console.log('updateGameStats appelée', new Date().toISOString(), { username, isWin });
+  console.log(username, "\n", isWin, "\n", game, "\n", mode );
+  console.log("updateGameStats appelée", new Date().toISOString(), { username, isWin, game });
   const token = await getToken();
 
   if (!token) {
@@ -109,13 +145,14 @@ export async function updateGameStats(username: string, isWin: boolean) {
   }
 
   try {
+    // 1. PATCH pour mettre à jour les stats
     const response = await fetch("http://localhost:8098/api/user-management/games_data", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ username, isWin }),
+      body: JSON.stringify({ username, isWin, mode }),
     });
 
     if (!response.ok) {
@@ -125,7 +162,29 @@ export async function updateGameStats(username: string, isWin: boolean) {
 
     const data = await response.json();
     console.log("Statistiques mises à jour :", data);
+
+    // 2. POST vers match-history (en utilisant juste le username)
+    const matchResponse = await fetch("http://localhost:8091/api/user-management/match-history", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        mode,
+        game,
+        winlose: isWin ? 1 : 0,
+        date: new Date().toISOString(),
+      }),
+    });
+    if (!matchResponse.ok) {
+      console.error("Erreur lors de l’enregistrement du match");
+    } else {
+      console.log("Match history enregistré !");
+    }
+
   } catch (err) {
-    // console.error("Erreur réseau stats:", err);
+    console.error("Erreur réseau dans updateGameStats:", err);
   }
 }
+

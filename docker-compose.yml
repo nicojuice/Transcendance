@@ -175,6 +175,21 @@ services:
     networks:
       - Transcendance
 
+  match-history-service:
+    build:
+       context: ./backend/user-management/match-history
+       dockerfile: Dockerfile
+    ports:
+      - "8091:8091"
+    environment:
+      - NODE_ENV=production
+    volumes:
+       - sql:/data
+    depends_on:
+      - db
+    networks:
+      - Transcendance
+
   # rooms-local-service:
   #   build:
   #     context: ./backend/games/rooms/local
@@ -222,6 +237,7 @@ services:
       - games_data-service
       - status-service
       - tournament-service
+      - match-history-service
     networks:
       - Transcendance
 

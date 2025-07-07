@@ -115,7 +115,8 @@ export class GameEngine extends BABYLON.Engine {
 
     if (currentUser && !this.room.isTournament) {
       const isWin = winnerName === currentUser;
-      await updateGameStats(currentUser, isWin);
+      console.log(this.room.gameName);
+      await updateGameStats(currentUser, isWin, this.room.gameName);
       await loadPlayerStats();
       const statsStr = localStorage.getItem("playerStats");
       if (statsStr) {

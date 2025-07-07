@@ -18,3 +18,4 @@ import './loadPlayerData';
 import './selectGame';
 import './games/tournament';
 import './win-losses';
+import './matchhistory';

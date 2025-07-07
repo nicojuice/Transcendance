@@ -66,6 +66,7 @@ async function registerAddFriendsRoute(fastify, opts) {
       return reply.code(500).send({ message: 'Erreur lors de l’ajout.' });
     }
   });
+  
   fastify.delete('/remove-friend/:username/:friend', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, friend } = request.params;
 

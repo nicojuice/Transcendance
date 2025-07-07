@@ -11,6 +11,7 @@ import './i18n';
 import { updateTexts } from './i18n'
 import * as ROOM from "./games/room";
 import { initTournamentResultPage } from './games/tournament-result';
+import { loadMatchHistory } from './matchhistory'
 
 export const onNavigate = new EventManager();
 
@@ -64,10 +65,9 @@ export async function navigateOrTournament(): Promise<void> {
   const room = new ROOM.Room();
   room.loadFromLocalStorage();
 
-  // 1. Vérifie que c'est un tournoi, sinon navigue ailleurs (ex : profile ou IA)
   if (!room.isTournament) {
     console.log("Pas en mode tournoi, navigation vers profil ou autre");
-    return navigate("profile");  // Ou vers la page adéquate pour jouer contre l'IA
+    return navigate("profile");
   }
 
   try {
@@ -108,6 +108,20 @@ export async function navigate(page: string) {
       updateTexts();
       onProfilePageShow();
       initializeLanguageSwitcher();
+
+          // Si on est sur la page match-history, on charge les matchs
+      if (page === 'match-history') {
+        const username = localStorage.getItem('username');
+        if (username) {
+          const container = document.getElementById('match-history');
+          if (container) {
+            container.setAttribute('data-username', username);
+            loadMatchHistory(username);
+          }
+        } else {
+          console.error('Username non trouvé dans localStorage');
+        }
+      }
     }, 50);
 
     moveBall();

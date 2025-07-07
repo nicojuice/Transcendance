@@ -36,8 +36,6 @@ function changeAvatar(direction: number): void {
 
 export async function sendImgToDB(file: File, u: string | null): Promise<void> {
   const username = localStorage.getItem("username") || u;
-  // const token = localStorage.getItem("token");
-
   const formData = new FormData();
 
   if (!username) return;
@@ -54,7 +52,6 @@ export async function sendImgToDB(file: File, u: string | null): Promise<void> {
 
     const data = await response.json();
     if (response.ok) {
-      //alert(data.message || 'Image upload');
     } else {
       showToast(data.message || "Failed to upload image", "error");
     }

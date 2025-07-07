@@ -1,5 +1,3 @@
-import './i18n';
-
 function dataURLtoFile(dataUrl: string, filename: string): File {
   const arr = dataUrl.split(',');
   const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';

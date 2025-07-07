@@ -34,3 +34,11 @@ sqlite3 /data/data.db "
 		match3   TEXT,
 		matchid INTEGER
 	);"
+sqlite3 /data/data.db "
+	CREATE TABLE IF NOT EXISTS matchhistory (
+    mode TEXT,
+	game TEXT,
+    date TEXT,
+    username TEXT,
+    winlose INTEGER
+);"

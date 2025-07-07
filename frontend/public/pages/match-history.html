@@ -1,0 +1,51 @@
+<div
+  id="match-history"
+  data-username="clara"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+>
+  <div
+    class="w-[480px] h-[700px] bg-white/40 backdrop-blur-md border border-white/50 rounded-xl shadow-lg p-6 flex flex-col relative"
+  >
+    <div class="absolute top-0 left-0 w-full h-12 cursor-move"></div>
+
+    <button
+      onclick="navigate('profile')"
+      aria-label="Fermer"
+      class="absolute top-4 right-4 w-12 h-12 border border-white/20 rounded-full text-white hover:text-neon shadow-lg transition-all flex items-center justify-center z-10"
+      style="pointer-events: auto"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+
+    <h2 class="text-white text-3xl font-semibold mb-4 text-center drop-shadow-md z-0 pointer-events-none">
+      Match History
+    </h2>
+
+    <div class="flex flex-col bg-white/10 rounded-md p-4 border border-white/20 h-full">
+  <div class="flex justify-between text-white font-mono text-xs uppercase border-b border-white/30 pb-2 mb-2 select-none">
+    <span class="w-1/4">Jeu</span>
+    <span class="w-1/4 text-center">Résultat</span>
+    <span class="w-1/4 text-right">Date</span>
+  </div>
+
+
+
+    <div class="flex-1 overflow-y-auto bg-white/10 rounded-md p-4 border border-white/20">
+      <ul class="space-y-3 text-white font-mono text-sm"></ul>
+      <p class="text-white/50 text-center mt-6">No match history available</p>
+    </div>
+  </div>
+</div>

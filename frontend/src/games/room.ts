@@ -142,27 +142,14 @@ export async function createRoomAndNavigate(game: string, playerNames: string[],
   game;
   playerNames;
   custom;
-  // console.log(playerNames[0] , 'player \n');
-  // console.log(playerNames[1] , 'player \n');
-  // console.log(playerNames[2] , 'player \n');
-  // console.log(playerNames[3] , 'player \n');
-  // console.log(game, ' le jeu\n')
-  // console.log(custom, ' custom?')
-  // console.log(mode, 'le mode\n')
-  if(mode == 1)
-  {
-    //startGameAndNavigate(game);
+  if(mode == 1) {
     mode++;
   }
   if (mode == 2) {
-    //startGameAndNavigate(game);
     mode++;
   }
 }
 export async function startGameAndNavigate(game: string) {
-  console.log("=== DEBUG startGameAndNavigate ===");
-  console.log("Game:", game);
-  
   const card = document.getElementById(`${game}-card`);
   if (!card) {
     console.error(`Impossible de trouver le game-card : ${game}-card`);
@@ -170,20 +157,9 @@ export async function startGameAndNavigate(game: string) {
   }
   
   const selectedMode = card.querySelector<HTMLSelectElement>("#" + game + "-mode-selector")?.value || "";
-  console.log("Selected mode:", selectedMode);
   
   if (!selectedMode) {
     showToast("Veuillez sélectionner un mode de jeu.", "error");
-    return;
-  }
-  
-  if (selectedMode === "ia" && game == "pacman") {
-    showToast("IA is coming", "error");
-    return;
-  }
-  
-  if (selectedMode === "tournament") {
-    showToast("Tournament is coming", "error");
     return;
   }
   
@@ -213,26 +189,15 @@ export async function startGameAndNavigate(game: string) {
   
   // Utilisation de la propriété withIA de la classe Room
   if (selectedMode === "ia") {
-    console.log("✅ MODE IA DÉTECTÉ");
     room.withIA = true;
     room.addPlayer("IA", "assets/avatars/IA.png"); // Avec l'avatar de l'IA
   } else {
-    console.log("❌ MODE JOUEUR");
     room.withIA = false;
     room.addPlayer("Guest", "assets/avatars/avatar2.png");
   }
-  
-  console.log("Room avant sauvegarde:", room);
-  console.log("Room.withIA:", room.withIA);
-  
   room.saveToLocalStorage();
-  
-  // Vérification immédiate
   const testRoom = new Room();
   testRoom.loadFromLocalStorage();
-  console.log("Room après sauvegarde/chargement:", testRoom);
-  console.log("Room.withIA après sauvegarde:", testRoom.withIA);
-  
   navigate("game");
 }
 
