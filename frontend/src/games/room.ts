@@ -159,28 +159,38 @@ export async function createRoomAndNavigate(game: string, playerNames: string[],
     mode++;
   }
 }
-
 export async function startGameAndNavigate(game: string) {
+  console.log("=== DEBUG startGameAndNavigate ===");
+  console.log("Game:", game);
+  
   const card = document.getElementById(`${game}-card`);
   if (!card) {
     console.error(`Impossible de trouver le game-card : ${game}-card`);
     return;
   }
-
-  // const selectedMode =
-  //   card.querySelector<HTMLSelectElement>("#" + game + "-mode-selector")
-  //     ?.value || "";
   
-  const selectedMode = card.querySelector<HTMLSelectElement>('#'+game+'-mode-selector')?.value || false;
-
+  const selectedMode = card.querySelector<HTMLSelectElement>("#" + game + "-mode-selector")?.value || "";
+  console.log("Selected mode:", selectedMode);
+  
   if (!selectedMode) {
     showToast("Veuillez sélectionner un mode de jeu.", "error");
     return;
   }
-
+  
+  if (selectedMode === "ia" && game == "pacman") {
+    showToast("IA is coming", "error");
+    return;
+  }
+  
+  if (selectedMode === "tournament") {
+    showToast("Tournament is coming", "error");
+    return;
+  }
+  
   const username = localStorage.getItem("username") || "Invité";
   const room = new Room();
   room.gameName = game;
+  
   try {
     const res = await fetch(
       `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`,
@@ -191,8 +201,8 @@ export async function startGameAndNavigate(game: string) {
         },
       }
     );
+    
     if (!res.ok) throw new Error("Avatar not found");
-
     const blob = await res.blob();
     const imageUrl = URL.createObjectURL(blob);
     room.addPlayer(username, imageUrl);
@@ -200,17 +210,31 @@ export async function startGameAndNavigate(game: string) {
     console.error("Erreur avatar:", err);
     room.addPlayer(username);
   }
+  
+  // Utilisation de la propriété withIA de la classe Room
   if (selectedMode === "ia") {
+    console.log("✅ MODE IA DÉTECTÉ");
     room.withIA = true;
-    room.addPlayer("IA");
+    room.addPlayer("IA", "assets/avatars/IA.png"); // Avec l'avatar de l'IA
   } else {
+    console.log("❌ MODE JOUEUR");
     room.withIA = false;
-    room.addPlayer("Guest");
+    room.addPlayer("Guest", "assets/avatars/avatar2.png");
   }
+  
+  console.log("Room avant sauvegarde:", room);
+  console.log("Room.withIA:", room.withIA);
+  
   room.saveToLocalStorage();
+  
+  // Vérification immédiate
+  const testRoom = new Room();
+  testRoom.loadFromLocalStorage();
+  console.log("Room après sauvegarde/chargement:", testRoom);
+  console.log("Room.withIA après sauvegarde:", testRoom.withIA);
+  
   navigate("game");
 }
-
 
 (window as any).setupModeSelectors = setupModeSelectors;
 (window as any).createRoomAndNavigate = createRoomAndNavigate;
