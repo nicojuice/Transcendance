@@ -9,6 +9,12 @@ export enum Winner {
   NONE = "NONE",
 }
 
+export enum DifficultyIA {
+  EASY = "EASY",
+  MEDIUM = "MEDIUM",
+  HARD = "HARD"
+}
+
 export class PlayerRoom {
   public name: string;
   public score: number;
@@ -26,6 +32,7 @@ export class Room {
   nextPage: string;
   players: PlayerRoom[];
   withIA: boolean;
+  difficulty: DifficultyIA;
   withCustom: boolean;
   winner: Winner;
   manualQuit: boolean;
@@ -37,6 +44,7 @@ export class Room {
     this.nextPage = "profile";
     this.players = [];
     this.withIA = false;
+    this.difficulty = DifficultyIA.EASY; // Default difficulty
     this.withCustom = false;
     this.winner = Winner.NONE;
     this.manualQuit = false;
@@ -56,6 +64,7 @@ export class Room {
       this.winner = parsedRoom.winner || Winner.NONE;
       this.manualQuit = parsedRoom.manualQuit || false;
       this.withIA = parsedRoom.withIA || false;
+      this.difficulty = parsedRoom.difficulty || DifficultyIA.EASY;
       this.withCustom = parsedRoom.withCustom || false;
       this.players = parsedRoom.players || [];
       this.isTournament = parsedRoom.isTournament || false;
@@ -72,6 +81,7 @@ export class Room {
     clone_room.nextPage = this.nextPage;
     clone_room.players = this.players.slice();
     clone_room.withIA = this.withIA;
+    clone_room.difficulty = this.difficulty;
     clone_room.withCustom = this.withCustom;
     clone_room.winner = this.winner;
     clone_room.manualQuit = this.manualQuit;

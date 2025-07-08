@@ -1,4 +1,4 @@
-import { Room } from './games/room';
+import { Room} from './games/room';
 
 export async function fetchProfileWL() {
   const token = localStorage.getItem("token");

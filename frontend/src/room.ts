@@ -29,7 +29,10 @@ function launchTournamentGame(gameId: string): void {
 
 async function handleStartClick(gameId: string): Promise<void> {
   const card = document.getElementById(`${gameId}-card`);
-  if (!card) return;
+  if (!card) {
+    console.error(`Impossible de trouver le game-card : ${gameId}-card`);
+    return;
+  }
 
   const modeSelector = card.querySelector<HTMLSelectElement>(`#${gameId}-mode-selector`);
   if (!modeSelector) return;
@@ -50,16 +53,16 @@ async function handleStartClick(gameId: string): Promise<void> {
   } else {
     const room = new ROOM.Room();
     room.gameName = gameId;
-
-    // const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value || '';
-    const card = document.getElementById(`${gameId}-card`);
-    if (!card) {
-      console.error(`Impossible de trouver le game-card : ${gameId}-card`);
-      return;
-    }
     const selectedMode = card.querySelector<HTMLSelectElement>('#'+gameId+'-mode-selector')?.value;
     if (!selectedMode) return;
-    room.withIA = (selectedMode === 'ia');
+    if (selectedMode=== 'ia')
+    {
+      room.withIA = (selectedMode === 'ia');
+      const difficultySelector = card.querySelector<HTMLSelectElement>(`#${gameId}-difficulty-selector`);
+      if (difficultySelector !== null)
+        room.difficulty = ROOM.DifficultyIA[difficultySelector.value.toUpperCase() as keyof typeof ROOM.DifficultyIA];
+    }
+    
 
     const bonus = card.querySelector<HTMLInputElement>('#'+gameId+'-bonus')?.checked || false;
     room.withCustom = bonus;
