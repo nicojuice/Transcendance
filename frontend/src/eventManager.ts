@@ -1,20 +1,45 @@
+// eventManager.ts
 export class EventManager {
-	private listeners: Set<() => void> = new Set();
+	private listeners: Map<string, Set<() => void>> = new Map();
 
-	addEventListener(callback: () => void): void {
-		this.listeners.add(callback);
+	addEventListener(event: string, callback: () => void): void {
+		if (!this.listeners.has(event)) {
+			this.listeners.set(event, new Set());
+		}
+		this.listeners.get(event)!.add(callback);
 	}
 
-	removeEventListener(callback: () => void): void {
-		this.listeners.delete(callback);
+	removeEventListener(event: string, callback: () => void): void {
+		const callbacks = this.listeners.get(event);
+		if (callbacks) {
+			callbacks.delete(callback);
+			if (callbacks.size === 0) {
+				this.listeners.delete(event);
+			}
+		}
 	}
 
-	dispatch(): void {
-		for (const cb of this.listeners) {
-			try {
-				cb();
-			} catch (e) {
-				console.error("Erreur :", e);
+	dispatch(event: string): void {
+		const callbacks = this.listeners.get(event);
+		if (callbacks) {
+			for (const cb of callbacks) {
+				try {
+					cb();
+				} catch (e) {
+					console.error(`Erreur pendant l'exécution de '${event}' :`, e);
+				}
+			}
+		}
+	}
+
+	dispatch_all(): void {
+		for (const [event, callbacks] of this.listeners.entries()) {
+			for (const cb of callbacks) {
+				try {
+					cb();
+				} catch (e) {
+					console.error(`Erreur pendant l'exécution de '${event}' :`, e);
+				}
 			}
 		}
 	}

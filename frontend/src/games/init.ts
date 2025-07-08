@@ -42,7 +42,7 @@ window.addEventListener("resize", () => {
 
 waitForCanvasAndStart();
 
-NAV.onNavigate.addEventListener(() => {
+NAV.onNavigate.addEventListener("WaitEngine",() => {
   if (engine) {
     engine.dispose();
     engine = null;

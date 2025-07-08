@@ -92,5 +92,5 @@ export function main(engine: Engine.GameEngine): void {
   };
   engine.runRenderLoop(() => scene.render());
 
-  engine.OnResize.addEventListener(updateCameraRadius);
+  engine.OnResize.addEventListener("OnResizeGame",updateCameraRadius);
 }

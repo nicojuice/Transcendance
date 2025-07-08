@@ -27,22 +27,27 @@ export class GameManager {
     const username = this.players[0];
     const token = localStorage.getItem("token");
 
-    try {
-      const res = await fetch(
-        `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`,
-        {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Avatar not found");
-      const blob = await res.blob();
-      const imageUrl = URL.createObjectURL(blob);
-      this.templatetRoom.addPlayer(username, imageUrl);
-    } catch {
+    if (this.templatetRoom.isTournament)
       this.templatetRoom.addPlayer(username);
+    else
+    {
+      try {
+        const res = await fetch(
+          `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(username)}`,
+          {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+        if (!res.ok) throw new Error("Avatar not found");
+        const blob = await res.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        this.templatetRoom.addPlayer(username, imageUrl);
+      } catch {
+        this.templatetRoom.addPlayer(username);
+      }
     }
 
     let secondName: string;
@@ -101,39 +106,13 @@ export class GameManager {
       return;
     }
 
-    const currentUser = localStorage.getItem("username");
+    //const currentUser = localStorage.getItem("username");
     const bracketRooms: ROOM.Room[] = [];
 
     for (const [p1, p2] of pairs) {
       const room = this.templatetRoom.clone();
-
-      const addWithAvatar = async (name: string) => {
-        if (name === currentUser) {
-          try {
-            const res = await fetch(
-              `http://localhost:8086/api/backend/get-avatar/${encodeURIComponent(name)}`,
-              {
-                method: "GET",
-                headers: {
-                  "Authorization": `Bearer ${token}`,
-                },
-              }
-            );
-            if (!res.ok) throw new Error("Avatar not found");
-            const blob = await res.blob();
-            const imageUrl = URL.createObjectURL(blob);
-            room.addPlayer(name, imageUrl);
-          } catch {
-            console.warn("Pas d'avatar pour", name);
-            room.addPlayer(name);
-          }
-        } else {
-          room.addPlayer(name);
-        }
-      };
-
-      await addWithAvatar(p1);
-      await addWithAvatar(p2);
+      room.addPlayer(p1);
+      room.addPlayer(p2);
       bracketRooms.push(room);
     }
 

@@ -78,7 +78,7 @@ export class GameEngine extends BABYLON.Engine {
       clearTimeout(this.popupTimeout); // Clear the popup timeout if it exists
       this.popupTimeout = undefined; // Reset the timeout variable
     }
-    this.OnDispose.dispatch();
+    this.OnDispose.dispatch_all();
     this.scene.actionManager.dispose();
     this.scene.onAfterRenderObservable.clear();
     this.scene.onBeforeRenderObservable.clear();
@@ -97,7 +97,7 @@ export class GameEngine extends BABYLON.Engine {
     const scaling = widthRatio;
     this.setHardwareScalingLevel(scaling);
     this.resize();
-    this.OnResize.dispatch();
+    this.OnResize.dispatch_all();
   }
 
   async EndGame() {

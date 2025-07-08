@@ -13,7 +13,6 @@ export async function loadPlayerStats(): Promise<PlayerStats | null> {
   const token = await getToken();
 
   if (!username || !token) {
-    console.error('Aucun username ou token trouvé en localStorage');
     return null;
   }
 

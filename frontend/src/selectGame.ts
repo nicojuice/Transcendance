@@ -1,5 +1,7 @@
 type GameType = 'pong' | 'other';
-let current: GameType = 'pong';
+export let current: GameType = 'pong';
+
+import * as NAV from "./nav";
 
 function selectGame(game: GameType): void {
 
@@ -69,6 +71,31 @@ function closeTournamentForm(gameId: string) {
     back.classList.remove("hidden");
   }
 }
+
+function checkAndInitPongMode()
+{
+  const modeSelector = document.getElementById("pong-mode-selector") as HTMLSelectElement | null;
+  const difficultyDiv = document.getElementById("pong-difficulty") as HTMLDivElement | null;
+
+  if (!modeSelector || !difficultyDiv) {
+    // Les éléments ne sont pas encore dans le DOM
+    return;
+  }
+
+  const toggleDifficultyVisibility = () => {
+    difficultyDiv.style.display = modeSelector.value === "ia" ? "block" : "none";
+  };
+
+  // Cacher ou afficher selon l'état actuel
+  toggleDifficultyVisibility();
+  modeSelector.removeEventListener("change", toggleDifficultyVisibility);
+  // Ajouter l'écouteur si ce n’est pas déjà fait
+  modeSelector.addEventListener("change", toggleDifficultyVisibility);
+};
+
+NAV.onNavigate.addEventListener("waitOptionsGame",checkAndInitPongMode);
+
+
 
 (window as any).closeTournamentForm = closeTournamentForm;
 (window as any).selectGame = selectGame;

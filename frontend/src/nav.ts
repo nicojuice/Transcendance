@@ -99,7 +99,7 @@ export async function navigate(page: string) {
     const elem = document.getElementById('screen-content');
     if (elem) elem.innerHTML = html;
 
-    onNavigate.dispatch();
+    onNavigate.dispatch_all();
 
     setTimeout(() => {
       updateTexts();
@@ -123,7 +123,7 @@ export async function navigate(page: string) {
 
     moveBall();
   } catch (error) {
-    console.error("Erreur de chargement :", error);
+    //console.error("Erreur de chargement :", error);
     const elem = document.getElementById('screen-content');
     if (elem) elem.innerHTML = "<p>404 - QUITTE LA PAGE VITE!</p>";
   }
@@ -248,7 +248,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await default_navigate();
 });
 
-onNavigate.addEventListener(() => {
+onNavigate.addEventListener("loadAll" ,() => {
   const path = window.location.pathname;
 
   if (path.endsWith("profile")) {
