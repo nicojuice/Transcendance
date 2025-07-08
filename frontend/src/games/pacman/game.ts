@@ -72,12 +72,12 @@ export function main(engine: Engine.GameEngine): void {
   camera.lowerAlphaLimit = camera.upperAlphaLimit = camera.alpha = -Math.PI / 2;
   camera.radius = 60;
 
-  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  let player1 = new Entities.Player(0, Spawn.spawn_pacman(scene), new BABYLON.Color3(1, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['w', 's', 'a', 'd']);
   player1.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 0));
   player1.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player1);
 
-  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['w', 's', 'a', 'd']);
+  let player2 = new Entities.Player(1, Spawn.spawn_pacman(scene), new BABYLON.Color3(0, 1, 0), Map.pacman_map, Entities.Player.SPEED, ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
   player2.set_coordinates(Map.get_coord(Map.pacman_map,Map.CellType.PLAYER, 1));
   player2.direction = Utils.getDirection(Math.PI / 2); // Orientation initiale vers le haut
   characters.push(player2);
