@@ -207,6 +207,7 @@ export class GameEngine extends BABYLON.Engine {
   matchCountdown(eventData: BABYLON.Scene, eventState: BABYLON.EventState): void {
     void eventData;
     void eventState;
+    if (this.paused) return; // Si le jeu est en pause, ne pas mettre à jour le décompte
     if (this.countdownTimer > 0) {
       this.countdownTimer--;
     }

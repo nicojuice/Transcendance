@@ -2,7 +2,6 @@ type GameType = 'pong' | 'other';
 let current: GameType = 'pong';
 
 function selectGame(game: GameType): void {
-  if (current === game) return;
 
   const pong = document.getElementById('pong-card') as HTMLElement;
   const pacman = document.getElementById('pacman-card') as HTMLElement;
@@ -25,7 +24,9 @@ function selectGame(game: GameType): void {
   current = game;
 }
 
-function flipCard(cardId: string): void {
+function flipCard(game: string): void {
+  var cardId = `${game}-card`;
+  selectGame(game as GameType);
   const pongCard = document.getElementById('pong-card');
   const otherCard = document.getElementById('pacman-card');
   const selectedCard = document.getElementById(cardId);
