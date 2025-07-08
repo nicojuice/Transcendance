@@ -194,12 +194,12 @@ export class Player extends Character {
 }
 
 export enum PowerUpType {
-  PlayerSpeed,
-  GhostSpeed,
-  PlayerInvulnerable,
-  InvertedControls,
-  GhostsFreeze,
-  PlayerScore,
+  PlayerSpeed = 1, // Bonus : Augmente la vitesse du joueur
+  GhostSpeed = 2, // Bonus : Augmente la vitesse des fantômes
+  PlayerInvulnerable = 3, // Bonus : Rend le joueur invulnérable
+  InvertedControls = 4, // Malus : Inverse les contrôles du joueur
+  GhostsFreeze = 5, // Malus : Gèle les fantômes
+  PlayerScore = 6 // Bonus : Ajoute des points au score du joueur,
 }
 
 export function getRandomPowerUpType(): PowerUpType

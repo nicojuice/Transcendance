@@ -285,10 +285,10 @@ export class IA extends Paddle {
 }
 
 export enum PowerUpType {
-  PaddleEnlarge,       // Bonus : Agrandit la raquette
-  PaddleShrink,        // Malus : Réduit la raquette
-  InvertedControls,    // Malus : Contrôles inversés
-  BallSpeedUp,         // Bonus : Accélère la balle
+  PaddleEnlarge = 1,       // Bonus : Agrandit la raquette
+  PaddleShrink = 2,        // Malus : Réduit la raquette
+  InvertedControls = 3,    // Malus : Contrôles inversés
+  BallSpeedUp = 4,         // Bonus : Accélère la balle
   //MultiBall          // Bonus : Ajoute plusieurs balles
 }
 
