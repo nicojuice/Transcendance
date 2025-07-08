@@ -51,7 +51,7 @@ export class GameManager {
     } else if (this.templatetRoom.isTournament) {
       secondName = this.players[1] || "Invité";
     } else {
-      secondName = "Ghest";
+      secondName = "Guest";
     }
     this.templatetRoom.addPlayer(secondName);
 

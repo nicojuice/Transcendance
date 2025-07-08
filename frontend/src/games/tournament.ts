@@ -44,8 +44,6 @@ function createMatchLauncher(gameName: string, matchPlayers: string[]) {
 }
 
 export async function initTournamentPage() {
-  console.log("initTournamentPage");
-
   const rawId = localStorage.getItem("tournamentId");
   if (!rawId) {
     showToast("Aucun tournoi en cours.", "error");
@@ -61,7 +59,6 @@ export async function initTournamentPage() {
     const res = await fetch(`http://localhost:8001/api/backend/games/tournament/${tournamentId}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     tournament = await res.json();
-    console.log("Tournoi reçu:", tournament);
   } catch (err) {
     console.error("Erreur fetch tournoi:", err);
     showToast("Impossible de charger le tournoi.", "error");
@@ -84,8 +81,6 @@ export async function initTournamentPage() {
   const btn = document.getElementById("launch-final-btn") as HTMLButtonElement;
 
   if (btn) {
-    console.log("Configuration du bouton pour matchid:", matchid);
-
     switch (matchid) {
       case 1:
         btn.disabled = false;
@@ -115,8 +110,6 @@ export async function initTournamentPage() {
         btn.textContent = "Tournoi terminé";
         break;
     }
-
-    console.log("Bouton configuré - disabled:", btn.disabled, "text:", btn.textContent);
   }
 
   const currentMatchId = parseInt(localStorage.getItem("lastMatchPlayed") || "1", 10);

@@ -40,5 +40,5 @@ fastify.listen({ host, port }, (err, address) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log('\n\n🚀 Serveur login en écoute sur :', address, '\n');
+  console.log('\n\nServeur login en écoute sur :', address, '\n');
 });

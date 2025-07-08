@@ -12,7 +12,7 @@ async function syncGoogleUserToDB(userData) {
 
     db.get(checkUserSQL, [userData.email, userData.id], (err, existingUser) => {
       if (err) {
-        console.error('❌ Erreur vérification utilisateur:', err);
+        console.error('Erreur vérification utilisateur:', err);
         db.close();
         return reject(err);
       }
@@ -29,12 +29,12 @@ async function syncGoogleUserToDB(userData) {
 
         db.run(updateSQL, [userData.id, userData.email, userData.picture, existingUser.id], function(err) {
           if (err) {
-            console.error('❌ Erreur mise à jour utilisateur:', err);
+            console.error('Erreur mise à jour utilisateur:', err);
             db.close();
             return reject(err);
           }
 
-          console.log('✅ Utilisateur Google mis à jour:', existingUser.name);
+          console.log('Utilisateur Google mis à jour:', existingUser.name);
           db.close();
           resolve({
             id: existingUser.id,
@@ -61,7 +61,7 @@ async function syncGoogleUserToDB(userData) {
           
           db.get(checkUsernameSQL, [testUsername], (err, existingUsername) => {
             if (err) {
-              console.error('❌ Erreur vérification username:', err);
+              console.error('Erreur vérification username:', err);
               db.close();
               return reject(err);
             }
@@ -79,12 +79,12 @@ async function syncGoogleUserToDB(userData) {
 
               db.run(insertSQL, [testUsername, userData.email, userData.id, userData.picture], function(err) {
                 if (err) {
-                  console.error('❌ Erreur création utilisateur:', err);
+                  console.error('Erreur création utilisateur:', err);
                   db.close();
                   return reject(err);
                 }
 
-                console.log('✅ Nouvel utilisateur Google créé:', testUsername);
+                console.log('Nouvel utilisateur Google créé:', testUsername);
                 db.close();
                 resolve({
                   id: this.lastID,
@@ -110,13 +110,11 @@ function ensureGoogleColumns() {
     // Vérifier d'abord quelles colonnes existent
     db.all("PRAGMA table_info(users)", (err, columns) => {
       if (err) {
-        console.error('❌ Erreur vérification structure table:', err);
         db.close();
         return reject(err);
       }
 
       const existingColumns = columns.map(col => col.name);
-      console.log('📋 Colonnes existantes dans users:', existingColumns);
 
       const columnsToAdd = [
         { name: 'google_id', sql: "ALTER TABLE users ADD COLUMN google_id TEXT" },
@@ -127,12 +125,9 @@ function ensureGoogleColumns() {
       const missingColumns = columnsToAdd.filter(col => !existingColumns.includes(col.name));
       
       if (missingColumns.length === 0) {
-        console.log('✅ Toutes les colonnes Google existent déjà');
         db.close();
         return resolve();
       }
-
-      console.log('🔧 Ajout des colonnes manquantes:', missingColumns.map(c => c.name));
 
       let completed = 0;
       const total = missingColumns.length;
@@ -140,14 +135,11 @@ function ensureGoogleColumns() {
       missingColumns.forEach(column => {
         db.run(column.sql, (err) => {
           if (err) {
-            console.error(`❌ Erreur ajout colonne ${column.name}:`, err);
+            console.error(`Erreur ajout colonne ${column.name}:`, err);
             db.close();
             return reject(err);
           }
-          
-          console.log(`✅ Colonne ${column.name} ajoutée`);
           completed++;
-          
           if (completed === total) {
             db.close();
             resolve();

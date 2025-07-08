@@ -8,7 +8,6 @@
   <option value="es">Español</option>
 </select>
 
-<!-- Flèche “Retour au profil” -->
 <button
   class="absolute top-0 left-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
   onclick="navigate('profile')"
@@ -17,7 +16,6 @@
   ←
 </button>
 
-<!-- Conteneur principal -->
 <div
   class="card-container flex flex-col items-center bg-black border border-white font-pixelify rounded-2xl p-6 space-y-6 shadow-lg max-w-xl mx-auto mt-20 overflow-hidden relative z-10"
 >
@@ -25,7 +23,7 @@
   <div
     class="flex flex-col items-center justify-center text-[var(--neon)] text-xl mt-8 select-none leading-none"
   >
-    <h2 class="text-4xl text-white mb-8 mt-12">VICTOIRE</h2>
+    <h2 class="text-4xl text-white mb-8 mt-12" data-i18n="win-tournament.win">VICTOIRE</h2>
     <div class="mt-4 text-white text-center text-lg space-y-2">
       <div><span id="match1-winner" class="text-neon text-4xl">-</span></div>
       <div><span id="match2-winner" class="text-neon text-4xl">-</span></div>
@@ -33,7 +31,7 @@
     </div>
 
     <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <button onclick="navigateOrTournament()" class="param-button">
+      <button onclick="navigateOrTournament()" class="param-button" data-i18n="win-tournament.continue">
         CONTINUER
       </button>
     </div>

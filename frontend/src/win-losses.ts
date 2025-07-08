@@ -52,7 +52,6 @@ export async function fetchProfileWL() {
 }
 
 function updateUI(username: string, avatarUrl: string | null) {
-  console.log('ici');
   const displayUsernameWin = document.getElementById("display-username-win");
   const avatarImg = document.getElementById("user-avatar") as HTMLImageElement | null;
   

@@ -39,9 +39,9 @@ fastify.get('/api/test', async (request, reply) => {
 });
 
 fastify.ready().then(() => {
-  console.log('\n📋 Routes disponibles:');
+  console.log('\nRoutes disponibles:');
   console.log(fastify.printRoutes());
-  console.log('\n🔗 URLs importantes:');
+  console.log('\nURLs importantes:');
   console.log(`- Test: http://localhost:8095/`);
   console.log(`- API Test: http://localhost:8095/api/test`);
   console.log(`- Google Auth: http://localhost:8095/api/auth/google`);
@@ -56,15 +56,15 @@ fastify.listen({ host, port }, (err, address) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log('\n🚀 =====================================');
+  console.log('\n=====================================');
   console.log(`⭐ Server listening at ${address} ⭐`);
   console.log('=====================================\n');
 });
 
 process.on('SIGINT', () => {
-  console.log('\n🛑 Arrêt du serveur...');
+  console.log('\nArrêt du serveur...');
   fastify.close().then(() => {
-    console.log('✅ Serveur arrêté proprement');
+    console.log('Serveur arrêté proprement');
     process.exit(0);
   });
 });

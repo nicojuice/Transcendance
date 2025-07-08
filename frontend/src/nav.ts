@@ -61,18 +61,15 @@ export async function advanceTournamentMatchId(): Promise<number> {
 }
 
 export async function navigateOrTournament(): Promise<void> {
-  console.log("navigateOrTournament");
   const room = new ROOM.Room();
   room.loadFromLocalStorage();
 
   if (!room.isTournament) {
-    console.log("Pas en mode tournoi, navigation vers profil ou autre");
     return navigate("profile");
   }
 
   try {
     const nextMatchId = await advanceTournamentMatchId();
-    console.log("Next match ID :", nextMatchId);
 
     if (nextMatchId > 3) {
       localStorage.setItem("tournament", room.winner || "Inconnu");

@@ -4,7 +4,7 @@ require("dotenv").config();
 module.exports = async function (fastify, opts) {
   const db = fastify.db || new sqlite3.Database("/data/data.db");
 
-  fastify.post('/user-management/match-history', async (request, reply) => {
+  fastify.post('/user-management/match-history', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username, game, winlose, date } = request.body;
 
     if (!username || typeof winlose === 'undefined' || !date || !game) {
@@ -12,7 +12,6 @@ module.exports = async function (fastify, opts) {
     }
 
     try {
-      // Vérifie que l'utilisateur existe
       const userExists = await new Promise((resolve, reject) => {
         db.get("SELECT 1 FROM users WHERE name = ?", [username], (err, row) => {
           if (err) reject(err);
@@ -46,7 +45,7 @@ module.exports = async function (fastify, opts) {
     }
   });
 
-  fastify.get('/user-management/match-history/:username', async (request, reply) => {
+  fastify.get('/user-management/match-history/:username', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username } = request.params;
 
     if (!username) {

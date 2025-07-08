@@ -1,4 +1,3 @@
-<!-- Language Switcher -->
 <select
   id="language-switcher"
   class="fixed top-4 right-4 z-50 border border-[#39ff14] bg-black rounded text-neon font-pixelify px-3 py-1 cursor-pointer shadow-lg"
@@ -8,7 +7,6 @@
   <option value="es">Español</option>
 </select>
 
-<!-- Flèche “Retour au profil” -->
 <button
   class="absolute top-0 left-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
   onclick="navigate('profile')"
@@ -21,23 +19,23 @@
   class="card-container flex flex-col items-center bg-black border border-white font-pixelify rounded-2xl p-6 space-y-6 shadow-lg max-w-xl mx-auto mt-20 overflow-hidden relative z-10"
 >
   <div class="game-card"></div>
-  <h1 class="text-2xl text-white text-center mt-6">Tournoi Terminé</h1>
+  <h1 class="text-2xl text-white text-center mt-6" data-i18n="tournament-result.done-tournament">Tournoi Terminé</h1>
   <hr class="w-full border-t border-white opacity-30" />
 
   <div
     class="flex flex-col items-center justify-center text-[var(--neon)] text-xl mt-8 select-none leading-none"
   >
-    <h2 class="text-2xl text-white mb-8 mt-12">VICTOIRE</h2>
+    <h2 class="text-2xl text-white mb-8 mt-12" data-i18n="tournament-result.win">VICTOIRE</h2>
     <span id="winner-name" class="text-neon text-4xl mb-8 block">Chargement…</span>
     <div class="text-2xl mt-4" aria-hidden="true">
       🔥 🏆 🏆 🔥
     </div>
-    <!-- Bouton RETOUR centré -->
     <div class="flex justify-center mt-8 relative z-50">
       <button
         onclick="navigate('profile')"
         class="mt-4 param-button"
         style="position: relative; z-index: 9999;"
+        data-i18n="tournament-result.done"
       >
         RETOUR
       </button>

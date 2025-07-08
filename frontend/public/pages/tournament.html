@@ -1,6 +1,4 @@
 <div class="bg-black text-white font-pixelify">
-
-  <!-- Sélecteur de langue -->
   <select
     id="language-switcher"
     class="fixed top-4 right-4 z-50 border border-[#39ff14] bg-black rounded text-neon font-pixelify px-3 py-1 cursor-pointer shadow-lg"
@@ -10,7 +8,6 @@
     <option value="es">Español</option>
   </select>
 
-  <!-- Bouton retour -->
   <button
     class="absolute top-0 left-0 text-white text-[1.8rem] p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
     onclick="navigate('profile')"
@@ -19,14 +16,12 @@
     ←
   </button>
 
-  <!-- Conteneur principal -->
   <div class="card-container flex flex-col items-center bg-black border border-white font-pixelify rounded-2xl p-6 space-y-6 shadow-lg max-w-xl mx-auto mt-20 overflow-hidden">
 
-    <h1 class="text-2xl text-white text-center mt-6">Résumé du tournoi</h1>
+    <h1 class="text-2xl text-white text-center mt-6" data-i18n="tournament.resume" >Résumé du tournoi</h1>
 
-    <!-- Demi-finales -->
     <div class="w-full bg-black rounded-xl">
-      <h2 class="text-2xl text-center text-white mt-4">Demi-finales</h2>
+      <h2 class="text-2xl text-center text-white mt-4"data-i18n="tournament.demi-finales">Demi-finales</h2>
       <hr class="w-full border-t border-white opacity-30" />
       <div class="space-y-4 text-center mt-4">
         <div id="match1" class="text-2xl">Chargement…</div>
@@ -34,19 +29,18 @@
       </div>
     </div>
 
-    <!-- Finale -->
     <div class="w-full bg-black rounded-xl">
-      <h2 class="text-2xl text-center text-white mt-4">Finale</h2>
+      <h2 class="text-2xl text-center text-white mt-4" data-i18n="tournament.Finale">Finale</h2>
       <hr class="w-full border-t border-white opacity-30" />
       <div class="text-white text-center mt-4">
         <div id="final-match" class="text-2xl text-neon">Chargement…</div>
       </div>
 
-      <!-- Bouton Lancer -->
       <div class="flex justify-center w-full mt-4">
         <button
           id="launch-final-btn"
           class="param-button z-10 relative"
+          data-i18n="tournament.boutton"
         >
           Lancer le match
         </button>

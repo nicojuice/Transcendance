@@ -8,13 +8,11 @@
 </select>
 
 <div class="min-h-screen flex flex-col items-center justify-center font-pixelify p-6 space-y-8">
-  <!-- Cartes Victoire / Défaite -->
   <div class="flex flex-col md:flex-row md:space-x-10 space-y-6 md:space-y-0">
     
-    <!-- Carte Victoire -->
     <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg"
          style="width: 340px; height: 480px;">
-      <h2 class="text-4xl text-neon font-bold mb-10">VICTOIRE</h2>
+      <h2 class="text-4xl text-neon font-bold mb-10" data-i18n="win.win">VICTOIRE</h2>
       <img
         id="user-avatar"
         src="assets/avatars/avatar7.png"
@@ -22,29 +20,26 @@
         class="w-44 h-44 rounded-full border-2 border-neon object-cover"
       />
       <span class="text-white text-4xl mt-10" id="display-username-win"></span>
-      <!-- <div class="text-white text-xl font-semibold mt-10" id="display-username-win">username1</div> -->
     </div>
 
-    <!-- Carte Défaite (avec effet) -->
     <div class="flex flex-col items-center bg-black border border-white rounded-2xl p-6 space-y-6 shadow-lg opacity-60 grayscale"
          style="width: 340px; height: 480px;">
-      <h2 class="text-4xl text-red-500 font-bold mb-10">DEFAITE</h2>
+      <h2 class="text-4xl text-red-500 font-bold mb-10" data-i18n="win.loose">DEFAITE</h2>
       <img
         id="opponent-avatar"
         src="assets/avatars/avatar2.png"
         alt="Avatar utilisateur"
         class="w-44 h-44 rounded-full border-2 border-red-500 object-cover mb-10"
       />
-      <!-- <span class="text-white text-xl font-semibold" >User2</span> -->
       <div class="text-white text-xl font-semibold" id="display-opponent-name"></div>
     </div>
     
   </div>
 
-  <!-- Bouton Retour -->
   <button
     onclick="navigateOrTournament()"
     class="px-6 py-3 border border-neon rounded text-neon hover:bg-neon hover:text-black transition text-lg"
+    data-i18n="win.back"
   >
     RETOUR
   </button>

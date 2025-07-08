@@ -1,6 +1,5 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-# Crée un répertoire de travail dans le conteneur
 WORKDIR /usr/src/app/backend/google-auth
 
 COPY package*.json ./
@@ -21,8 +20,6 @@ RUN echo "📦 Installation de metric..."
 RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
 COPY . .
-
-EXPOSE 8095
 
 RUN echo "🚀 Lancement du Back/Google-Auth..."
 CMD ["node", "server.js"]

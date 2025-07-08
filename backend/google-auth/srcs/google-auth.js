@@ -10,17 +10,17 @@ const REDIRECT_URI = process.env.REDIRECT_URI;
 
 async function routes(fastify, options) {
   if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !REDIRECT_URI) {
-    console.error('❌ Variables d\'environnement manquantes');
+    console.error('Variables d\'environnement manquantes');
     throw new Error('Google OAuth credentials not configured');
   }
   try {
     await ensureGoogleColumns();
-    console.log('✅ Colonnes Google vérifiées dans la DB');
+    console.log('Colonnes Google vérifiées dans la DB');
   } catch (err) {
-    console.error('❌ Erreur initialisation DB:', err);
+    console.error('Erreur initialisation DB:', err);
   }
 
-  console.log('🔧 OAuth Config:', {
+  console.log('OAuth Config:', {
     client_id: GOOGLE_CLIENT_ID ? 'SET' : 'MISSING',
     client_secret: GOOGLE_CLIENT_SECRET ? 'SET' : 'MISSING',
     redirect_uri: REDIRECT_URI
@@ -37,7 +37,7 @@ async function routes(fastify, options) {
     };
     
     const url = `https://accounts.google.com/o/oauth2/v2/auth?${querystring.stringify(params)}`;
-    console.log('🔄 Redirection vers Google:', url);
+    console.log('Redirection vers Google:', url);
     reply.redirect(url);
   });
 
@@ -45,12 +45,12 @@ async function routes(fastify, options) {
     const { code, error } = request.query;
 
     if (error) {
-      console.error('❌ Erreur OAuth:', error);
+      console.error('Erreur OAuth:', error);
       return reply.redirect(`https://localhost:8443/log?error=${encodeURIComponent(error)}`);
     }
 
     if (!code) {
-      console.log('❌ No code provided');
+      console.log('No code provided');
       return reply.redirect('https://localhost:8443/log?error=no_code');
     }
 
@@ -72,16 +72,16 @@ async function routes(fastify, options) {
       const tokenData = await tokenRes.json();
 
       if (!tokenRes.ok) {
-        console.error('❌ Erreur token response:', tokenData);
+        console.error('Erreur token response:', tokenData);
         return reply.redirect(`https://localhost:8443/log?error=token_exchange_failed`);
       }
 
       if (!tokenData.access_token) {
-        console.error('❌ Pas de access_token:', tokenData);
+        console.error('Pas de access_token:', tokenData);
         return reply.redirect('https://localhost:8443/log?error=no_access_token');
       }
 
-      console.log('✅ Token obtenu, récupération des infos utilisateur...');
+      console.log('Token obtenu, récupération des infos utilisateur...');
 
       const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: {
@@ -92,21 +92,21 @@ async function routes(fastify, options) {
       const userData = await userRes.json();
 
       if (!userRes.ok) {
-        console.error('❌ Erreur user data:', userData);
+        console.error('Erreur user data:', userData);
         return reply.redirect('https://localhost:8443/log?error=user_data_failed');
       }
 
-      console.log('✅ Utilisateur connecté:', userData.email);
+      console.log('Utilisateur connecté:', userData.email);
 
       const JWT_SECRET = process.env.JWT_SECRET;
       if (!JWT_SECRET) {
-        console.error('❌ JWT_SECRET not configured');
+        console.error('JWT_SECRET not configured');
         return reply.redirect('https://localhost:8443/log?error=server_config');
       }
 
       try {
         const dbUser = await syncGoogleUserToDB(userData);
-        console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
+        console.log('Utilisateur synchronisé avec la DB:', dbUser);
 
         const customToken = fastify.jwt.sign(
           { 
@@ -123,11 +123,11 @@ async function routes(fastify, options) {
         );
 
         const redirectUrl = `https://localhost:8443/auth-success?user=${encodeURIComponent(dbUser.username)}&token=${customToken}`;
-        console.log('🔄 Redirecting to:', redirectUrl);
+        console.log('Redirecting to:', redirectUrl);
         return reply.redirect(redirectUrl);
 
       } catch (dbError) {
-        console.error('❌ Erreur synchronisation DB:', dbError);
+        console.error('Erreur synchronisation DB:', dbError);
         // Fallback: créer le JWT sans sync DB
         const customToken = fastify.jwt.sign(
           { 
@@ -145,7 +145,7 @@ async function routes(fastify, options) {
       }
 
     } catch (err) {
-      console.error('❌ Erreur OAuth2:', err);
+      console.error('Erreur OAuth2:', err);
       return reply.redirect('https://localhost:8443/log?error=server_error');
     }
   });
@@ -153,7 +153,7 @@ async function routes(fastify, options) {
   fastify.post('/auth/google/token', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { code } = request.body;
 
-    console.log('📤 POST /auth/google/token received code:', code ? 'present' : 'missing');
+    console.log('POST /auth/google/token received code:', code ? 'present' : 'missing');
 
     if (!code) {
       return reply.status(400).send({ 
@@ -163,7 +163,7 @@ async function routes(fastify, options) {
     }
 
     try {
-      console.log('🔄 Exchanging code for token...');
+      console.log('Exchanging code for token...');
       
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
@@ -178,10 +178,10 @@ async function routes(fastify, options) {
       });
 
       const tokenData = await tokenRes.json();
-      console.log('📥 Token response status:', tokenRes.status);
+      console.log('Token response status:', tokenRes.status);
 
       if (!tokenRes.ok || !tokenData.access_token) {
-        console.error('❌ Token exchange failed:', tokenData);
+        console.error('Token exchange failed:', tokenData);
         return reply.status(401).send({ 
           success: false, 
           message: 'Token exchange failed', 
@@ -189,17 +189,17 @@ async function routes(fastify, options) {
         });
       }
 
-      console.log('✅ Token obtained, getting user info...');
+      console.log('Token obtained, getting user info...');
 
       const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
 
       const userData = await userRes.json();
-      console.log('📥 User data response status:', userRes.status);
+      console.log('User data response status:', userRes.status);
 
       if (!userRes.ok) {
-        console.error('❌ Failed to get user data:', userData);
+        console.error('Failed to get user data:', userData);
         return reply.status(401).send({ 
           success: false, 
           message: 'Failed to get user data',
@@ -207,15 +207,15 @@ async function routes(fastify, options) {
         });
       }
 
-      console.log('✅ User authenticated:', userData.email);
+      console.log('User authenticated:', userData.email);
 
       try {
         const dbUser = await syncGoogleUserToDB(userData);
-        console.log('✅ Utilisateur synchronisé avec la DB:', dbUser);
+        console.log('Utilisateur synchronisé avec la DB:', dbUser);
 
         const JWT_SECRET = process.env.JWT_SECRET;
         if (!JWT_SECRET) {
-          console.error('❌ JWT_SECRET not configured');
+          console.error('JWT_SECRET not configured');
           return reply.status(500).send({ 
             success: false, 
             message: 'Server configuration error' 
@@ -251,7 +251,7 @@ async function routes(fastify, options) {
         });
 
       } catch (dbError) {
-        console.error('❌ Erreur synchronisation DB:', dbError);
+        console.error('Erreur synchronisation DB:', dbError);
         return reply.status(500).send({ 
           success: false, 
           message: 'Database synchronization failed',
@@ -260,7 +260,7 @@ async function routes(fastify, options) {
       }
 
     } catch (err) {
-      console.error('❌ Erreur OAuth2:', err);
+      console.error('Erreur OAuth2:', err);
       return reply.status(500).send({ 
         success: false, 
         message: 'Internal Server Error',
@@ -294,7 +294,7 @@ async function routes(fastify, options) {
         }
       });
     } catch (err) {
-      console.error('❌ Token verification failed:', err.message);
+      console.error('Token verification failed:', err.message);
       return reply.status(401).send({ valid: false, message: 'Invalid token' });
     }
   });

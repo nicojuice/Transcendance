@@ -20,7 +20,7 @@
   },
   "profile": {
     "close": "Close",
-    "friends": "MY FRIENDS",
+    "friends": "Friends",
     "noFriends": "No friends added yet.",
     "enterUsername": "Enter a username...",
     "follow": "Follow",
@@ -92,5 +92,30 @@
     "back": "Back",
     "close": "Close",
     "closeTournamentForm": "Close tournament form"
+  },
+  "win": {
+    "win": "VICTORY",
+    "loose": "DEFEAT",
+    "back": "BACK"
+  },
+  "win-tournament": {
+    "win": "VICTORY",
+    "continue": "CONTINUE"
+  },
+  "tournament": {
+    "resume": "Tournament Summary",
+    "demi-finales": "Semi-Finals",
+    "Finale": "Final",
+    "boutton": "Start Match"
+  },
+  "tournament-result": {
+    "done-tournament": "Tournament Finished",
+    "win": "VICTORY",
+    "done": "BACK"
+  },
+  "tournament-finale": {
+    "tournament.finale": "FINAL",
+    "play": "PLAY"
   }
+
 }

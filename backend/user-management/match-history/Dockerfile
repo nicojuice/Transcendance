@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /usr/src/app/backend/user-management/profile-info
 
@@ -11,9 +11,7 @@ RUN echo "📦 Installation des dépendances..."
 RUN npm install
 RUN npm install sqlite3
 RUN npm install fastify
-RUN npm install dotenv
 RUN npm install @fastify/cors
-
 
 RUN echo "📦 Installation de Bcrypt..."
 RUN npm install bcryptjs

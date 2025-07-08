@@ -22,7 +22,6 @@ function selectGame(game: GameType): void {
     pacman.classList.add('card-selected', 'top-card');
     pong.classList.add('card-deselected', 'bottom-card');
   }
-
   current = game;
 }
 

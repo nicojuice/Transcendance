@@ -35,9 +35,9 @@ fastify.register(fastifyJwt, {
 fastify.decorate('authenticate', async function(request, reply) {
   try {
     await request.jwtVerify();
-    console.log('✅ Token valide pour', request.user);
+    console.log('Token valide pour', request.user);
   } catch (err) {
-    console.error('❌ Erreur auth:', err);
+    console.error('Erreur auth:', err);
     reply.send(err);
   }
 });

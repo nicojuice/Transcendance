@@ -1,6 +1,5 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-# Crée un répertoire de travail dans le conteneur
 WORKDIR /usr/src/app/backend/user-management/change-email
 
 COPY package*.json ./
@@ -20,11 +19,7 @@ RUN npm install bcryptjs
 RUN echo "📦 Installation de metric..."
 RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
-
-
 COPY . .
-
-EXPOSE 8086
 
 RUN echo "🚀 Lancement du Back/User-Management/Change-Email..."
 CMD ["sh", "-c", "node server.js -d"]

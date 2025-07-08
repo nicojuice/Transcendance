@@ -37,7 +37,6 @@ module.exports = fp(async function (fastify, opts) {
   
   fastify.get('/api/status', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const { username } = request.query;
-    console.log('GET /api/status called for:', username);
 
     if (typeof username !== 'string') {
       return reply.code(400).send({ error: 'Paramètre "username" manquant ou invalide' });

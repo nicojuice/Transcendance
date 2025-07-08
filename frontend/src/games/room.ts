@@ -44,7 +44,7 @@ export class Room {
     this.nextPage = "profile";
     this.players = [];
     this.withIA = false;
-    this.difficulty = DifficultyIA.EASY; // Default difficulty
+    this.difficulty = DifficultyIA.EASY;
     this.withCustom = false;
     this.winner = Winner.NONE;
     this.manualQuit = false;
@@ -196,11 +196,9 @@ export async function startGameAndNavigate(game: string) {
     console.error("Erreur avatar:", err);
     room.addPlayer(username);
   }
-  
-  // Utilisation de la propriété withIA de la classe Room
   if (selectedMode === "ia") {
     room.withIA = true;
-    room.addPlayer("IA", "assets/avatars/IA.png"); // Avec l'avatar de l'IA
+    room.addPlayer("IA", "assets/avatars/IA.png");
   } else {
     room.withIA = false;
     room.addPlayer("Guest", "assets/avatars/avatar2.png");

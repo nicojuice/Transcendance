@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Crée un répertoire de travail dans le conteneur
 WORKDIR /usr/src/app/backend/user-management/add-friends
@@ -22,11 +22,7 @@ RUN npm install bcryptjs
 RUN echo "📦 Installation de metric..."
 RUN npm install fastify-metrics prom-client --legacy-peer-deps
 
-
-
 COPY . .
-
-EXPOSE 8088
 
 RUN echo "🚀 Lancement du Back/User-Management/add-friends..."
 CMD ["sh", "-c", "node server.js -d"]

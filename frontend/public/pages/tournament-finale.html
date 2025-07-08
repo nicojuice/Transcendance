@@ -1,5 +1,3 @@
-<!-- /pages/tournament.html -->
-<!-- Bouton retour (flottant en haut à gauche de la page) -->
 <button
   class="absolute top-0 left-0 text-white p-1 cursor-pointer select-none z-50 hover:text-neon ml-6 mt-2"
   onclick="navigate('profile')"
@@ -9,12 +7,8 @@
 </button>
 
 <div class="border border-white rounded-2xl font-pixelify z-10 bg-black text-white">
-
-
-  <!-- Contenu principal -->
   <div class="card-tournament flex flex-col items-center justify-center h-full p-6 relative">
     
-    <!-- Bouton fermeture -->
     <button
       class="absolute top-4 right-4 text-white text-[1.8rem] p-1 cursor-pointer select-none z-10 hover:text-neon"
       onclick="navigate('game-choice')"
@@ -23,17 +17,15 @@
       &times;
     </button>
 
-    <h1 class="text-4xl mt-8 mb-6 text-center">Finale</h1>
+    <h1 class="text-4xl mt-8 mb-6 text-center" data-i18n="tournament-finale.tournament.finale">Finale</h1>
 
-    <!-- Demi-finales -->
     <div class="mb-6 w-full">
       <h2 class="text-2xl mb-2 border-b border-gray-600 pb-2 text-center"></h2>
       <p id="match1" class="mb-2 text-center"></p>
     </div>
 
-    <!-- Finale -->
     <div class="mb-6 w-full">
-      <button id="launch-final-btn" class="param-button w-full">JOUER</button>
+      <button id="launch-final-btn" class="param-button w-full" data-i18n="tournament-finale.play">JOUER</button>
     </div>
   </div>
 </div>

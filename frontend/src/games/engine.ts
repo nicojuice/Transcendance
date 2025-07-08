@@ -121,7 +121,6 @@ export class GameEngine extends BABYLON.Engine {
 
     if (currentUser && !this.room.isTournament) {
       const isWin = winnerName === currentUser;
-      console.log(this.room.gameName);
       await updateGameStats(currentUser, isWin, this.room.gameName);
       await loadPlayerStats();
       const statsStr = localStorage.getItem("playerStats");
@@ -156,12 +155,6 @@ export class GameEngine extends BABYLON.Engine {
           localStorage.setItem("tournamentWinners", JSON.stringify(winners));
           localStorage.setItem("lastMatchPlayed", currentMatchId.toString());
 
-          console.log(
-            "Gagnant tournoi enregistré:",
-            winnerName,
-            "pour match",
-            currentMatchId
-          );
           if (currentMatchId === 3) {
             route = "tournament-result";
           } else {

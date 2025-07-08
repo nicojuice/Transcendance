@@ -6,21 +6,16 @@
   <option value="en">English</option>
   <option value="es">Español</option>
 </select>
-
-<!-- Pong ball -->
 <div id="pongBall" class="ball absolute"></div>
 
 <div
   class="text-neon font-pixelify flex items-center justify-center relative overflow-visible p-4"
 >
-  <!-- CRT scanlines -->
   <div class="crt-effect absolute inset-0 z-[-1]"></div>
 
-  <!-- Main container: rings + form -->
   <div
     class="relative w-[500px] h-[500px] group flex flex-col items-center justify-center"
   >
-    <!-- Rings -->
     <div
       class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-spin-slow group-hover:border-neon group-hover:drop-shadow-[0_0_20px_lime] transition-all duration-500"
     ></div>
@@ -30,8 +25,6 @@
     <div
       class="pointer-events-none -z-10 absolute w-full h-full border-2 border-white rounded-[41%_44%_56%_59%/38%_62%_63%_37%] animate-spin-slowest group-hover:border-crtBlue group-hover:drop-shadow-[0_0_20px_yellow] transition-all duration-500"
     ></div>
-
-    <!-- Form content -->
     <div
       id="loginForm"
       class="relative flex flex-col items-center justify-center font-pixelify text-neon text-center px-8"
@@ -46,8 +39,6 @@
         Autoriser l'authentification à deux facteurs
       </button>
     </div>
-
-    <!-- Bottom text + button -->
     <div
       class="font-pixelify flex items-center justify-center relative overflow-visible text-white"
     >

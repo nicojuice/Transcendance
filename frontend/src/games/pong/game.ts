@@ -6,7 +6,6 @@ import * as GUI from "@babylonjs/gui";
 
 // === Main game function ===
 export function main(engine: Engine.GameEngine): void {
-  console.log("difficulty : ", engine.room.difficulty);
   const scene = engine.scene;
   scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
