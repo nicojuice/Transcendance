@@ -92,6 +92,10 @@ export class GameManager {
 
       const data = await res.json();
       localStorage.setItem("tournamentId", data.id.toString());
+      if (this.templatetRoom.gameName === "pong")
+        localStorage.setItem("tournamentGame", "pong");
+      else if (this.templatetRoom.gameName === "pacman")
+        localStorage.setItem("tournamentGame", "pacman");
     } catch (err) {
       showToast("Impossible de créer le tournoi", "error");
       return;
