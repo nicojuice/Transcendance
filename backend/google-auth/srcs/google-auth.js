@@ -46,16 +46,16 @@ async function routes(fastify, options) {
 
     if (error) {
       console.error('Erreur OAuth:', error);
-      return reply.redirect(`https://localhost:8443/log?error=${encodeURIComponent(error)}`);
+      return reply.redirect(`http://localhost:8081/api/backend/login`);
     }
 
     if (!code) {
       console.log('No code provided');
-      return reply.redirect('https://localhost:8443/log?error=no_code');
+      return reply.redirect('http://localhost:8081/api/backend/login');
     }
 
     try {
-      console.log('🔄 Échange du code contre un token...');
+      console.log('Échange du code contre un token...');
 
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
@@ -73,12 +73,12 @@ async function routes(fastify, options) {
 
       if (!tokenRes.ok) {
         console.error('Erreur token response:', tokenData);
-        return reply.redirect(`https://localhost:8443/log?error=token_exchange_failed`);
+        return reply.redirect(`http://localhost:8081/api/backend/login`);
       }
 
       if (!tokenData.access_token) {
         console.error('Pas de access_token:', tokenData);
-        return reply.redirect('https://localhost:8443/log?error=no_access_token');
+        return reply.redirect('http://localhost:8081/api/backend/login');
       }
 
       console.log('Token obtenu, récupération des infos utilisateur...');
@@ -93,7 +93,7 @@ async function routes(fastify, options) {
 
       if (!userRes.ok) {
         console.error('Erreur user data:', userData);
-        return reply.redirect('https://localhost:8443/log?error=user_data_failed');
+        return reply.redirect('http://localhost:8081/api/backend/login');
       }
 
       console.log('Utilisateur connecté:', userData.email);
@@ -101,7 +101,7 @@ async function routes(fastify, options) {
       const JWT_SECRET = process.env.JWT_SECRET;
       if (!JWT_SECRET) {
         console.error('JWT_SECRET not configured');
-        return reply.redirect('https://localhost:8443/log?error=server_config');
+        return reply.redirect('http://localhost:8081/api/backend/login');
       }
 
       try {
@@ -146,126 +146,7 @@ async function routes(fastify, options) {
 
     } catch (err) {
       console.error('Erreur OAuth2:', err);
-      return reply.redirect('https://localhost:8443/log?error=server_error');
-    }
-  });
-
-  fastify.post('/auth/google/token', { preHandler: [fastify.authenticate] }, async (request, reply) => {
-    const { code } = request.body;
-
-    console.log('POST /auth/google/token received code:', code ? 'present' : 'missing');
-
-    if (!code) {
-      return reply.status(400).send({ 
-        success: false, 
-        message: 'No code provided' 
-      });
-    }
-
-    try {
-      console.log('Exchanging code for token...');
-      
-      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: querystring.stringify({
-          code,
-          client_id: GOOGLE_CLIENT_ID,
-          client_secret: GOOGLE_CLIENT_SECRET,
-          redirect_uri: REDIRECT_URI,
-          grant_type: 'authorization_code',
-        }),
-      });
-
-      const tokenData = await tokenRes.json();
-      console.log('Token response status:', tokenRes.status);
-
-      if (!tokenRes.ok || !tokenData.access_token) {
-        console.error('Token exchange failed:', tokenData);
-        return reply.status(401).send({ 
-          success: false, 
-          message: 'Token exchange failed', 
-          error: tokenData 
-        });
-      }
-
-      console.log('Token obtained, getting user info...');
-
-      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` },
-      });
-
-      const userData = await userRes.json();
-      console.log('User data response status:', userRes.status);
-
-      if (!userRes.ok) {
-        console.error('Failed to get user data:', userData);
-        return reply.status(401).send({ 
-          success: false, 
-          message: 'Failed to get user data',
-          error: userData
-        });
-      }
-
-      console.log('User authenticated:', userData.email);
-
-      try {
-        const dbUser = await syncGoogleUserToDB(userData);
-        console.log('Utilisateur synchronisé avec la DB:', dbUser);
-
-        const JWT_SECRET = process.env.JWT_SECRET;
-        if (!JWT_SECRET) {
-          console.error('JWT_SECRET not configured');
-          return reply.status(500).send({ 
-            success: false, 
-            message: 'Server configuration error' 
-          });
-        }
-
-        const customToken = fastify.jwt.sign(
-          { 
-            id: dbUser.id, 
-            username: dbUser.username, 
-            email: dbUser.email, 
-            name: userData.name,
-            google_id: userData.id,
-            picture: userData.picture,
-            isNewUser: dbUser.isNewUser
-          },
-          JWT_SECRET,
-          { expiresIn: '24h' }
-        );
-
-        return reply.send({
-          success: true,
-          user: {
-            id: dbUser.id,
-            username: dbUser.username,
-            email: dbUser.email,
-            name: userData.name,
-            picture: userData.picture,
-            google_id: userData.id,
-            isNewUser: dbUser.isNewUser
-          },
-          token: customToken,
-        });
-
-      } catch (dbError) {
-        console.error('Erreur synchronisation DB:', dbError);
-        return reply.status(500).send({ 
-          success: false, 
-          message: 'Database synchronization failed',
-          error: dbError.message
-        });
-      }
-
-    } catch (err) {
-      console.error('Erreur OAuth2:', err);
-      return reply.status(500).send({ 
-        success: false, 
-        message: 'Internal Server Error',
-        error: err.message
-      });
+      return reply.redirect('http://localhost:8081/api/backend/login');
     }
   });
 

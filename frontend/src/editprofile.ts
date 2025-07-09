@@ -269,7 +269,7 @@ export async function fetchProfile(): Promise<void> {
     if (storedUsername || storedEmail) {
       updateUserInterface(storedUsername || "Utilisateur", storedEmail || "");
     } else {
-      showToast("Impossible de charger les données du profil", "error");
+      // showToast("Impossible de charger les données du profil", "error");
       clearUserData();
     }
   }

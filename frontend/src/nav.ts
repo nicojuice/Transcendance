@@ -15,11 +15,6 @@ import { loadMatchHistory } from './matchhistory'
 
 export const onNavigate = new EventManager();
 
-async function getAuthHeaders(): Promise<HeadersInit> {
-  const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 export async function advanceTournamentMatchId(): Promise<number> {
   const rawId = localStorage.getItem("tournamentId");
   if (!rawId) {
@@ -106,7 +101,6 @@ export async function navigate(page: string) {
       onProfilePageShow();
       initializeLanguageSwitcher();
 
-          // Si on est sur la page match-history, on charge les matchs
       if (page === 'match-history') {
         const username = localStorage.getItem('username');
         if (username) {
@@ -169,7 +163,6 @@ async function handleAuthSuccess() {
   const user = urlParams.get("user");
   const token = urlParams.get("token");
 
-
   if (user && token) {
     localStorage.setItem("username", decodeURIComponent(user));
     localStorage.setItem("token", token);
@@ -184,67 +177,9 @@ async function handleAuthSuccess() {
   return false;
 }
 
-export async function handleGoogleAuthCode() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get("code");
-  const error = urlParams.get("error");
-
-  if (error) {
-    console.error("❌ OAuth error:", error);
-    showToast('Erreur d\'authentification', 'error');
-    await navigate("log");
-    return;
-  }
-
-  if (!code) return false;
-
-
-  try {
-    const headers = await getAuthHeaders();
-    const response = await fetch("http://localhost:8095/api/auth/google/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      body: JSON.stringify({ code }),
-    });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-
-    if (data.success && data.token && data.user) {
-      localStorage.setItem("username", data.user.name);
-      localStorage.setItem("email", data.user.email);
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("isConnected", "true");
-      localStorage.setItem("isGoogleConnected", "true");
-
-      window.history.replaceState({}, document.title, window.location.pathname);
-      showToast(`Bienvenue ${data.user.name} !`, 'success');
-      setTimeout(() => {
-        navigate("profile");
-      }, 500);
-      return true;
-    } else {
-      console.error("❌ Auth failed:", data);
-      showToast('Échec de l\'authentification', 'error');
-      await navigate("log");
-    }
-  } catch (err) {
-    console.error("❌ Network error during token exchange:", err);
-    showToast('Erreur de connexion', 'error');
-    await navigate("log");
-  }
-
-  return false;
-}
-
 window.addEventListener("DOMContentLoaded", async () => {
 
   if (await handleAuthSuccess()) return;
-  if (await handleGoogleAuthCode()) return;
   await default_navigate();
 });
 
