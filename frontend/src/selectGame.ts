@@ -56,9 +56,7 @@ function closeCard(cardId: string): void {
     console.error('One or more elements not found');
     return;
   }
-
   selectedCard.classList.remove('flipped', 'focused');
-
   pongCard.classList.remove('hidden');
   otherCard.classList.remove('hidden');
 }
@@ -78,7 +76,6 @@ function checkAndInitPongMode()
   const difficultyDiv = document.getElementById("pong-difficulty") as HTMLDivElement | null;
 
   if (!modeSelector || !difficultyDiv) {
-    // Les éléments ne sont pas encore dans le DOM
     return;
   }
 
@@ -86,19 +83,14 @@ function checkAndInitPongMode()
     difficultyDiv.style.display = modeSelector.value === "ia" ? "block" : "none";
   };
 
-  // Cacher ou afficher selon l'état actuel
   toggleDifficultyVisibility();
   modeSelector.removeEventListener("change", toggleDifficultyVisibility);
-  // Ajouter l'écouteur si ce n’est pas déjà fait
   modeSelector.addEventListener("change", toggleDifficultyVisibility);
 };
 
 NAV.onNavigate.addEventListener("waitOptionsGame",checkAndInitPongMode);
 
-
-
 (window as any).closeTournamentForm = closeTournamentForm;
 (window as any).selectGame = selectGame;
 (window as any).closeCard = closeCard; 
 (window as any).flipCard = flipCard; 
-

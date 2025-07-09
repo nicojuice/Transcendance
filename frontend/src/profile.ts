@@ -1,9 +1,5 @@
 import { fetchProfile } from "./editprofile";
-import { editUser } from "./editprofile";
-import { editEmail } from "./editprofile";
-import { editPass } from "./editprofile";
 import "./i18n";
-import { showToast } from "./showToast";
 
 async function getAuthHeaders(): Promise<HeadersInit> {
   const token = localStorage.getItem("token");
@@ -35,7 +31,6 @@ async function displayAvatar(username: string): Promise<void> {
   }
 }
 
-
 export async function initProfilePage(): Promise<void> {
   await fetchProfile();
 
@@ -48,126 +43,3 @@ export async function initProfilePage(): Promise<void> {
     await displayAvatar(storedUsername);
   }
 }
-
-async function openModalWithUserData(): Promise<void> {
-  await fetchProfile();
-
-  const username =
-    (document.getElementById("username") as HTMLInputElement)?.value || "";
-  const email =
-    (document.getElementById("email") as HTMLInputElement)?.value || "";
-
-  (document.getElementById("modal-username") as HTMLInputElement).value = username;
-  (document.getElementById("modal-email") as HTMLInputElement).value = email;
-  (document.getElementById("modal-password") as HTMLInputElement).value = "";
-  (document.getElementById("modal-confirm-password") as HTMLInputElement).value = "";
-
-  const modal = document.getElementById("editModal") as HTMLElement | null;
-  const popup = modal?.querySelector("#popup-profile") as HTMLElement | null;
-  const handle = document.getElementById("drag-handle-profile") as HTMLElement | null;
-
-  if (!modal || !popup || !handle) return;
-
-  modal.classList.remove("hidden");
-
-  let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  const onMouseDown = (e: MouseEvent) => {
-    isDragging = true;
-    const rect = popup.getBoundingClientRect();
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    popup.style.left = `${e.clientX - offsetX}px`;
-    popup.style.top = `${e.clientY - offsetY}px`;
-  };
-
-  const onMouseUp = () => {
-    isDragging = false;
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-  };
-
-  handle.addEventListener("mousedown", onMouseDown);
-}
-
-function closeModal() {
-  document.getElementById("editModal")?.classList.add("hidden");
-}
-
-async function saveProfileChanges() {
-  const username = (
-    document.getElementById("modal-username") as HTMLInputElement
-  ).value.trim();
-  const email = (
-    document.getElementById("modal-email") as HTMLInputElement
-  ).value.trim();
-  const password = (
-    document.getElementById("modal-password") as HTMLInputElement
-  ).value;
-  const confirmPassword = (
-    document.getElementById("modal-confirm-password") as HTMLInputElement
-  ).value;
-
-  if (password !== "" && password !== confirmPassword) {
-    showToast("Les mots de passe ne correspondent pas.", "error");
-    return;
-  }
-
-  (document.getElementById("username") as HTMLInputElement).value = username;
-  (document.getElementById("email") as HTMLInputElement).value = email;
-
-  try {
-    await editUser();
-    await editEmail(email);
-
-    if (password !== "") {
-      await editPass(password);
-    }
-
-    closeModal();
-  } catch (err) {
-    console.error("Erreur lors de la sauvegarde des modifications :", err);
-  }
-}
-
-(window as any).openModalWithUserData = openModalWithUserData;
-(window as any).saveProfileChanges = saveProfileChanges;
-(window as any).closeModal = closeModal;
-
-function showPasswordEdit(): void {
-  const passwordView = document.getElementById("password-view");
-  const passwordEdit = document.getElementById("password-edit");
-  if (passwordView && passwordEdit) {
-    passwordView.classList.add("hidden");
-    passwordEdit.classList.remove("hidden");
-  }
-}
-
-function cancelPasswordEdit(): void {
-  const passwordView = document.getElementById("password-view");
-  const passwordEdit = document.getElementById("password-edit");
-  const oldPassword = document.getElementById("old-password") as HTMLInputElement | null;
-  const newPassword = document.getElementById("new-password") as HTMLInputElement | null;
-  const confirmPassword = document.getElementById("confirm-password") as HTMLInputElement | null;
-
-  if (passwordEdit && passwordView) {
-    passwordEdit.classList.add("hidden");
-    passwordView.classList.remove("hidden");
-  }
-
-  if (oldPassword) oldPassword.value = "";
-  if (newPassword) newPassword.value = "";
-  if (confirmPassword) confirmPassword.value = "";
-}
-
-(window as any).showPasswordEdit = showPasswordEdit;
-(window as any).cancelPasswordEdit = cancelPasswordEdit;

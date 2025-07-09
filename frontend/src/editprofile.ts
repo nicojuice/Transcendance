@@ -139,6 +139,12 @@ export async function editPass(edit: string): Promise<void> {
 export async function editEmail(edit: string): Promise<void> {
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
+  const isGoogleConnected = localStorage.getItem("isGoogleConnected");
+
+  if (isGoogleConnected === "true") {
+    showToast("Les utilisateurs Google ne peuvent pas modifier leur email.", "error");
+    return;
+  }
 
   if (!edit?.trim()) {
     showToast("Veuillez saisir un nouvel email.", "error");

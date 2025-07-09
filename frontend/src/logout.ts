@@ -6,6 +6,8 @@ export function logout(): void {
     updateConnectionStatus(0);
     localStorage.removeItem('username');
     localStorage.removeItem('isConnected');
+    localStorage.removeItem('isGoogleConnected');
+    localStorage.removeItem("authMethod");
     navigate('log');
 }
 

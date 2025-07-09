@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 let hasUpdatedStats = false;
 
-
 export function resetHasUpdatedStats() {
   hasUpdatedStats = false;
 }

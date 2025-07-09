@@ -24,7 +24,6 @@ async function connect(e: Event): Promise<void> {
       localStorage.setItem("token", data.token);
       localStorage.setItem("authMethod", "standard");
       localStorage.setItem("isConnected", "true");
-      
 
       if ((await is2FA(e)) === false) {
         await navigate("2FA");

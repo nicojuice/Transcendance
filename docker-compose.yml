@@ -177,32 +177,19 @@ services:
 
   match-history-service:
     build:
-       context: ./backend/user-management/match-history
-       dockerfile: Dockerfile
+      context: ./backend/user-management/match-history
+      dockerfile: Dockerfile
     ports:
       - "8091:8091"
     environment:
       - NODE_ENV=production
     volumes:
-       - sql:/data
+      - sql:/data
     depends_on:
       - db
     networks:
       - Transcendance
 
-  # rooms-local-service:
-  #   build:
-  #     context: ./backend/games/rooms/local
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8096:8096"
-  #   environment:
-  #     - NODE_ENV=production
-  #   volumes:
-  #     - sql:/data
-  #   networks:
-  #     - Transcendance
-    
   google-auth-service:
     build:
       context: ./backend/google-auth
@@ -215,41 +202,6 @@ services:
       - sql:/data
     networks:
       - Transcendance
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - 8443:8443
-    # volumes:
-    # ./frontend/public:/usr/src/app/frontend/public
-    # - public-volume:/usr/src/app
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      - register-service
-      - login-service
-      - email-service
-      - pass-service
-      - add-friends-service
-      - games-player
-      - games_data-service
-      - status-service
-      - tournament-service
-      - match-history-service
-    networks:
-      - Transcendance
-
-  db:
-    build:
-      context: ./SQL
-      dockerfile: Dockerfile
-    volumes:
-      - sql:/data
-    networks:
-      - Transcendance
-
   2fa:
     build:
       context: ./backend/2FA/
@@ -264,33 +216,41 @@ services:
     networks:
       - Transcendance
 
-  # prometheus:
-  #   build:
-  #     context: ./monitoring/prometheus
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - Transcendance
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 8443:8443
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - register-service
+      - login-service
+      - email-service
+      - pass-service
+      - user-service
+      - avatar-service
+      - add-friends-service
+      - profile-info-service
+      - games-player
+      - games_data-service
+      - status-service
+      - tournament-service
+      - google-auth-service
+      - 2fa
+      - match-history-service
+    networks:
+      - Transcendance
 
-  # grafana:
-  #   build:
-  #     context: ./monitoring/grafana
-  #     dockerfile: Dockerfile
-  #   container_name: grafana
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - grafana-data:/var/lib/grafana
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=admin
-  #     - GF_SECURITY_ADMIN_PASSWORD=admin
-  #   depends_on:
-  #     - prometheus
-  #   networks:
-  #     - Transcendance
+  db:
+    build:
+      context: ./SQL
+      dockerfile: Dockerfile
+    volumes:
+      - sql:/data
+    networks:
+      - Transcendance
 
   redis:
     image: redis:7-alpine
@@ -308,7 +268,6 @@ volumes:
   node-modules-front:
   node-modules-back:
   node-volume:
-  grafana-data:
   public-volume:
   2fa:
   sql:

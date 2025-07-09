@@ -3,7 +3,6 @@ const sqlite3 = require('sqlite3').verbose();
 require('dotenv').config();
 
 module.exports = async function (fastify, options) {
-  // Accéder à la base de données SQLite
   const dbPath = '/data/data.db';
   const db = new sqlite3.Database(dbPath, err => {
     if (err) {
@@ -12,7 +11,6 @@ module.exports = async function (fastify, options) {
     }
     fastify.log.info('tournamentRoutes: connecté à SQLite:', dbPath);
 
-    // Création de la table 'tournament' si elle n'existe pas
     db.run(
       `CREATE TABLE IF NOT EXISTS tournament (
          id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +25,6 @@ module.exports = async function (fastify, options) {
     );
   });
 
-  // Schéma de validation pour POST
   const tournamentSchema = {
     body: {
       type: 'object',
@@ -52,7 +49,6 @@ module.exports = async function (fastify, options) {
     }
   };
 
-  // Route POST pour créer un tournoi
   fastify.post(
     '/backend/games/tournament', 
     { 
@@ -64,7 +60,6 @@ module.exports = async function (fastify, options) {
       const match1 = JSON.stringify([player1, player2]);
       const match2 = JSON.stringify([player3, player4]);
 
-      // Insérer en base avec matchid initialisé à 1
       const insertedId = await new Promise((resolve, reject) => {
         const sql = `INSERT INTO tournament (match1, match2, matchid) VALUES (?, ?, 1)`;
         db.run(sql, [match1, match2], function(err) {
@@ -82,7 +77,6 @@ module.exports = async function (fastify, options) {
     }
   );
 
-  // Schéma de validation pour GET
   const getTournamentSchema = {
     params: {
       type: 'object',
@@ -103,7 +97,6 @@ module.exports = async function (fastify, options) {
     }
   };
 
-  // Route GET pour récupérer un tournoi par ID
   fastify.get(
     '/backend/games/tournament/:id', 
     { 
@@ -130,7 +123,6 @@ module.exports = async function (fastify, options) {
     }
   );
 
-  // Schéma de validation pour PATCH
   const advanceSchema = {
     params: {
       type: 'object',
@@ -154,7 +146,6 @@ module.exports = async function (fastify, options) {
     }
   };
 
-  // Route PATCH pour passer au match suivant et enregistrer le gagnant
   fastify.patch(
     '/backend/games/tournament/:id/next', 
     { 
@@ -164,7 +155,6 @@ module.exports = async function (fastify, options) {
       const id = request.params.id;
       const { winner } = request.body;
       try {
-        // Lire matchid et match3 existants
         const row = await new Promise((resolve, reject) => {
           db.get('SELECT matchid, match3 FROM tournament WHERE id = ?', [id], (err, row) => err ? reject(err) : resolve(row));
         });
@@ -180,11 +170,9 @@ module.exports = async function (fastify, options) {
         } else {
           newMatch3 = ['', ''];
         }
-        // Placer le gagnant au bon index
         newMatch3[current - 1] = winner;
         const match3Json = JSON.stringify(newMatch3);
 
-        // Mettre à jour matchid et match3
         await new Promise((resolve, reject) => {
           db.run(
             'UPDATE tournament SET matchid = ?, match3 = ? WHERE id = ?',
